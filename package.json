@@ -1,7 +1,7 @@
 {
   "name": "validate-declarative",
   "version": "0.1.3",
-  "description": "A simple, highly-extensible utility for validating the structure of JS objects.",
+  "description": "A simple, highly-extensible utility for validating the structure of any JS object.",
   "main": "lib/unravel.js",
   "scripts": {
     "prepublish": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
