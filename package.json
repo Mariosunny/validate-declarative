@@ -1,0 +1,32 @@
+{
+  "name": "validate-declarative",
+  "version": "0.1.3",
+  "description": "A simple, highly-extensible utility for validating the structure of JS objects.",
+  "main": "lib/unravel.js",
+  "scripts": {
+    "prepublish": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mariosunny/validate-declarative.git"
+  },
+  "author": "Tyler Hurson <tyler.james.hurson@gmail.com>",
+  "license": "ISC",
+  "dependencies": {},
+  "keywords": [
+  ],
+  "files": [
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "jest": "^23.6.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
+}
