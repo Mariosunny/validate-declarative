@@ -1,12 +1,16 @@
 ## validate-declarative
-A simple, highly-extensible utility for validating the structure of any JS object.
+A utility for validating the structure of any JS object in a simple, declarative manner.
+Fast, lightweight, and highly extensible.
 
+
+**See it in action:**
 ```javascript
 import {verify, string, boolean, int, nonNegativeInt} from 'validate-declarative';
 
-const schema = {
+// Define the schema for your objects
+const courseSchema = {
     courseName: {
-        $test: /[A-Za-z0-9 ]/
+        $test: /[A-Za-z0-9 ]+/
     },
     capacity: nonNegativeInt,
     professor: {
@@ -18,11 +22,13 @@ const schema = {
         }
     },
     teacherAssistants: {
+        $optional: true,
         $element: string
     }
 };
 
-let course1 = {
+// Create some objects
+let objectOrientedCourse = {
     courseName: "Object Oriented Programming",
     capacity: 30,
     professor: {
@@ -33,17 +39,19 @@ let course1 = {
     teacherAssistants: ["Matthew R.", "Jennifer Q."]
 };
 
-let course2 = {
+let microprocessorsCourse = {
     courseName: "Microprocessors",
     capacity: 25,
     professor: {
         name: "Mr. Baz",
         tenured: false,
         salary: 45000
-    },
-    teacherAssistants: []
+    }
 };
 
-console.log(verify(schema, course1)); // prints true
-console.log(verify(schema, course2)); // prints false (professor.salary fails $test)
+// true - the object matches the schema!
+let result1 = verify(courseSchema, objectOrientedCourse);
+
+// false - professor.salary fails the $test constraint!
+let result2 = verify(courseSchema, microprocessorsCourse);
 ```
