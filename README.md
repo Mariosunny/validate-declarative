@@ -6,8 +6,9 @@ Lightweight and highly extensible.
 ```javascript
 import {verify, string, boolean, int, nonNegativeInt} from 'validate-declarative';
 
-// Define the structure of your objects
+// Define the structure and constraints of your objects
 const courseSchema = {
+    // courseName must satisfy the regex /[A-Za-z0-9 ]+/
     courseName: {
         $test: /[A-Za-z0-9 ]+/
     },
@@ -15,13 +16,14 @@ const courseSchema = {
     professor: {
         name: string,
         tenured: boolean,
-        salary: {
+        salary: { // salary must be an integer between 50,000 and 150,000
             $type: int,
             $test: function(object) {
               return 50000 <= object && object <= 150000;
             }
         }
     },
+    // teacherAssistants must be an array of strings, but is optional
     teacherAssistants: {
         $optional: true,
         $element: string
