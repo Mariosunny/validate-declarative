@@ -112,11 +112,12 @@ Check out some [more examples](#examples).
 
 ## API
 
-#### `verify(schema, data, extraneous=false)`
-Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see Constraints), *false* otherwise. If `extraneous` is set to *false*, and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneous` is set to *true*, extraneous properties in the data will be ignored.
+#### `verify(schema, data, extraneousAllowed=false)`
+Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see Constraints), *false* otherwise. If `extraneousAllowed` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneousAllowed` is set to *true*, extraneous properties in the data will be ignored.
 
-#### `validate(schema, data, extraneous=false)`
-Same as `verify()`, but returns an array of error objects (see below) describing each constraint failure in detail. If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
+#### `validate(schema, data, extraneousAllowed=false)`
+Same as `verify()`, but returns an array of error objects (see below) describing each constraint failure in detail. 
+If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
 
 #### Errors
 
@@ -126,8 +127,8 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 {
   error: "InvalidValueError",    // name of the error
   key: "menu.menuItems[3].desc", // the property where the error occurred
-  value: 5,              // the actual value found in the data
-  expectedType: "string" // the expected type, defined by $name
+  value: 5,                      // the actual value found in the data
+  expectedType: "string"         // the expected type, defined by $name
 }
 ```
 
@@ -152,8 +153,7 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 
 ###### ExtraneousPropertyError
 ```javascript
-/* Generated when there is an extra property in the data
-   (Not generated when extraneous = true) */
+/* Generated when there is an extra property in the data (when extraneousAllowed = false) */
 {
   error: "ExtraneousPropertyError",
   key: "username"

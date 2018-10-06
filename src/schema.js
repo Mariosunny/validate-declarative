@@ -211,11 +211,11 @@ function getPath(context) {
     return path;
 }
 
-export function verify(schema, data, extraneous = false) {
+export function verify(schema, data, extraneousAllowed = false) {
 
 }
 
-export function validate(schema, data, extraneous = false) {
+export function validate(schema, data, extraneousAllowed = false) {
 
 }
 
