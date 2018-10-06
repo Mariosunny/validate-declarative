@@ -60,11 +60,11 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 ## Table of Contents
 - [Installation](#installation)
 - [Overview](#overview)
+- [Examples](#examples)
 - [API](#api)
 - [Constraints](#constraints)
 - [Errors](#errors)
 - [Built-in Types](#built-in-types)
-- [Examples](#examples)
 - [Reserved Key Names](#reserved-key-names)
 - [Configuration](#configuration)
 - [About](#about)
@@ -115,7 +115,162 @@ let result3 = verify(tweetSchema, myTweet3); // false
 
 This is a simple example, but schemas can be as large and complex as you want.
 You can create a schema for any Javascript object. 
-Check out some [more examples](#examples).
+
+Check out [more examples](#examples) below, or
+learn about the other types of [constraints](#constraints). 
+See the [API](#api) for a description of `verify()` and `validate()`.
+Check out a list of the available [built-in types](#built-in-types).
+
+
+## Examples
+
+#### Validating a single value
+```javascript
+import {verify, int, string} from 'validate-declarative';
+
+let result1 = verify(int, 5);                 // true
+let result2 = verify(int, "hello world");     // false
+let result3 = verify(string, "hello world");  // true
+```
+
+#### Validating an object
+```javascript
+import {verify, string, number, boolean} from 'validate-declarative';
+
+const bankAccountSchema = {
+  accountHolder: string,
+  active: boolean,
+  balance: {
+    checkings: number,
+    savings: number
+  }
+};
+
+let bankAccount = {
+  accountHolder: "Susan B. Foo",
+  active: true,
+  balance: {
+    checkings: 1094.97,
+    savings: 39328.03
+  }
+};
+
+let result = verify(bankAccountSchema, bankAccount); // true
+```
+
+#### Defining a custom type
+```javascript
+import {verify, int} from 'validate-declarative';
+
+const primeNumber = {
+    $type: int,
+    $test: function(object) {
+        for(let i = 2; i < object; i++) {
+            if(object % i === 0) {
+                return false;
+            }
+        }
+        return object !== 1 && object !== 0;
+    }
+};
+
+const schema = {
+    a: primeNumber
+};
+
+let result1 = verify(schema, {a: 7}); // true
+let result2 = verify(schema, {a: 20}); // false
+
+```
+
+#### Validating an array
+```javascript
+import {verify, boolean} from 'validate-declarative';
+
+const schema = {
+  $element: boolean
+};
+
+let data = [true, true, false, true, false];
+
+let result = verify(schema, data); // true
+```
+
+#### Validating a multi-dimensional array
+```javascript
+import {verify, int} from 'validate-declarative';
+
+const threeDimensionalShapeSchema = {
+  // a 3-dimensional array of ints
+  voxels: {
+    $element: {
+      $element: {
+        $element: int
+      }
+    }
+  }
+};
+
+let data = {
+  voxels: [
+    [[123, 48, 20], [93, 184, 230]],
+    [[101, 200, 228], [76, 134, 120]],
+    [[4, 67, 77], [129, 166, 249]]
+  ]
+};
+
+let result = verify(threeDimensionalShapeSchema, data); // true
+```
+
+#### Validating a complex object
+```javascript
+import {verify, string, int} from 'validate-declarative';
+
+const companySchema = {
+  companyName: string,
+  ceo: string,
+  employees: {
+    $element: {
+      name: string,
+      salary: int,
+      beneficiaries: {
+        $optional: true,
+        $element: {
+          name: string,
+          relationship: string
+        }
+      }
+    }
+  }
+};
+
+let industryTech = {
+  companyName: "Industry Tech, Inc.",
+  ceo: "James Tech",
+  employees: [
+    {
+      name: "John Q. Workingman",
+      salary: 65000,
+      beneficiaries: [
+        {
+          name: "Nancy Workingman",
+          relationship: "Mother"
+        },
+        {
+          name: "Bob Workingman",
+          relationship: "Father"
+        }
+      ]
+    },
+    {
+      name: "Fred T. Orphan",
+      salary: 38000
+    }
+  ]
+};
+
+let result = verify(companySchema, industryTech); // true
+```
 
 ## API
 
@@ -678,156 +833,6 @@ const any = {
     return true;
   }
 };
-```
-
-## Examples
-
-#### Validating a single value
-```javascript
-import {verify, int, string} from 'validate-declarative';
-
-let result1 = verify(int, 5);                 // true
-let result2 = verify(int, "hello world");     // false
-let result3 = verify(string, "hello world");  // true
-```
-
-#### Validating an object
-```javascript
-import {verify, string, number, boolean} from 'validate-declarative';
-
-const bankAccountSchema = {
-  accountHolder: string,
-  active: boolean,
-  balance: {
-    checkings: number,
-    savings: number
-  }
-};
-
-let bankAccount = {
-  accountHolder: "Susan B. Foo",
-  active: true,
-  balance: {
-    checkings: 1094.97,
-    savings: 39328.03
-  }
-};
-
-let result = verify(bankAccountSchema, bankAccount); // true
-```
-
-#### Defining a custom type
-```javascript
-import {verify, int} from 'validate-declarative';
-
-const primeNumber = {
-    $type: int,
-    $test: function(object) {
-        for(let i = 2; i < object; i++) {
-            if(object % i === 0) {
-                return false;
-            }
-        }
-        return object !== 1 && object !== 0;
-    }
-};
-
-const schema = {
-    a: primeNumber
-};
-
-let result1 = verify(schema, {a: 7}); // true
-let result2 = verify(schema, {a: 20}); // false
-
-```
-
-#### Validating an array
-```javascript
-import {verify, boolean} from 'validate-declarative';
-
-const schema = {
-  $element: boolean
-};
-
-let data = [true, true, false, true, false];
-
-let result = verify(schema, data); // true
-```
-
-#### Validating a multi-dimensional array
-```javascript
-import {verify, int} from 'validate-declarative';
-
-const threeDimensionalShapeSchema = {
-  // a 3-dimensional array of ints
-  voxels: {
-    $element: {
-      $element: {
-        $element: int
-      }
-    }
-  }
-};
-
-let data = {
-  voxels: [
-    [[123, 48, 20], [93, 184, 230]],
-    [[101, 200, 228], [76, 134, 120]],
-    [[4, 67, 77], [129, 166, 249]]
-  ]
-};
-
-let result = verify(threeDimensionalShapeSchema, data); // true
-```
-
-#### Validating a complex object
-```javascript
-import {verify, string, int} from 'validate-declarative';
-
-const companySchema = {
-  companyName: string,
-  ceo: string,
-  employees: {
-    $element: {
-      name: string,
-      salary: int,
-      beneficiaries: {
-        $optional: true,
-        $element: {
-          name: string,
-          relationship: string
-        }
-      }
-    }
-  }
-};
-
-let industryTech = {
-  companyName: "Industry Tech, Inc.",
-  ceo: "James Tech",
-  employees: [
-    {
-      name: "John Q. Workingman",
-      salary: 65000,
-      beneficiaries: [
-        {
-          name: "Nancy Workingman",
-          relationship: "Mother"
-        },
-        {
-          name: "Bob Workingman",
-          relationship: "Father"
-        }
-      ]
-    },
-    {
-      name: "Fred T. Orphan",
-      salary: 38000
-    }
-  ]
-};
-
-let result = verify(companySchema, industryTech); // true
 ```
 
 ## Reserved Key Names
