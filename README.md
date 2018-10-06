@@ -63,6 +63,8 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 - [Constraints](#constraints)
 - [Examples](#examples)
 - [Built-in Types](#built-in-types)
+- [Reserved Key Names](#reserved-key-names)
+- [Configuration](#configuration)
 - [About](#about)
 
 ## Overview
@@ -77,7 +79,7 @@ const tweetSchema = {
   }
 };
 ```
-Keys in a schema beginning with `$` are constraints. Constraints define the rules for validating data. 
+Keys in a schema beginning with `$` are constraints. [Constraints](#constraints) define the rules for validating data. 
 The most commonly used constraint is the `$test` constraint, which defines a type test.
 In the example above, `$test` defines a type that is a *string* and also has a *length* of 24 characters or less. 
 
@@ -106,7 +108,7 @@ let result3 = verify(tweetSchema, myTweet3); // false
 
 This is a simple example, but schemas can be as large and complex as you want.
 You can create a schema for any Javascript object. 
-Check out some more examples.
+Check out some [more examples](#examples).
 
 ## API
 
@@ -122,8 +124,8 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 ```javascript
 /* Generated when a value fails its type test */
 {
-  error: "InvalidValueError"    // name of the error
-  key: "menu.menuItems[3].desc" // the property where the error occurred
+  error: "InvalidValueError",    // name of the error
+  key: "menu.menuItems[3].desc", // the property where the error occurred
   value: 5,              // the actual value found in the data
   expectedType: "string" // the expected type, defined by $name
 }
@@ -133,7 +135,7 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 ```javascript
 /* Generated when a duplicate value is detected on a unique constraint */
 {
-  error: "NonUniqueValueError"
+  error: "NonUniqueValueError",
   key: "restaurant.headChef",
   value: "Tom G. Bar"
 }
@@ -143,7 +145,7 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 ```javascript
 /* Generated when a property is missing from the data */
 {
-  error: "MissingPropertyError"
+  error: "MissingPropertyError",
   key: "headChef"
 }
 ```
@@ -153,7 +155,7 @@ Same as `verify()`, but returns an array of error objects (see below) describing
 /* Generated when there is an extra property in the data
    (Not generated when extraneous = true) */
 {
-  error: "ExtraneousPropertyError"
+  error: "ExtraneousPropertyError",
   key: "username"
 }
 ```
@@ -518,7 +520,7 @@ const number = {
 
 #### `nonPositiveNumber`
 ```javascript
-// An integer that is less than or equal to 0 (ex. -5.5, 0)
+// A number that is less than or equal to 0 (ex. -5.5, 0)
 const nonPositiveNumber = {
   $type: number,
   $test: function(object) {
@@ -529,7 +531,7 @@ const nonPositiveNumber = {
 
 #### `negativeNumber`
 ```javascript
-// An integer that is less than 0 (ex. -5.5)
+// A number that is less than 0 (ex. -5.5)
 const negativeNumber = {
   $type: number,
   $test: function(object) {
@@ -540,7 +542,7 @@ const negativeNumber = {
 
 #### `nonNegativeNumber`
 ```javascript
-// An integer that is greater than or equal to 0 (ex. 0, 5.5)
+// A number that is greater than or equal to 0 (ex. 0, 5.5)
 const nonNegativeNumber = {
   $type: number,
   $test: function(object) {
@@ -593,10 +595,10 @@ const negativeInt = {
 };
 ```
 
-#### `nonNegativeInt`
+#### `nonPositiveInt`
 ```javascript
 // An integer that is greater than or equal to 0 (ex. 0, 5)
-const nonNegativeInt = {
+const nonPositiveInt = {
   $type: int,
   $test: function(object) {
     return object >= 0;
@@ -657,7 +659,7 @@ const array = {
 
 #### `object`
 ```javascript
-// A object literal (ex. {}, {foo: 5})
+// An object literal (ex. {}, {foo: 5})
 const object = {
   $test: function(object) {
     return object !== null && typeof object === 'object';
@@ -677,7 +679,7 @@ const func = {
 
 #### `date`
 ```javascript
-// A function (ex. new Date())
+// A date object (ex. new Date())
 const date = {
   $test: function(object) {
     return object instanceof Date;
@@ -687,7 +689,7 @@ const date = {
 
 #### `symbol`
 ```javascript
-// A function (ex. Symbol())
+// A symbol (ex. Symbol())
 const symbol = {
   $test: function(object) {
     return typeof object === 'symbol';
@@ -697,7 +699,7 @@ const symbol = {
 
 #### `regexp`
 ```javascript
-// A function (ex. /\w+/, new Regexp('abc'))
+// A regular expression (ex. /\w+/, new Regexp('abc'))
 const regexp = {
   $test: function(object) {
     return object instanceof RegExp;
@@ -744,6 +746,30 @@ const any = {
   }
 };
 ```
+
+## Reserved Key Names
+The following key names are reserved and should not be used as keys in schema objects:
+
+- `$element`
+- `$name`
+- `$optional`
+- `$test`
+- `$type`
+- `$unique`
+
+## Configuration
+`validationConfig(config)` accepts a `config` object in the following format:
+```javascript
+{
+    keyNames: {
+        $test: '__test__' // defines a 
+    }
+}
+```
+
+#### Overriding reserved key names
+If a key name in your schema conflicts with one of the [reserved key names](#reserved-key-names),
+you can 
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
