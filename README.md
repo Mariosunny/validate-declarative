@@ -2,7 +2,7 @@
 A simple utility for declaratively validating the structure of any Javascript object.
 Lightweight and highly extensible.
 
-***See it in action:***
+***Example:***
 ```javascript
 import {verify, string, boolean, int, nonNegativeInt} from 'validate-declarative';
 
@@ -58,6 +58,7 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 ```
 
 ## Table of Contents
+- [Installation](#installation)
 - [Overview](#overview)
 - [API](#api)
 - [Constraints](#constraints)
@@ -66,6 +67,11 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 - [Reserved Key Names](#reserved-key-names)
 - [Configuration](#configuration)
 - [About](#about)
+
+## Installation
+```
+npm install validate-declarative --save
+```
 
 ## Overview
 A *schema* is a plain-old Javascript object that has some special properties. 
@@ -314,7 +320,8 @@ let result2 = verify(playerSchema, player2);
 ```
 
 ### `$element`
-Defines the schema of each element in an array. When `$element` is present, the array `$type` is implied.
+Defines the schema of each element in an array. 
+When `$element` is present, `$type` is set to `array` (see [Built-in Types](#built-in-types)).
 
 ```javascript
 import {verify, string, number} from 'validate-declarative';
