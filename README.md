@@ -158,7 +158,7 @@ let result1 = verify(sedanSchema, car1); // true
 let result2 = verify(sedanSchema, car2); // false
 ``` 
 
-#### Defining a custom type
+#### Creating a custom type
 ```javascript
 import {verify, int} from 'validate-declarative';
 
@@ -171,7 +171,8 @@ const primeNumber = {
             }
         }
         return object !== 1 && object !== 0;
-    }
+    },
+    $name: 'primeNumber' // optional; defines the expectedType in error objects
 };
 
 const schema = {
@@ -350,7 +351,10 @@ const countrySchema = {
 ```
 
 #### `$type`
-Allows you to extend an existing type. `$type` is any object with a `$test` property. During validation, the `$test` in `$type` is called first before the local `$test`.
+Allows you to extend an existing type. `$type` is any object with a `$test` property. 
+During validation, the `$test` in `$type` is called first before the local `$test`.
+Additionally, you can add a `$name` property to your custom type, which defines the *expectedType*
+in [error objects](#errors), thought it is entirely optional.
 
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
@@ -362,7 +366,8 @@ const palindrome = {
   $test: function(object) {
     let str = object + "";
     return str === str.split("").reverse().join("");
-  }
+  },
+  $name: 'palindrome' // optional
 };
 
 const schema = {
@@ -537,7 +542,7 @@ Generated when there is an extra property in the data (only when `extraneousAllo
 ## Built-in Types
 This section contains a list of the built-in types that are included in this package.
 See [this example](#validating-an-object) for how to use built-in types.
-For creating your own types, see [Defining a custom type](#defining-a-custom-type).
+For creating your own types, see [Creating a custom type](#creating-a-custom-type).
 
 |Type|Description|Examples|
 |----|-----------|------------|
