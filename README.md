@@ -536,26 +536,8 @@ Generated when there is an extra property in the data (only when `extraneousAllo
 
 ## Built-in Types
 This section contains a list of the built-in types that are included in this package.
+See [this example](#validating-an-object) for how to use built-in types.
 For creating your own types, see [Defining a custom type](#defining-a-custom-type).
-
-#### How to use built-in types (Example)
-```javascript
-import {string, nonPositiveNumber, verify} from 'validate-declarative';
-
-const debtorSchema = {
-    name: string,
-    debt: nonPositiveNumber
-};
-
-let debtor = {
-    name: "James Everyman",
-    debt: -100
-};
-
-let result = verify(debtorSchema, debtor); // true
-```
-
-#### Built-in types
 
 |Type|Description|Examples|
 |----|-----------|------------|
