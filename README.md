@@ -22,15 +22,15 @@ let objectOrientedCourse = {
     professor: "Dr. Placeholder"
 };
 
-// true - the object matches the schema
+// true! the object matches the schema
 let result1 = verify(courseSchema, objectOrientedCourse);
 
 let microprocessorsCourse = {
-    courseName: "Microprocessors",
+    courseName: "Microprocessors %%",
     roomCapacity: -10,
 };
 
-// false - missing 'professor' property, roomCapacity is negative!
+// false (missing 'professor' property, roomCapacity is negative, courseName fails regex)
 let result2 = verify(courseSchema, microprocessorsCourse);
 ```
 
@@ -134,6 +134,29 @@ let bankAccount = {
 
 let result = verify(bankAccountSchema, bankAccount); // true
 ```
+
+#### Validating an object with constant properties
+```javascript
+import {verify, string} from 'validate-declarative';
+
+const sedanSchema = {
+    wheels: 4,
+    model: string
+};
+
+let car1 = {
+    wheels: 4,
+    model: "Chrysler 300"
+};
+
+let car2 = {
+    wheels: 5,
+    model: "Chevrolet Impala"
+};
+
+let result1 = verify(sedanSchema, car1); // true
+let result2 = verify(sedanSchema, car2); // false
+``` 
 
 #### Defining a custom type
 ```javascript
