@@ -275,7 +275,7 @@ let result = verify(companySchema, industryTech); // true
 ## API
 
 #### `verify(schema, data, extraneousAllowed=false) → boolean`
-Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see Constraints), *false* otherwise. If `extraneousAllowed` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneousAllowed` is set to *true*, extraneous properties in the data will be ignored.
+Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. If `extraneousAllowed` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneousAllowed` is set to *true*, extraneous properties in the data will be ignored.
 
 #### `validate(schema, data, extraneousAllowed=false) → Array`
 Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
@@ -585,3 +585,7 @@ for ordinary, non-constraint properties.
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
 Submit any issues or pull requests to the [official Github repo](https://github.com/Mariosunny/validate-declarative).
+
+Check out other projects by this author:
+- [**unravel-function**](https://www.npmjs.com/package/unravel-function) - Takes a function and spreads its arguments across a chain of functions to be lazily evaluated.
+                                                                       
