@@ -195,11 +195,5 @@ export function verify(schema, data, extraneousAllowed = false) {
 }
 
 export function validate(schema, data, extraneousAllowed = false) {
-    return _.uniqWith(validateData([], schema, data), function(error1, error2) {
-        return error1.error === error2.error && error1.key === error2.key;
-    });
-}
-
-export function validationConfig(config) {
-
+    return validateData([], schema, data);
 }
