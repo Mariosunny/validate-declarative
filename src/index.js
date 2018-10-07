@@ -21,6 +21,11 @@ export {
     truthy,
     falsy,
     array,
+    set,
+    weakSet,
+    list,
+    map,
+    weakMap,
     object,
     func,
     date,
@@ -29,7 +34,8 @@ export {
     nullValue,
     undefinedValue,
     nanValue,
-    any
+    any,
+    typeWithInstanceOf
 } from './types';
 
 export {

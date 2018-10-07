@@ -1,4 +1,3 @@
-// A string (ex. "", "hello world")
 export const string = {
     $test: function (object) {
         return typeof object === 'string';
@@ -6,15 +5,13 @@ export const string = {
     $name: 'string'
 };
 
-// A number (ex. -5, 0, 8.4, 7/3)
 export const number = {
     $test: function (object) {
-        return typeof object === 'number';
+        return typeof object === 'number' && !isNaN(object);
     },
     $name: 'number'
 };
 
-// A number that is less than or equal to 0 (ex. -5.5, 0)
 export const nonPositiveNumber = {
     $type: number,
     $test: function (object) {
@@ -23,7 +20,6 @@ export const nonPositiveNumber = {
     $name: 'nonPositiveNumber'
 };
 
-// A number that is less than 0 (ex. -5.5)
 export const negativeNumber = {
     $type: number,
     $test: function(object) {
@@ -32,7 +28,6 @@ export const negativeNumber = {
     $name: 'negativeNumber'
 };
 
-// A number that is greater than or equal to 0 (ex. 0, 5.5)
 export const nonNegativeNumber = {
     $type: number,
     $test: function(object) {
@@ -41,7 +36,6 @@ export const nonNegativeNumber = {
     $name: 'nonNegativeNumber'
 };
 
-// A number that is greater than 0 (ex. 5.5)
 export const positiveNumber = {
     $type: number,
     $test: function(object) {
@@ -50,7 +44,6 @@ export const positiveNumber = {
     $name: 'positiveNumber'
 };
 
-// An integer number (ex. -5, 0, 100000)
 export const int = {
     $type: number,
     $test: function (object) {
@@ -59,16 +52,14 @@ export const int = {
     $name: 'int'
 };
 
-// An integer that is less than or equal to 0 (ex. -5, 0)
-export const nonNegativeInt = {
+export const nonPositiveInt = {
     $type: int,
     $test: function(object) {
         return object <= 0;
     },
-    $name: 'nonNegativeInt'
+    $name: 'nonPositiveInt'
 };
 
-// An integer that is less than 0 (ex. -5)
 export const negativeInt = {
     $type: int,
     $test: function(object) {
@@ -77,16 +68,14 @@ export const negativeInt = {
     $name: 'negativeInt'
 };
 
-// An integer that is greater than or equal to 0 (ex. 0, 5)
-export const nonPositiveInt = {
+export const nonNegativeInt = {
     $type: int,
     $test: function(object) {
         return object >= 0;
     },
-    $name: 'nonPositiveInt'
+    $name: 'nonNegativeInt'
 };
 
-// An integer that is greater than 0 (ex. 5)
 export const positiveInt = {
     $type: int,
     $test: function(object) {
@@ -95,7 +84,6 @@ export const positiveInt = {
     $name: 'positiveInt'
 };
 
-// A boolean value (true or false)
 export const boolean = {
     $test: function(object) {
         return typeof object === 'boolean';
@@ -103,7 +91,6 @@ export const boolean = {
     $name: 'boolean'
 };
 
-// A value that is 'truthy' (ex. true, 1, [], {}, "false")
 export const truthy = {
     $test: function(object) {
         return !!object;
@@ -111,7 +98,6 @@ export const truthy = {
     $name: 'truthy'
 };
 
-// A value that is 'falsy' (false, 0, "", null, undefined, or NaN)
 export const falsy = {
     $test: function(object) {
         return !object;
@@ -119,7 +105,6 @@ export const falsy = {
     $name: 'falsy'
 };
 
-// An array (ex. [], [1, 2, 3])
 export const array = {
     $test: function(object) {
         return Array.isArray(object);
@@ -127,7 +112,41 @@ export const array = {
     $name: 'array'
 };
 
-// An object literal (ex. {}, {foo: 5})
+export const set = {
+    $test: function(object) {
+        return object instanceof Set;
+    },
+    $name: 'set'
+};
+
+export const weakSet = {
+    $test: function(object) {
+        return object instanceof WeakSet;
+    },
+    $name: 'weakSet'
+};
+
+export const list = {
+    $test: function(object) {
+        return array.$test(object) || set.$test(object) || weakSet.$test(object);
+    },
+    $name: 'list'
+};
+
+export const map = {
+    $test: function(object) {
+        return object instanceof Map;
+    },
+    $name: 'map'
+};
+
+export const weakMap = {
+    $test: function(object) {
+        return object instanceof WeakMap;
+    },
+    $name: 'weakMap'
+};
+
 export const object = {
     $test: function(object) {
         return object !== null && typeof object === 'object';
@@ -135,7 +154,6 @@ export const object = {
     $name: 'object'
 };
 
-// A function (ex. function() {}, () => {}, Date)
 export const func = {
     $test: function(object) {
         return typeof object === "function";
@@ -143,7 +161,6 @@ export const func = {
     $name: 'func'
 };
 
-// A date object (ex. new Date())
 export const date = {
     $test: function(object) {
         return object instanceof Date;
@@ -151,7 +168,6 @@ export const date = {
     $name: 'date'
 };
 
-// A symbol (ex. Symbol())
 export const symbol = {
     $test: function(object) {
         return typeof object === 'symbol';
@@ -159,7 +175,6 @@ export const symbol = {
     $name: 'symbol'
 };
 
-// A regular expression (ex. /\w+/, new Regexp('abc'))
 export const regexp = {
     $test: function(object) {
         return object instanceof RegExp;
@@ -167,7 +182,6 @@ export const regexp = {
     $name: 'regexp'
 };
 
-// A null value
 export const nullValue = {
     $test: function(object) {
         return object === null;
@@ -175,7 +189,6 @@ export const nullValue = {
     $name: 'nullValue'
 };
 
-// An undefined value
 export const undefinedValue = {
     $test: function(object) {
         return object === undefined;
@@ -183,18 +196,24 @@ export const undefinedValue = {
     $name: 'undefinedValue'
 };
 
-// A NaN value
 export const nanValue = {
     $test: function(object) {
-        return isNaN(object);
+        return Number.isNaN(object);
     },
     $name: 'nanValue'
 };
 
-// Any value (always returns true)
 export const any = {
     $test: function(object) {
         return true;
     },
     $name: 'any'
 };
+
+export function typeWithInstanceOf(clazz) {
+    return {
+        $test: function(object) {
+            return object !== null && object instanceof clazz;
+        }
+    }
+}

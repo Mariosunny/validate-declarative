@@ -5,16 +5,11 @@ import {
     EXTRANEOUS_PROPERTY_ERROR
 } from "./errors";
 import {
-
+    string,
+    array,
+    list, set, weakSet
 } from "./types";
 import _ from "lodash";
-
-export {
-    INVALID_VALUE_ERROR,
-    MISSING_PROPERTY_ERROR,
-    NON_UNIQUE_PROPERTY_ERROR,
-    EXTRANEOUS_PROPERTY_ERROR
-} from './errors';
 
 const META_KEYS = [
     '$test',
@@ -22,43 +17,16 @@ const META_KEYS = [
     '$element',
     '$optional',
     '$unique',
-    '$_$r00t$_$',
+    ROOT_KEY,
     '$name'
 ];
 
 const PROPERTY = 'property';
 const ELEMENT = 'element';
 
-const ROOT_KEY = "$_$r00t$_$";
+const ROOT_KEY = "$_$r0ot_$_";
 
-function compileSchema(schema) {
-
-    _.forOwn(schema, function(value, key) {
-        if(key === "$unique") {
-            if(value) {
-                schema[key] = [];
-            }
-            else {
-                delete schema[key];
-            }
-        }
-        if(key === "$element") {
-            schema.$type = array;
-        }
-
-        if(typeof value === 'object' && !Array.isArray(value)) {
-            compileSchema(value);
-        }
-    });
-
-    return schema;
-}
-
-function validate(schema, data) {
-    return _.uniqWith(validateData([], schema, data), function(error1, error2) {
-        return error1.error === error2.error && error1.key === error2.key;
-    });
-}
+const LIST_TYPES = [array, set, weakSet];
 
 function validateData(context, schema, data) {
     let rootSchema = {};
@@ -74,15 +42,21 @@ function validateKey(context, key, schema, data) {
     let value = data[key];
     let valueExists = data.hasOwnProperty(key);
 
-    context = addContext(context, PROPERTY, key, meta);
+    context = addContext(context, PROPERTY, key);
 
     if (isLiteralValue(meta) && valueExists && !_.isEqual(meta, value)) {
-        addError(errors, context, INVALID_PROPERTY_ERROR, value);
+        addError(errors, context, INVALID_VALUE_ERROR, value);
     }
     else {
+        if(meta.hasOwnProperty('$element')) {
+            if(!meta.hasOwnProperty('$type') ||
+                (meta.$type !== list && !LIST_TYPES.includes(meta.$type))) {
+                meta.$type = list;
+            }
 
-        if(meta.$element && array.$test(value)) {
-            errors = _.concat(validateArray(context, value, meta.$element), errors);
+            if(list.$test(value)) {
+                errors = _.concat(validateArray(context, value, meta.$element), errors);
+            }
         }
 
         if (!meta.$optional && !valueExists) {
@@ -92,7 +66,7 @@ function validateKey(context, key, schema, data) {
         if (valueExists) {
             validateUniqueKey(context, meta, value, errors);
             if (failsTypeTest(meta, value)) {
-                addError(errors, context, INVALID_PROPERTY_ERROR, value, meta);
+                addError(errors, context, INVALID_VALUE_ERROR, value, meta);
             }
             _.forEach(getNonMetaKeys(meta), subKey => {
                 errors = _.concat(validateKey(context, subKey, meta, value), errors);
@@ -116,7 +90,12 @@ function validateArray(context, array, elementSchema) {
 
 function validateUniqueKey(context, meta, value, errors) {
     if (!!meta.$unique) {
+        if(!Array.isArray(meta.$unique)) {
+            meta.$unique = [];
+        }
+
         let uniqueValues = meta.$unique;
+
         if (uniqueValues.includes(value)) {
             addError(errors, context, NON_UNIQUE_PROPERTY_ERROR, value);
         }
@@ -212,25 +191,15 @@ function getPath(context) {
 }
 
 export function verify(schema, data, extraneousAllowed = false) {
-
+    return validate(schema, data, extraneousAllowed).length === 0;
 }
 
 export function validate(schema, data, extraneousAllowed = false) {
-
+    return _.uniqWith(validateData([], schema, data), function(error1, error2) {
+        return error1.error === error2.error && error1.key === error2.key;
+    });
 }
 
 export function validationConfig(config) {
 
-}
-
-export default function(schema) {
-    schema = compileSchema(_.cloneDeep(schema));
-    return {
-        validate: function(data) {
-            return validate(schema, data);
-        },
-        verify: function(data) {
-            return validate(schema, data).length === 0;
-        }
-    }
 }

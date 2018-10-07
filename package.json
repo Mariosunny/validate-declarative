@@ -4,8 +4,10 @@
   "description": "A simple, highly-extensible utility for validating the structure of any JS object.",
   "main": "lib/unravel.js",
   "scripts": {
-    "prepublish": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
-    "test": "jest"
+    "prepublish": "jest && node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "test": "jest",
+    "test:verbose": "jest --verbose",
+    "start": "babel-watch src/main.js"
   },
   "repository": {
     "type": "git",
@@ -20,8 +22,10 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
+    "babel-watch": "^2.0.7",
     "jest": "^23.6.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "unravel-function": "^0.1.3"
   },
   "babel": {
     "presets": [
