@@ -211,9 +211,15 @@ export const any = {
 };
 
 export function typeWithInstanceOf(clazz) {
-    return {
+    let customType = {
         $test: function(object) {
             return object !== null && object instanceof clazz;
         }
+    };
+
+    if(clazz.name) {
+        customType.$name = clazz.name;
     }
+
+    return customType;
 }

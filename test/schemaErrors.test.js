@@ -6,10 +6,9 @@ import {
     NON_UNIQUE_PROPERTY_ERROR,
     nonNegativeInt,
     string,
-    validate,
     verify
 } from "../src";
-import _ from "lodash";
+import {createError, validateErrors} from "./testUtils";
 
 function getSchema() {
     return {
@@ -55,20 +54,6 @@ function getData() {
         },
         h: "hello world"
     };
-}
-
-function createError(path, errorType, receivedValue, expectedType) {
-    let error = {
-        error: errorType,
-        key: path
-    };
-    if(receivedValue) {
-        error.receivedValue = receivedValue;
-    }
-    if(expectedType) {
-        error.expectedType = expectedType;
-    }
-    return error;
 }
 
 test('test valid data', () => {
@@ -233,12 +218,3 @@ test('test multiple error types', () => {
     validateErrors(schema, data, errors);
 });
 
-function validateErrors(schema, data, expectedErrors) {
-    let receivedErrors = validate(schema, data);
-
-    expect(receivedErrors.length).toBe(expectedErrors.length);
-
-    _.forEach(receivedErrors, receivedError => {
-        expect(expectedErrors).toContainEqual(receivedError);
-    });
-}

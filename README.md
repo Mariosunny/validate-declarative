@@ -9,7 +9,7 @@ import {verify, string, nonNegativeInt} from 'validate-declarative';
 // Define the structure and constraints of your objects
 const courseSchema = {
     courseName: {
-        $test: /[A-Za-z0-9 ]+/
+        $test: /^[A-Za-z0-9 ]+$/
     },
     roomCapacity: nonNegativeInt,
     professor: string
@@ -200,8 +200,8 @@ let result = verify(schema, data); // true
 ```javascript
 import {verify, int} from 'validate-declarative';
 
-const threeDimensionalShapeSchema = {
-  // a 3-dimensional array of ints
+const schema = {
+  // a 3-dimensional array of integers
   voxels: {
     $element: {
       $element: {
@@ -219,7 +219,7 @@ let data = {
   ]
 };
 
-let result = verify(threeDimensionalShapeSchema, data); // true
+let result = verify(schema, data); // true
 ```
 
 #### Validating a complex object
@@ -319,7 +319,7 @@ const countryCode = {
     // a valid country code is a string with 3 characters
     return typeof object === 'string' && object.length === 3;
   }
-}
+};
 
 // using the type in a schema
 const countrySchema = {
@@ -341,8 +341,8 @@ let result2 = verify(countrySchema, country2); // false, fails $test
 ```javascript
 // Using a regular expression instead of a function
 const countryCode = {
-  $test: /[A-Za-z]{3}/
-}
+  $test: /^[A-Za-z]{3}$/
+};
 
 const countrySchema = {
   country: countryCode
@@ -397,7 +397,7 @@ const smallNoDuplicatesArray = {
   $test: function(object) { // called third
     return (new Set(object)).size === object.length;
   }
-}
+};
 
 const schema = {
   cars: smallNoDuplicatesArray
@@ -418,7 +418,7 @@ const schema = {
   }
 };
 
-let data = {
+let data1 = {
   foo: -100,
   bar: "hello world"
 };
@@ -432,7 +432,7 @@ let result2 = verify(schema, data2); // true
 ```
 
 #### `$unique`
-Declares the value of a property to be unique across all data.
+Declares the value of a property to be unique across all data. 
 
 ```javascript
 import {verify, string} from 'validate-declarative';
@@ -583,7 +583,7 @@ For creating your own types, see [Creating a custom type](#creating-a-custom-typ
 
 ## Reserved Key Names
 The following key names are reserved and should not be used as key names in schema objects
-for ordinary, non-constraint properties.
+for ordinary (non-constraint) properties:
 
 - `$element`
 - `$name`
@@ -591,6 +591,8 @@ for ordinary, non-constraint properties.
 - `$test`
 - `$type`
 - `$unique`
+- `$__mock__`
+- `$__root__`
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
