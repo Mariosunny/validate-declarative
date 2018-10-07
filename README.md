@@ -326,7 +326,7 @@ const countrySchema = {
 };
 ```
 
-### `$type`
+#### `$type`
 Allows you to extend an existing type. `$type` is any object with a `$test` property. During validation, the `$test` in `$type` is called first before the local `$test`.
 
 ```javascript
@@ -377,7 +377,7 @@ const schema = {
 };
 ```
 
-### `$optional`
+#### `$optional`
 Declares a property to be optional. By default, all properties defined in the schema are required. Declaring `$optional: true` on a property will make it optional.
 
 ```javascript
@@ -404,7 +404,7 @@ let result1 = verify(schema, data1); // true
 let result2 = verify(schema, data2); // true
 ```
 
-### `$unique`
+#### `$unique`
 Declares the value of a property to be unique across all data.
 
 ```javascript
@@ -435,7 +435,7 @@ let result1 = verify(playerSchema, player1);
 let result2 = verify(playerSchema, player2);
 ```
 
-### `$element`
+#### `$element`
 Defines the schema of each element in an array. 
 When `$element` is present, `$type` is set to `array` (see [Built-in Types](#built-in-types)).
 
