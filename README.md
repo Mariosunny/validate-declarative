@@ -274,14 +274,14 @@ let result = verify(companySchema, industryTech); // true
 
 ## API
 
-#### `verify(schema, data, extraneousAllowed=false)`
+#### `verify(schema, data, extraneousAllowed=false) → boolean`
 Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see Constraints), *false* otherwise. If `extraneousAllowed` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneousAllowed` is set to *true*, extraneous properties in the data will be ignored.
 
-#### `validate(schema, data, extraneousAllowed=false)`
+#### `validate(schema, data, extraneousAllowed=false) → Array`
 Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
 
-#### `typeWithInstanceOf(clazz)`
+#### `typeWithInstanceOf(clazz) → Object`
 Convenience function.
 Returns a *type* (an object with a `$test` [constraint](#constraints)) that returns
 *true* if the object is not null and the object is an **instanceof** `clazz`, *false* otherwise.
@@ -372,6 +372,7 @@ const schema = {
 
 ```javascript
 // A type may contain many deeply nested $tests
+// The deepest $test is always called first
 const array = {
   $test: function(object) { // called first
     return Array.isArray(object);
@@ -534,309 +535,62 @@ Generated when there is an extra property in the data (when `extraneousAllowed` 
 ```
 
 ## Built-in Types
+This section contains a list of the built-in types that are included in this package.
 
-#### `string`
+#### How to use built-in types (Example)
 ```javascript
-// A string (ex. "", "hello world")
-const string = {
-  $test: function(object) {
-    return typeof object === 'string';
-  }
+import {string, nonPositiveNumber, verify} from 'validate-declarative';
+
+const debtorSchema = {
+    name: string,
+    debt: nonPositiveNumber
 };
+
+let debtor = {
+    name: "James Everyman",
+    debt: -100
+};
+
+let result = verify(debtorSchema, debtor); // true
 ```
 
-#### `number`
-```javascript
-// A number (ex. -5, 0, 8.4, 7/3)
-const number = {
-  $test: function(object) {
-    return typeof object === 'number';
-  }
-};
-```
+#### Built-in types
 
-#### `nonPositiveNumber`
-```javascript
-// A number that is less than or equal to 0 (ex. -5.5, 0)
-const nonPositiveNumber = {
-  $type: number,
-  $test: function(object) {
-    return object <= 0;
-  }
-};
-```
-
-#### `negativeNumber`
-```javascript
-// A number that is less than 0 (ex. -5.5)
-const negativeNumber = {
-  $type: number,
-  $test: function(object) {
-    return object < 0;
-  }
-};
-```
-
-#### `nonNegativeNumber`
-```javascript
-// A number that is greater than or equal to 0 (ex. 0, 5.5)
-const nonNegativeNumber = {
-  $type: number,
-  $test: function(object) {
-    return object >= 0;
-  }
-};
-```
-
-#### `positiveNumber`
-```javascript
-// A number that is greater than 0 (ex. 5.5)
-const positiveNumber = {
-  $type: number,
-  $test: function(object) {
-    return object > 0;
-  }
-};
-```
-
-#### `int`
-```javascript
-// An integer number (ex. -5, 0, 100000)
-const int = {
-  $type: number,
-  $test: function(object) {
-    return Number.isInteger(object);
-  }
-};
-```
-
-#### `nonNegativeInt`
-```javascript
-// An integer that is less than or equal to 0 (ex. -5, 0)
-const nonNegativeInt = {
-  $type: int,
-  $test: function(object) {
-    return object <= 0;
-  }
-};
-```
-
-#### `negativeInt`
-```javascript
-// An integer that is less than 0 (ex. -5)
-const negativeInt = {
-  $type: int,
-  $test: function(object) {
-    return object < 0;
-  }
-};
-```
-
-#### `nonPositiveInt`
-```javascript
-// An integer that is greater than or equal to 0 (ex. 0, 5)
-const nonPositiveInt = {
-  $type: int,
-  $test: function(object) {
-    return object >= 0;
-  }
-};
-```
-
-#### `positiveInt`
-```javascript
-// An integer that is greater than 0 (ex. 5)
-const positiveInt = {
-  $type: int,
-  $test: function(object) {
-    return object > 0;
-  }
-};
-```
-
-#### `boolean`
-```javascript
-// A boolean value (true or false)
-const boolean = {
-  $test: function(object) {
-    return typeof object === 'boolean';
-  }
-};
-```
-
-#### `truthy`
-```javascript
-// A value that is 'truthy' (ex. true, 1, [], {}, "false")
-const truthy = {
-  $test: function(object) {
-    return !!object;
-  }
-};
-```
-
-#### `falsy`
-```javascript
-// A value that is 'falsy' (false, 0, "", null, undefined, or NaN)
-const falsy = {
-  $test: function(object) {
-    return !object;
-  }
-};
-```
-
-#### `array`
-```javascript
-// An array (ex. [], [1, 2, 3])
-const array = {
-  $test: function(object) {
-    return Array.isArray(object);
-  }
-};
-```
-
-#### `set`
-```javascript
-// A set (ex. new Set())
-const set = {
-  $test: function(object) {
-    return object instanceof Set;
-  }
-};
-```
-
-#### `weakMap`
-```javascript
-// A weak map (ex. new WeakMap())
-const weakMap = {
-    $test: function(object) {
-        return object instanceof WeakMap;
-    }
-};
-```
-
-#### `weakSet`
-```javascript
-// A weak set (ex. new WeakSet())
-const weakSet = {
-    $test: function(object) {
-        return object instanceof WeakSet;
-    }
-};
-```
-
-#### `object`
-```javascript
-// An object that is not a function
-// (ex. {}, Object.create(null), new Object(), function(){}, [], Date, new Set())
-const object = {
-    $test: function(object) {
-        return object !== null && typeof object === 'object';
-    }
-};
-```
-
-#### `plainObject`
-```javascript
-// An object created by object literal notation or by Object.create or the Object constructor
-// (ex. {}, Object.create(null), new Object())
-const plainObject = {
-    $test: function(object) {
-        if (typeof object === 'object' && object !== null) {
-            if (typeof Object.getPrototypeOf === 'function') {
-                let proto = Object.getPrototypeOf(object);
-                return proto === Object.prototype || proto === null;
-            }
-
-            return Object.prototype.toString.call(object) === '[object Object]';
-        }
-
-        return false;
-    }
-};
-```
-
-#### `func`
-```javascript
-// A function (ex. function() {}, () => {}, Date)
-const func = {
-  $test: function(object) {
-    return typeof object === "function";
-  }
-};
-```
-
-#### `date`
-```javascript
-// A date object (ex. new Date())
-const date = {
-  $test: function(object) {
-    return object instanceof Date;
-  }
-};
-```
-
-#### `symbol`
-```javascript
-// A symbol (ex. Symbol())
-const symbol = {
-  $test: function(object) {
-    return typeof object === 'symbol';
-  }
-};
-```
-
-#### `regexp`
-```javascript
-// A regular expression (ex. /\w+/, new Regexp('abc'))
-const regexp = {
-  $test: function(object) {
-    return object instanceof RegExp;
-  }
-};
-```
-
-#### `nullValue`
-```javascript
-// A null value
-const nullValue = {
-  $test: function(object) {
-    return object === null;
-  }
-};
-```
-
-#### `undefinedValue`
-```javascript
-// An undefined value
-const undefinedValue = {
-  $test: function(object) {
-    return object === undefined;
-  }
-};
-```
-
-#### `nanValue`
-```javascript
-// A NaN value
-const nanValue = {
-  $test: function(object) {
-    return isNaN(object);
-  }
-};
-```
-
-#### `any`
-```javascript
-// Any value (always returns true)
-const any = {
-  $test: function(object) {
-    return true;
-  }
-};
-```
+|Type|Description|Examples|
+|----|-----------|------------|
+|`string`|A string.|`""`, `"hello world"`|
+|`number`|A number.|`-5`, `0`, `8.4`, `7/3`, `Infinity`, `-Infinity`|
+|`nonPositiveNumber`|A non-positive number.|`-Infinity`, `-5.5`, `0`|
+|`negativeNumber`|A negative number.|`-Infinity`, `-5.5`|
+|`nonNegativeNumber`|A non-negative number.|`0`, `5.5`, `Infinity`|
+|`positiveNumber`|A positive number.|`5.5`, `Infinity`|
+|`int`|An integer.|`-10000000`, `-5`, `0`, `12345`|
+|`nonPositiveInt`|A non-positive integer.|`-5`, `0`|
+|`negativeInt`|A negative integer.|`-5`|
+|`nonNegativeInt`|A non-negative integer.|`0`, `5`|
+|`positiveInt`|A positive integer.|`5`|
+|`boolean`|A boolean value.|`true`, `false`|
+|`truthy`|A truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
+|`falsy`|A falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
+|`array`|An array.|`[1, 2, "3"]`, `new Array()`|
+|`set`|A set.|`new Set(1, 2, 3)`|
+|`weakSet`|A weak set.|`new WeakSet(1, 2, 3)`|
+|`map`|A map.|`new Map()`|
+|`weakMap`|A weak map.|`new WeakMap()`|
+|`object`|Any object that is not a function.|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
+|`plainObject`|A [plain object](https://www.npmjs.com/package/is-plain-object).|`{}`, `Object.create(null)`, `new Object()`|
+|`func`|A function.|`function(){}`, `() => {}`, `Date`|
+|`date`|A date object.|`new Date()`|
+|`symbol`|A symbol.|`Symbol()`|
+|`regexp`|A regular expression object.|`/.*/g`, `new Regexp(".*")`|
+|`nullValue`|A **null** value.|`null`|
+|`undefinedValue`|An **undefined** value.|`undefined`|
+|`nanValue`|A **NaN** value.|`NaN`|
+|`any`|Any value.|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
 ## Reserved Key Names
-The following key names are reserved and should not be used as keys in schema objects:
+The following key names are reserved and should not be used as key names in schema objects
+for ordinary, non-constraint properties.
 
 - `$element`
 - `$name`
