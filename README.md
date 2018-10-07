@@ -1,6 +1,6 @@
 ## validate-declarative
-A simple utility for declaratively validating the structure of any Javascript object.
-Lightweight and highly extensible.
+A simple utility for declaratively validating the structure/type of any Javascript object.
+Lightweight, reliable, and highly extensible.
 
 ***Example:***
 ```javascript
@@ -43,7 +43,6 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 - [Errors](#errors)
 - [Built-in Types](#built-in-types)
 - [Reserved Key Names](#reserved-key-names)
-- [Configuration](#configuration)
 - [About](#about)
 
 ## Installation
@@ -464,8 +463,8 @@ let result2 = verify(playerSchema, player2);
 ```
 
 #### `$element`
-Defines the schema of each element in an array. 
-When `$element` is present, `$type` is set to `array` (see [Built-in Types](#built-in-types)).
+Defines the schema of each element in an array, set, or weak set. 
+When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
 
 ```javascript
 import {verify, string, number} from 'validate-declarative';
@@ -569,10 +568,10 @@ For creating your own types, see [Creating a custom type](#creating-a-custom-typ
 |`array`|An array.|`[1, 2, "3"]`, `new Array()`|
 |`set`|A set.|`new Set(1, 2, 3)`|
 |`weakSet`|A weak set.|`new WeakSet(1, 2, 3)`|
+|`list`|An array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
 |`map`|A map.|`new Map()`|
 |`weakMap`|A weak map.|`new WeakMap()`|
 |`object`|Any object that is not a function.|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
-|`plainObject`|A [plain object](https://www.npmjs.com/package/is-plain-object).|`{}`, `Object.create(null)`, `new Object()`|
 |`func`|A function.|`function(){}`, `() => {}`, `Date`|
 |`date`|A date object.|`new Date()`|
 |`symbol`|A symbol.|`Symbol()`|
