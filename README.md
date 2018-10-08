@@ -1,6 +1,8 @@
 ## validate-declarative
-A simple utility for declaratively validating the structure of any Javascript object.
-Lightweight, reliable, and highly extensible. Works with arbitrarily large and/or deeply nested objects.
+*A simple utility for declaratively validating the structure of any Javascript object.*
+- The most robust object validation utility available
+- Lightweight and highly extensible
+- Works with arbitrarily large and deeply nested objects
 
 ***Example:***
 ```javascript
@@ -274,10 +276,12 @@ let result = verify(companySchema, industryTech); // true
 
 ## API
 
-#### `verify(schema, data, extraneousAllowed=false) → boolean`
-Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. If `extraneousAllowed` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. If `extraneousAllowed` is set to *true*, extraneous properties in the data will be ignored.
+#### `verify(schema, data, allowExtraneous=false) → boolean`
+Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. 
+If `allowExtraneous` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. 
+If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.
 
-#### `validate(schema, data, extraneousAllowed=false) → Array`
+#### `validate(schema, data, allowExtraneous=false) → Array`
 Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
 
@@ -433,6 +437,8 @@ let result2 = verify(schema, data2); // true
 
 #### `$unique`
 Declares the value of a property to be unique across all data. 
+When there are several nested `$unique` properties in `$type`,
+only the most shallow value of `$unique` is considered- the others are ignored (see second example below).
 
 ```javascript
 import {verify, string} from 'validate-declarative';
@@ -536,7 +542,7 @@ Generated when a property is missing from the data.
 ```
 
 #### ExtraneousPropertyError
-Generated when there is an extra property in the data (when `extraneousAllowed` = *false*).
+Generated when there is an extra property in the data (when `allowExtraneous` = *false*).
 ```javascript
 {
   error: "ExtraneousPropertyError",
@@ -591,7 +597,7 @@ for ordinary (non-constraint) properties:
 - `$test`
 - `$type`
 - `$unique`
-- `$__mock__`
+- `$__meta__`
 - `$__root__`
 
 ## About

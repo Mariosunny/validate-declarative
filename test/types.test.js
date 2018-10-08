@@ -296,7 +296,7 @@ testTypeWith
     .type(object)
     .validValues([
         {},
-        {a: 5},
+        {b: 5},
         new TestClass(),
         Object.create(null),
         new Object(),

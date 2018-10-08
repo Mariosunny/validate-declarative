@@ -39,15 +39,37 @@ const ELEMENT = 'element';
 const LIST_TYPES = [array, set, weakSet];
 
 
-function validateData(context, schema, data) {
+function validateData(context, schema, data, allowExtraneous) {
     let rootSchema = {};
     rootSchema[$ROOT] = schema;
     let rootData = {};
     rootData[$ROOT] = data;
-    return validateKey(context, $ROOT, rootSchema, rootData);
+    return validateKey(context, $ROOT, rootSchema, rootData, allowExtraneous);
 }
 
-function validateKey(context, key, schema, data) {
+function validateKeys(context, schema, data, allowExtraneous) {
+    let errors = [];
+    let schemaIsObject = isKeyValueObject(schema);
+    let dataIsObject = isKeyValueObject(data);
+
+    if(!allowExtraneous && schemaIsObject && dataIsObject) {
+        for (let dataProperty in data) {
+            if (!schema.hasOwnProperty(dataProperty)) {
+                addError(errors, addContext(context, PROPERTY, dataProperty), EXTRANEOUS_PROPERTY_ERROR);
+            }
+        }
+    }
+
+    if(schemaIsObject) {
+        getNonMetaKeys(schema).forEach(key => {
+            errors = _.concat(validateKey(context, key, schema, data, allowExtraneous), errors);
+        });
+    }
+
+    return errors;
+}
+
+function validateKey(context, key, schema, data, allowExtraneous) {
     let errors = [];
     let meta = schema[key];
     let value = data[key];
@@ -76,12 +98,12 @@ function validateKey(context, key, schema, data) {
 
         if (valueExists) {
             validateUniqueKey(context, meta, value, errors);
+
             if (!passesTypeTest(meta, value)) {
                 addError(errors, context, INVALID_VALUE_ERROR, value, meta);
             }
-            _.forEach(getNonMetaKeys(meta), subKey => {
-                errors = _.concat(validateKey(context, subKey, meta, value), errors);
-            });
+
+            errors = _.concat(validateKeys(context, meta, value, allowExtraneous), errors);
         }
     }
 
@@ -141,17 +163,33 @@ function isLiteralValue(object) {
 }
 
 function getMetaKeys(meta) {
-    return _.filter(_.keys(meta), key => META_KEYS.includes(key));
+    let keys = [];
+
+    for(let key in meta) {
+        if(meta.hasOwnProperty(key) && META_KEYS.includes(key)) {
+            keys.push(key);
+        }
+    }
+
+    return keys;
 }
 
 function getNonMetaKeys(meta) {
-    return _.filter(_.keys(meta), key => !META_KEYS.includes(key));
+    let keys = [];
+
+    for(let key in meta) {
+        if(meta.hasOwnProperty(key) && !META_KEYS.includes(key)) {
+            keys.push(key);
+        }
+    }
+
+    return keys;
 }
 
 function passesTypeTest(meta, value) {
     let result = true;
 
-    if(meta.hasOwnProperty($TYPE) && isObject(meta[$TYPE])) {
+    if(meta.hasOwnProperty($TYPE) && isKeyValueObject(meta[$TYPE])) {
         result = passesTypeTest(meta[$TYPE], value) && result;
     }
 
@@ -194,7 +232,7 @@ function getTypeName(meta) {
     else if(meta[$TEST] && !meta[$TYPE] && meta[$TEST] instanceof RegExp) {
         name = meta[$TEST];
     }
-    else if(meta[$TYPE] && isObject(meta[$TYPE])){
+    else if(meta[$TYPE] && isKeyValueObject(meta[$TYPE])){
         name = getTypeName(meta[$TYPE]);
     }
     return name;
@@ -213,22 +251,25 @@ function getPath(context) {
     return path;
 }
 
-function isObject(obj) {
-    return obj !== null && typeof obj === 'object';
+function isKeyValueObject(obj) {
+    return obj !== null
+        && typeof obj === 'object'
+        && !(obj instanceof Array)
+        && !(obj instanceof Set)
+        && !(obj instanceof WeakSet);
 }
 
 function generateMock(schema, mock) {
     return {};
 }
 
-export function verify(schema, data, extraneousAllowed = false) {
-    return validate(schema, data, extraneousAllowed).length === 0;
+export function verify(schema, data, allowExtraneous = false) {
+    return validate(schema, data, allowExtraneous).length === 0;
 }
 
-export function validate(schema, data, extraneousAllowed = false) {
-    if(isObject(schema) && !schema.hasOwnProperty($MOCK)) {
+export function validate(schema, data, allowExtraneous = false) {
+    if(isKeyValueObject(schema) && !schema.hasOwnProperty($MOCK)) {
         schema[$MOCK] = generateMock(schema, {});
     }
-
-    return validateData([], schema, data);
+    return validateData([], schema, data, allowExtraneous);
 }

@@ -1,12 +1,13 @@
 import {
-    boolean,
+    boolean, EXTRANEOUS_PROPERTY_ERROR,
     int,
     INVALID_VALUE_ERROR,
     MISSING_PROPERTY_ERROR,
     NON_UNIQUE_PROPERTY_ERROR,
     nonNegativeInt,
     string,
-    verify
+    verify,
+    validate
 } from "../src";
 import {createError, validateErrors} from "./testUtils";
 
@@ -137,7 +138,14 @@ test('test missing attribute ', () => {
     validateErrors(schema, data, errors);
 });
 
-test('test invalid attribute ', () => {
+test('test extraneous property', () => {
+    let schema = getSchema();
+    let data = getData();
+    data.i = 5;
+    let errors = [createError("i", EXTRANEOUS_PROPERTY_ERROR)];
+});
+
+test('test invalid value', () => {
     let schema = getSchema();
     let data = getData();
     data.a[0].c = "hello";

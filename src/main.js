@@ -1,18 +1,10 @@
-function isPlainObject(object) {
-    return object !== null && typeof object === 'object';
-}
+import {validate, verify} from "./schema";
+import {int, object} from "./types";
 
-class TestClass {constructor() {}}
+const schema = object;
 
-const values = [
-    null,
-    {a: 5},
-    new TestClass(),
-    Object.create(null),
-    new Object(),
-    new function() {},
-    [],
-    Date
-];
+let data = {
+    b: 5
+};
 
-values.forEach(value => console.log(isPlainObject(value)));
+console.log(validate(schema, data));
