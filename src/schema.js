@@ -1,7 +1,11 @@
+import {isConstantValue} from "./util";
+
 function validateData(context, schema, data, allowExtraneous) {
     let errors = [];
 
+    if(isConstantValue(schema)) {
 
+    }
 
     return errors;
 }

@@ -15,7 +15,9 @@
   },
   "author": "Tyler Hurson <tyler.james.hurson@gmail.com>",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "deep-strict-equal": "^0.2.0"
+  },
   "keywords": [],
   "files": [],
   "devDependencies": {

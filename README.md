@@ -1,8 +1,8 @@
 ## validate-declarative
 *A simple utility for declaratively validating the structure of any Javascript object.*
-- The most robust object validation utility available
-- Lightweight and highly extensible
-- Works with arbitrarily large and deeply nested objects
+- The most robust object validation utility available.
+- Lightweight and highly extensible.
+- Works with arbitrarily large and deeply nested objects.
 
 ***Example:***
 ```javascript
@@ -278,6 +278,8 @@ let result = verify(companySchema, industryTech); // true
 
 #### `verify(schema, data, allowExtraneous=false) → boolean`
 Validates `data` against the `schema`, returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. 
+Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message)
+rules when comparing constant  objects (that is, objects without constraints) between `schema` and `data`.
 If `allowExtraneous` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. 
 If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.
 
