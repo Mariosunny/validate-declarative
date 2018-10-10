@@ -40,6 +40,5 @@ export {
 
 export {
     verify,
-    validate,
-    validationConfig
-} from './schema';
+    validate
+} from './validate';

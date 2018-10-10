@@ -7,7 +7,8 @@ import {
     int,
     number,
     boolean,
-    typeWithInstanceOf, NON_UNIQUE_PROPERTY_ERROR
+    typeWithInstanceOf,
+    NON_UNIQUE_PROPERTY_ERROR
 } from "../src";
 import {createError, validateErrors} from "./testUtils";
 

@@ -1,4 +1,4 @@
-import scheme, {verify} from '../src/schema';
+import {verify} from '../src/validate';
 import {
     string,
     number,

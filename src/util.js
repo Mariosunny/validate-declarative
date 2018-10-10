@@ -1,19 +1,30 @@
 import {list} from "./types";
-import {META_KEYS} from "./keys";
+import {$CONSTRAINTS} from "./keys";
 import deepEqual from 'deep-strict-equal';
 
 export function isEqual(object1, object2) {
     return deepEqual(object1, object2);
 }
 
-function isObjectLike(object) {
-    return object != null && typeof object === 'object';
+export function hasOwnProperty(object, property) {
+    if(isKeyValueObject(object)) {
+        return object.hasOwnProperty(property);
+    }
+    return false;
+}
+
+export function forOwn(object, func, condition = () => true) {
+    for(let key in object) {
+        if(object.hasOwnProperty(key) && condition(key)) {
+            func(key, object[key]);
+        }
+    }
 }
 
 export function isConstantValue(object) {
     if(isKeyValueObject(object)) {
         for(let key in object) {
-            if(object.hasOwnProperty(key) && (META_KEYS.includes(key) || !isConstantValue(object[key]))) {
+            if(object.hasOwnProperty(key) && ($CONSTRAINTS.includes(key) || !isConstantValue(object[key]))) {
                 return false;
             }
         }
