@@ -277,7 +277,7 @@ let result = verify(companySchema, industryTech); // true
 ## API
 
 #### `verify(schema, data, allowExtraneous=false) → boolean`
-Validates `data` (any object) against the `schema` (a non-circular, key-value object), returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. 
+Validates `data` (any Javascript object) against the `schema` (a constant, non-circular, key-value object), returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. 
 
 If `allowExtraneous` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. 
 If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.

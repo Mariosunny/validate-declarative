@@ -61,7 +61,7 @@ test('test valid data', () => {
     expect(verify(getSchema(), getData())).toBe(true);
 });
 
-test('test missing attribute ', () => {
+test('test missing property ', () => {
     let schema = getSchema();
     let data = getData();
     delete data.a;

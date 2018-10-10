@@ -3,13 +3,13 @@ import {int} from "./types";
 
 let schema = {
     a: {
+        $optional: true,
         $element: {
             $type: int
         }
     }
 };
 let data = {
-    a: [1, 2, 3]
 };
 
 console.log(validate(schema, data));

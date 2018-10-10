@@ -1,4 +1,4 @@
-import {validate, verify} from '../src/schema';
+import {validate, verify} from '../src/validate';
 import {int, string} from "../src/types";
 
 test('test verify returns boolean', () => {

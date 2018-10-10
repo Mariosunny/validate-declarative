@@ -1,5 +1,5 @@
 import {list} from "./types";
-import {$CONSTRAINTS} from "./keys";
+import {$CONSTRAINTS, $RESERVED_KEYS} from "./keys";
 import deepEqual from 'deep-strict-equal';
 
 export function isEqual(object1, object2) {
@@ -24,7 +24,7 @@ export function forOwn(object, func, condition = () => true) {
 export function isConstantValue(object) {
     if(isKeyValueObject(object)) {
         for(let key in object) {
-            if(object.hasOwnProperty(key) && ($CONSTRAINTS.includes(key) || !isConstantValue(object[key]))) {
+            if(object.hasOwnProperty(key) && ($RESERVED_KEYS.includes(key) || !isConstantValue(object[key]))) {
                 return false;
             }
         }
