@@ -1,5 +1,5 @@
 import {forOwn, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject} from "./util";
-import {newErrors} from "./errors";
+import {Errors} from "./errors";
 import {$TYPE, $TEST, $NAME, $OPTIONAL, $CONSTRAINTS, $ELEMENT, $META, $UNIQUE, $RESERVED_KEYS, $ROOT} from "./keys";
 import {string, list} from "./types";
 
@@ -203,7 +203,7 @@ export function verify(schema, data, allowExtraneous = false) {
 }
 
 export function validate(schema, data, allowExtraneous = false) {
-    let errors = newErrors();
+    let errors = new Errors();
 
     addMeta(schema);
 

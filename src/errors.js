@@ -3,66 +3,65 @@ export const INVALID_VALUE_ERROR = "InvalidValueError";
 export const MISSING_PROPERTY_ERROR = "MissingPropertyError";
 export const EXTRANEOUS_PROPERTY_ERROR = "ExtraneousPropertyError";
 
-class Error {
-    constructor(type, key, errors) {
-        this.type = type;
-        this.key = key;
-        this._value = null;
-        this._expectedType = null;
-        this.valueSet = false;
-        this.expectedTypeSet = false;
-        this.errors = errors;
-    }
-    add() {
-        let error = {
-            error: this.type,
-            key: this.key
-        };
-
-        if(this.valueSet) {
-            error.value = this._value;
-        }
-
-        if(this.expectedTypeSet) {
-            error.expectedType = this._expectedType;
-        }
-
-        this.errors.push(error);
-    }
-    value(value) {
-        if(value) {
-            this._value = value;
-            this.valueSet = true;
-        }
-        return this;
-    }
-    expectedType(expectedType) {
-        if(expectedType) {
-            this._expectedType = expectedType;
-            this.expectedTypeSet = true;
-        }
-        return this;
-    }
+function Error(type, key, errors) {
+    this.type = type;
+    this.key = key;
+    this._value = null;
+    this._expectedType = null;
+    this.valueSet = false;
+    this.expectedTypeSet = false;
+    this.errors = errors;
 }
 
-class Errors {
-    constructor() {
-        this.errors = [];
+Error.prototype.add = function () {
+    let error = {
+        error: this.type,
+        key: this.key
+    };
+
+    if(this.valueSet) {
+        error.value = this._value;
     }
-    invalidValue(key) {
-        return new Error(INVALID_VALUE_ERROR, key, this.errors);
+
+    if(this.expectedTypeSet) {
+        error.expectedType = this._expectedType;
     }
-    nonUniqueValue(key) {
-        return new Error(NON_UNIQUE_PROPERTY_ERROR, key, this.errors);
+
+    this.errors.push(error);
+};
+
+Error.prototype.value = function(value) {
+    if(value) {
+        this._value = value;
+        this.valueSet = true;
     }
-    missingProperty(key) {
-        return new Error(MISSING_PROPERTY_ERROR, key, this.errors);
+    return this;
+};
+
+Error.prototype.expectedType = function(expectedType) {
+    if(expectedType) {
+        this._expectedType = expectedType;
+        this.expectedTypeSet = true;
     }
-    extraneousProperty(key) {
-        return new Error(EXTRANEOUS_PROPERTY_ERROR, key, this.errors);
-    }
+    return this;
+};
+
+export function Errors() {
+    this.errors = [];
 }
 
-export function newErrors() {
-    return new Errors();
-}
+Errors.prototype.invalidValue = function(key) {
+    return new Error(INVALID_VALUE_ERROR, key, this.errors);
+};
+
+Errors.prototype.nonUniqueValue = function(key) {
+    return new Error(NON_UNIQUE_PROPERTY_ERROR, key, this.errors);
+};
+
+Errors.prototype.missingProperty = function(key) {
+    return new Error(MISSING_PROPERTY_ERROR, key, this.errors);
+};
+
+Errors.prototype.extraneousProperty = function(key) {
+    return new Error(EXTRANEOUS_PROPERTY_ERROR, key, this.errors);
+};
