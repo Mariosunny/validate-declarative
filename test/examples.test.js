@@ -12,36 +12,45 @@ import {
 } from "../src";
 import {createError, validateErrors} from "./testUtils";
 
-test('test leading example', () => {
-    const courseSchema = {
-        courseName: {
-            $test: /^[A-Za-z0-9 ]+$/
-        },
-        roomCapacity: nonNegativeInt,
-        professor: string
+test("test leading example", () => {
+    const bankAccountSchema = {
+        accountHolder: string,
+        active: boolean,
+        balance: {
+            checkings: {
+                $type: number,
+                $optional: true
+            },
+            savings: number
+        }
     };
 
-    let objectOrientedCourse = {
-        courseName: "Object Oriented Programming",
-        roomCapacity: 30,
-        professor: "Dr. Placeholder"
+    let bankAccount1 = {
+        accountHolder: "Susan B. Foo",
+        active: true,
+        balance: {
+            savings: 39328.03
+        }
     };
 
-    expect(verify(courseSchema, objectOrientedCourse)).toBe(true);
+    expect(verify(bankAccountSchema, bankAccount1)).toBe(true);
 
-    let microprocessorsCourse = {
-        courseName: "Microprocessors %%",
-        roomCapacity: -10,
+    let bankAccount2 = {
+        accountHolder: 1,
+        balance: {
+            savings: "ten dollars",
+            checkings: 39328.03
+        }
     };
 
-    expect(verify(courseSchema, microprocessorsCourse)).toBe(false);
+    expect(verify(bankAccountSchema, bankAccount2)).toBe(false);
 
     let errors = [
-        createError("courseName", INVALID_VALUE_ERROR, "Microprocessors %%", /^[A-Za-z0-9 ]+$/),
-        createError("roomCapacity", INVALID_VALUE_ERROR, -10, nonNegativeInt.$name),
-        createError("professor", MISSING_PROPERTY_ERROR)
+        createError("active", MISSING_PROPERTY_ERROR),
+        createError("balance.savings", INVALID_VALUE_ERROR, "ten dollars", number.$name),
+        createError("accountHolder", INVALID_VALUE_ERROR, 1, string.$name),
     ];
-    validateErrors(courseSchema, microprocessorsCourse, errors);
+    validateErrors(bankAccountSchema, bankAccount2, errors);
 });
 
 test('test overview example', () => {
@@ -81,26 +90,22 @@ test("test 'Validating a single value' example", () => {
     validateErrors(int, "hello world", errors);
 });
 
-test("test 'Validating an object' example", () => {
-    const bankAccountSchema = {
-        accountHolder: string,
-        active: boolean,
-        balance: {
-            checkings: number,
-            savings: number
-        }
+test('test \'Validating an object\' example', () => {
+    const courseSchema = {
+        courseName: {
+            $test: /^[A-Za-z0-9 ]+$/
+        },
+        roomCapacity: nonNegativeInt,
+        professor: string
     };
 
-    let bankAccount = {
-        accountHolder: "Susan B. Foo",
-        active: true,
-        balance: {
-            checkings: 1094.97,
-            savings: 39328.03
-        }
+    let objectOrientedCourse = {
+        courseName: "Object Oriented Programming",
+        roomCapacity: 30,
+        professor: "Dr. Placeholder"
     };
 
-    expect(verify(bankAccountSchema, bankAccount)).toBe(true);
+    expect(verify(courseSchema, objectOrientedCourse)).toBe(true);
 });
 
 test("test 'Validating an object with constant properties' example", () => {

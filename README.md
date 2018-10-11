@@ -1,40 +1,55 @@
 ## validate-declarative
-*A simple utility for declaratively validating the structure of any Javascript object.*
+A simple utility for declaratively validating the structure of any Javascript object.
 - Lightweight and highly extensible
-- Detailed error reports
 - Works with arbitrarily large and deeply nested objects
+- Detailed error reports
 
-***Example:***
+***See it in action:***
 ```javascript
-import {verify, string, nonNegativeInt} from 'validate-declarative';
+import {verify, string, number, boolean} from 'validate-declarative';
 
 // Define the structure and constraints of your objects
-const courseSchema = {
-    courseName: {
-        $test: /^[A-Za-z0-9 ]+$/
+const bankAccountSchema = {
+  accountHolder: string,
+  active: boolean,
+  balance: {
+    checkings: {
+        $type: number,
+        $optional: true
     },
-    roomCapacity: nonNegativeInt,
-    professor: string
+    savings: number
+  }
 };
 
 // Create an object
-let objectOrientedCourse = {
-    courseName: "Object Oriented Programming",
-    roomCapacity: 30,
-    professor: "Dr. Placeholder"
+let bankAccount1 = {
+  accountHolder: "Susan B. Foo",
+  active: true,
+  balance: {
+    savings: 39328.03
+  }
 };
 
-// true! the object matches the schema
-let result1 = verify(courseSchema, objectOrientedCourse);
+verify(bankAccountSchema, bankAccount1); 
+// returns true: bankAccount1 satisfies the schema
 
-let microprocessorsCourse = {
-    courseName: "Microprocessors %%",
-    roomCapacity: -10,
+
+let bankAccount2 = {
+  accountHolder: 1,
+  balance: {
+    savings: "ten dollars",
+    checkings: 39328.03
+  }
 };
 
-// false (missing 'professor' property, roomCapacity is negative, courseName fails regex)
-let result2 = verify(courseSchema, microprocessorsCourse);
+verify(bankAccountSchema, bankAccount2);
+/* returns false, since:
+     property 'active' is missing,
+     accountHolder is not a string,
+     and balance.savings is not a number
+ */
 ```
+
 
 ## Table of Contents
 - [Installation](#installation)
@@ -51,6 +66,7 @@ let result2 = verify(courseSchema, microprocessorsCourse);
 ```
 npm install validate-declarative --save
 ```
+
 
 ## Overview
 A *schema* is a plain-old Javascript object that has some special properties. 
@@ -113,27 +129,23 @@ let result3 = verify(string, "hello world");  // true
 
 #### Validating an object
 ```javascript
-import {verify, string, number, boolean} from 'validate-declarative';
+import {verify, string, nonNegativeInt} from 'validate-declarative';
 
-const bankAccountSchema = {
-  accountHolder: string,
-  active: boolean,
-  balance: {
-    checkings: number,
-    savings: number
-  }
+const courseSchema = {
+    courseName: {
+        $test: /^[A-Za-z0-9 ]+$/
+    },
+    roomCapacity: nonNegativeInt,
+    professor: string
 };
 
-let bankAccount = {
-  accountHolder: "Susan B. Foo",
-  active: true,
-  balance: {
-    checkings: 1094.97,
-    savings: 39328.03
-  }
+let objectOrientedCourse = {
+    courseName: "Object Oriented Programming",
+    roomCapacity: 30,
+    professor: "Dr. Placeholder"
 };
 
-let result = verify(bankAccountSchema, bankAccount); // true
+let result1 = verify(courseSchema, objectOrientedCourse); // true
 ```
 
 #### Validating an object with constant properties
@@ -539,7 +551,7 @@ Generated when a value fails a type test.
 ```
 
 #### NonUniqueValueError
-Generated when a duplicate value is detected on a unique constraint.
+Generated when a duplicate value is detected (if and only if `$unique` = *true*).
 ```javascript
 {
   error: "NonUniqueValueError",
@@ -549,7 +561,7 @@ Generated when a duplicate value is detected on a unique constraint.
 ```
 
 #### MissingPropertyError
-Generated when a property is missing from the data (when `$optional` = *false*).
+Generated when a property is missing from the data (if and only if `$optional` = *false*).
 ```javascript
 {
   error: "MissingPropertyError",
@@ -558,7 +570,7 @@ Generated when a property is missing from the data (when `$optional` = *false*).
 ```
 
 #### ExtraneousPropertyError
-Generated when there is an extra property in the data (when `allowExtraneous` = *false*).
+Generated when there is an extra property in the data (if and only if `allowExtraneous` = *false*).
 ```javascript
 {
   error: "ExtraneousPropertyError",
