@@ -6,10 +6,12 @@ import {string, list} from "./types";
 function validateData(context, schema, data, errors, allowExtraneous, uniqueValues) {
     if(isConstantValue(schema) && !isEqual(schema, data)) {
         errors.invalidValue(context).value(data).add();
+        findExtraneousProperties(context, schema, data, errors, allowExtraneous);
     }
     else {
         if(!passesTypeTest(schema, data)) {
             errors.invalidValue(context).value(data).expectedType(getTypeName(schema)).add();
+            findExtraneousProperties(context, schema, data, errors, allowExtraneous);
         }
 
         if(hasOwnProperty(schema, $ELEMENT)) {
@@ -19,8 +21,6 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
             validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
         }
     }
-
-    findExtraneousProperties(context, schema, data, errors, allowExtraneous);
 }
 
 function findExtraneousProperties(context, schema, data, errors, allowExtraneous) {
@@ -55,7 +55,7 @@ function validateObject(context, schema, data, errors, allowExtraneous, uniqueVa
         let dataHasProperty = hasOwnProperty(data, key);
         let newData = data[key];
 
-        if(isKeyValueObject(newSchema) && !isOptional(newSchema) && !dataHasProperty) {
+        if(!isOptional(newSchema) && !dataHasProperty) {
             errors.missingProperty(newContext).add();
         }
         else if(dataHasProperty){
@@ -117,6 +117,10 @@ function forOwnNonReservedProperty(schema, func) {
 
 function passesTypeTest(schema, data) {
     let result = true;
+
+    if(schema.hasOwnProperty($ELEMENT) && !schema.hasOwnProperty($TYPE)) {
+        result = list.$test(data);
+    }
 
     if(schema.hasOwnProperty($TYPE) && isKeyValueObject(schema[$TYPE])) {
         result = passesTypeTest(schema[$TYPE], data) && result;

@@ -27,7 +27,7 @@
     "babel-watch": "^2.0.7",
     "jest": "^23.6.0",
     "lodash": "^4.17.11",
-    "unravel-function": "^0.1.3"
+    "unravel-function": "^0.2.1"
   },
   "babel": {
     "presets": [

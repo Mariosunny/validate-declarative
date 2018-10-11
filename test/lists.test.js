@@ -171,7 +171,7 @@ test('test regex test substitution', () => {
 });
 
 
-test('test $element inclusion overrides $type', () => {
+test('test $element inclusion does not override $type', () => {
     let schema = {
         a: {
             $type: int,
@@ -183,7 +183,7 @@ test('test $element inclusion overrides $type', () => {
     let data = {
         a: ['a', 'b', 'c']
     };
-    expect(verify(schema, data)).toBe(true);
+    expect(verify(schema, data)).toBe(false);
 
     data = {
         a: 5
