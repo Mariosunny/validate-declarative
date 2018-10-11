@@ -545,7 +545,7 @@ Generated when a duplicate value is detected on a unique constraint.
 ```
 
 #### MissingPropertyError
-Generated when a property is missing from the data.
+Generated when a property is missing from the data (when `$optional` = *false*).
 ```javascript
 {
   error: "MissingPropertyError",
