@@ -4,7 +4,8 @@
   "description": "A simple, highly-extensible utility for validating the structure of any JS object.",
   "main": "lib/unravel.js",
   "scripts": {
-    "prepublish": "jest && node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "prepublish": "npm run test && npm run build",
+    "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "test": "jest",
     "test:verbose": "jest --verbose",
     "start": "babel-watch src/main.js"
