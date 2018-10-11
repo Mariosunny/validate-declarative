@@ -1,4 +1,4 @@
-export const NON_UNIQUE_PROPERTY_ERROR = "NonUniqueValueError";
+export const DUPLICATE_PROPERTY_ERROR = "DuplicatePropertyError";
 export const INVALID_VALUE_ERROR = "InvalidValueError";
 export const MISSING_PROPERTY_ERROR = "MissingPropertyError";
 export const EXTRANEOUS_PROPERTY_ERROR = "ExtraneousPropertyError";
@@ -54,8 +54,8 @@ Errors.prototype.invalidValue = function(key) {
     return new Error(INVALID_VALUE_ERROR, key, this.errors);
 };
 
-Errors.prototype.nonUniqueValue = function(key) {
-    return new Error(NON_UNIQUE_PROPERTY_ERROR, key, this.errors);
+Errors.prototype.duplicateValue = function(key) {
+    return new Error(DUPLICATE_PROPERTY_ERROR, key, this.errors);
 };
 
 Errors.prototype.missingProperty = function(key) {

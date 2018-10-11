@@ -72,7 +72,7 @@ function checkUniqueness(context, schema, data, errors, uniqueValues) {
 
         for(let i = 0; i < localUniqueValues.length; i++) {
             if(isEqual(localUniqueValues[i], data)) {
-                errors.nonUniqueValue(context).value(data).add();
+                errors.duplicateValue(context).value(data).add();
                 return;
             }
         }

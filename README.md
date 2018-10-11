@@ -551,18 +551,18 @@ Generated when a value fails a type test.
 }
 ```
 
-#### NonUniqueValueError
-Generated when a duplicate value is detected (if and only if `$unique` = *true*).
+#### DuplicateValueError
+Generated when a duplicate value is detected (when `$unique` = *true*).
 ```javascript
 {
-  error: "NonUniqueValueError",
+  error: "DuplicateValueError",
   key: "restaurant.headChef",
   value: "Tom G. Bar"
 }
 ```
 
 #### MissingPropertyError
-Generated when a property is missing from the data (if and only if `$optional` = *false*).
+Generated when a property is missing from the data (when `$optional` = *false*).
 ```javascript
 {
   error: "MissingPropertyError",
@@ -571,7 +571,7 @@ Generated when a property is missing from the data (if and only if `$optional` =
 ```
 
 #### ExtraneousPropertyError
-Generated when there is an extra property in the data (if and only if `allowExtraneous` = *false*).
+Generated when there is an extra property in the data (when `allowExtraneous` = *false*).
 ```javascript
 {
   error: "ExtraneousPropertyError",

@@ -8,7 +8,7 @@ import {
     number,
     boolean,
     typeWithInstanceOf,
-    NON_UNIQUE_PROPERTY_ERROR
+    DUPLICATE_PROPERTY_ERROR
 } from "../src";
 import {createError, validateErrors} from "./testUtils";
 
@@ -400,7 +400,7 @@ test("test $unique example", () => {
     expect(verify(playerSchema, player2)).toBe(false);
 
     let errors = [
-        createError("username", NON_UNIQUE_PROPERTY_ERROR, "Mariosunny"),
+        createError("username", DUPLICATE_PROPERTY_ERROR, "Mariosunny"),
     ];
     validateErrors(playerSchema, player2, errors);
 });

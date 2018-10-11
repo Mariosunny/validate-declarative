@@ -3,7 +3,7 @@ import {
     int,
     INVALID_VALUE_ERROR,
     MISSING_PROPERTY_ERROR,
-    NON_UNIQUE_PROPERTY_ERROR,
+    DUPLICATE_PROPERTY_ERROR,
     nonNegativeInt,
     string,
     verify,
@@ -186,7 +186,7 @@ test('test unique attribute', () => {
     let data = getData();
     let errors = [];
     validateErrors(schema, data, errors);
-    errors = [createError("d.e.g", NON_UNIQUE_PROPERTY_ERROR, data.d.e.g)];
+    errors = [createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g)];
     validateErrors(schema, data, errors);
     validateErrors(schema, data, errors);
 
@@ -204,7 +204,7 @@ test('test unique attribute', () => {
     validateErrors(schema, data, errors);
     data = getData();
     data.d.e.g = 0;
-    errors = [createError("d.e.g", NON_UNIQUE_PROPERTY_ERROR, data.d.e.g)];
+    errors = [createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g)];
     validateErrors(schema, data, errors);
 });
 
@@ -222,7 +222,7 @@ test('test multiple error types', () => {
         createError("h", INVALID_VALUE_ERROR, 5, string.$name),
     ];
     validateErrors(schema, data, errors);
-    errors.push(createError("d.e.g", NON_UNIQUE_PROPERTY_ERROR, data.d.e.g));
+    errors.push(createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g));
     validateErrors(schema, data, errors);
 });
 
