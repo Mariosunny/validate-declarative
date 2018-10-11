@@ -415,9 +415,11 @@ const schema = {
 ```
 
 #### `$optional`
-Declares a property to be optional. 
-By default, all properties defined in the schema are required. 
+Declares a property optional. 
+By default, all properties in the schema are required. 
 If `$optional` is *true*, no error will be generated if the property does not exist in the data.
+
+(Note: `$optional` declarations at the top-level of the schema will be ignored.)
 
 ```javascript
 import {verify, int, string} from 'validate-declarative';
@@ -442,16 +444,16 @@ let data2 = {
 let result1 = verify(schema, data1); // true
 let result2 = verify(schema, data2); // true
 ```
-Note that `$optional` will be ignored if declared at the top-level of the schema,
-since it would be meaningless:
-```javascript
-const schema = {
-    $optional: true     // $optional is ignored here
-};
-```
 
 #### `$unique`
-Declares the value of a property to be unique across all data. 
+Declares the value of a property to be unique across all data validated against that particular schema.
+
+(Note: Each `$unique` declaration is mapped to an internal array of values stored within
+a hidden property `$__meta__` within the schema. 
+**Be warned**- a large number of validations may result in high memory usage,
+as every validation adds another element to each internal array of unique values within the schema.
+Though it is not recommended, you can call `schema.$__meta__.reset()` to clear these internal arrays.
+Doing this will no longer guarantee uniqueness for subsequent validations, however)
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -483,6 +485,8 @@ let result2 = verify(playerSchema, player2);
 #### `$element`
 Defines the schema of each element in an array, set, or weak set. 
 When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
+`$element` declarations can be nested within eachother to validate multi-dimensional arrays 
+(see [Validating a Multi-Dimensional Array](#validating-a-multi-dimensional-array)).
 
 ```javascript
 import {verify, string, number} from 'validate-declarative';
