@@ -8,7 +8,7 @@ A simple utility for declaratively validating the structure of any Javascript ob
 ```javascript
 import {verify, string, number, boolean} from 'validate-declarative';
 
-// Define the structure and constraints of your objects
+// Define the structure and constraints of your objects in a schema
 const bankAccountSchema = {
   accountHolder: string,
   active: boolean,
@@ -30,7 +30,7 @@ let bankAccount1 = {
   }
 };
 
-verify(bankAccountSchema, bankAccount1); 
+let result1 = verify(bankAccountSchema, bankAccount1); 
 // returns true: bankAccount1 satisfies the schema
 
 
@@ -42,11 +42,11 @@ let bankAccount2 = {
   }
 };
 
-verify(bankAccountSchema, bankAccount2);
-/* returns false, since:
-     property 'active' is missing,
-     accountHolder is not a string,
-     and balance.savings is not a number
+let result2 = verify(bankAccountSchema, bankAccount2);
+/* returns false, for the following reasons:
+     1. 'active' property is missing
+     2. accountHolder is not a string
+     3. balance.savings is not a number
  */
 ```
 
@@ -175,6 +175,7 @@ let result2 = verify(sedanSchema, car2); // false
 ```javascript
 import {verify, int} from 'validate-declarative';
 
+// a custom type
 const primeNumber = {
     $type: int,
     $test: function(object) {
