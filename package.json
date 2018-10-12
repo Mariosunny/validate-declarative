@@ -6,6 +6,7 @@
   "scripts": {
     "prepublish": "npm run test && npm run build",
     "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "benchmark": "babel-watch stats/benchmarks.js",
     "test": "jest",
     "test:verbose": "jest --verbose",
     "start": "babel-watch src/main.js"
@@ -28,6 +29,7 @@
     "babel-watch": "^2.0.7",
     "jest": "^23.6.0",
     "lodash": "^4.17.11",
+    "outliers": "^0.0.3",
     "unravel-function": "^0.2.1"
   },
   "babel": {
