@@ -203,7 +203,7 @@ export function verify(schema, data, allowExtraneous = false) {
 }
 
 export function validate(schema, data, allowExtraneous = false) {
-    let errors = new Errors();
+    let errors = new Errors(data);
 
     addMeta(schema);
 

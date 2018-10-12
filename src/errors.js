@@ -3,7 +3,7 @@ export const INVALID_VALUE_ERROR = "InvalidValueError";
 export const MISSING_PROPERTY_ERROR = "MissingPropertyError";
 export const EXTRANEOUS_PROPERTY_ERROR = "ExtraneousPropertyError";
 
-function Error(type, key, errors) {
+function Error(type, key, data, errors) {
     this.type = type;
     this.key = key;
     this._value = null;
@@ -11,12 +11,14 @@ function Error(type, key, errors) {
     this.valueSet = false;
     this.expectedTypeSet = false;
     this.errors = errors;
+    this.data = data;
 }
 
 Error.prototype.add = function () {
     let error = {
         error: this.type,
-        key: this.key
+        key: this.key,
+        data: this.data
     };
 
     if(this.valueSet) {
@@ -46,22 +48,23 @@ Error.prototype.expectedType = function(expectedType) {
     return this;
 };
 
-export function Errors() {
+export function Errors(data) {
     this.errors = [];
+    this.data = data;
 }
 
 Errors.prototype.invalidValue = function(key) {
-    return new Error(INVALID_VALUE_ERROR, key, this.errors);
+    return new Error(INVALID_VALUE_ERROR, key, this.data, this.errors);
 };
 
 Errors.prototype.duplicateValue = function(key) {
-    return new Error(DUPLICATE_PROPERTY_ERROR, key, this.errors);
+    return new Error(DUPLICATE_PROPERTY_ERROR, key, this.data, this.errors);
 };
 
 Errors.prototype.missingProperty = function(key) {
-    return new Error(MISSING_PROPERTY_ERROR, key, this.errors);
+    return new Error(MISSING_PROPERTY_ERROR, key, this.data, this.errors);
 };
 
 Errors.prototype.extraneousProperty = function(key) {
-    return new Error(EXTRANEOUS_PROPERTY_ERROR, key, this.errors);
+    return new Error(EXTRANEOUS_PROPERTY_ERROR, key, this.data, this.errors);
 };
