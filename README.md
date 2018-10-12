@@ -109,6 +109,8 @@ let result3 = verify(tweetSchema, myTweet3); // false
 
 `validate()` is similiar to `verify()`, but returns an array of [errors](#errors) describing any constraint violations:
 ```javascript
+import {validate} from 'validate-declarative';
+
 console.log( validate(tweetSchema, tweet2) );
 // prints: [{ error: "InvalidValueError", key: "", value: 5 }]
 ```
