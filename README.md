@@ -8,7 +8,7 @@ A simple utility for declaratively validating the structure of any Javascript ob
 ```javascript
 import {verify, string, number, boolean} from 'validate-declarative';
 
-// Define the structure and constraints of your objects in a schema
+// Define the structure and constraints of your objects
 const bankAccountSchema = {
   accountHolder: string,
   active: boolean,
@@ -105,6 +105,12 @@ import {verify} from 'validate-declarative';
 let result1 = verify(tweetSchema, myTweet1); // true
 let result2 = verify(tweetSchema, myTweet2); // false
 let result3 = verify(tweetSchema, myTweet3); // false
+```
+
+`validate()` is similiar to `verify()`, but returns an array of [errors](#errors) describing any constraint violations:
+```javascript
+console.log( validate(tweetSchema, tweet2) );
+// prints: [{ error: "InvalidValueError", key: "", value: 5 }]
 ```
 
 This is a simple example, but schemas can be as large and complex as you want.
@@ -296,9 +302,7 @@ If `allowExtraneous` is set to *false* (default), and there is at least one prop
 If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.
 
 Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message)
-rules when comparing constant  objects (that is, objects without constraints) between `schema` and `data`,
-or when testing properties for uniqueness in `data`.
-
+rules when comparing objects.
 
 #### `validate(schema, data, allowExtraneous=false) → Array`
 Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
@@ -375,7 +379,7 @@ const countrySchema = {
 #### `$type`
 Allows you to extend an existing type. `$type` is any object with a `$test` property. 
 During validation, the `$test` in `$type` is called first before the local `$test`.
-Additionally, you can add a `$name` property to your custom type, which determines the *expectedType*
+You can add a `$name` property to your custom type, which determines the *expectedType*
 in [error objects](#errors), though it is entirely optional.
 
 ```javascript
@@ -432,7 +436,7 @@ Declares a property optional.
 By default, all properties in the schema are required. 
 If `$optional` is *true*, no error will be generated if the property does not exist in the data.
 
-(Note: `$optional` declarations at the top-level of the schema will be ignored.)
+(Note: `$optional` declarations at the top level of the schema will be ignored.)
 
 ```javascript
 import {verify, int, string} from 'validate-declarative';
@@ -466,7 +470,7 @@ a hidden property `$__meta__` within the schema.
 **Be warned**- a large number of validations may result in high memory usage,
 as every validation adds another element to each internal array of unique values within the schema.
 Though it is not recommended, you can call `schema.$__meta__.reset()` to clear these internal arrays.
-Doing this will no longer guarantee uniqueness for subsequent validations, however)
+This, however, will not garuantee uniqueness for subsequent validations.)
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -591,7 +595,7 @@ Generated when a value fails a type test.
 ```
 
 #### DuplicateValueError
-Generated when a duplicate value is detected (when `$unique` = *true*).
+Generated when a duplicate value is detected, and when `$unique` = *true*.
 ```javascript
 {
   error: "DuplicateValueError",
@@ -601,7 +605,7 @@ Generated when a duplicate value is detected (when `$unique` = *true*).
 ```
 
 #### MissingPropertyError
-Generated when a property is missing from the data (when `$optional` = *false*).
+Generated when a property is missing from the data, and when `$optional` = *false*.
 ```javascript
 {
   error: "MissingPropertyError",
@@ -610,7 +614,7 @@ Generated when a property is missing from the data (when `$optional` = *false*).
 ```
 
 #### ExtraneousPropertyError
-Generated when there is an extra property in the data (when `allowExtraneous` = *false*).
+Generated when there is an extra property in the data, and when `allowExtraneous` = *false*.
 ```javascript
 {
   error: "ExtraneousPropertyError",
@@ -621,7 +625,7 @@ Generated when there is an extra property in the data (when `allowExtraneous` = 
 
 ## Reserved Key Names
 The following key names are reserved and should not be used as key names in schema objects
-for ordinary (non-constraint) properties:
+for ordinary properties:
 
 - `$element`
 - `$name`
