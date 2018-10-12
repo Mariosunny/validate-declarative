@@ -591,8 +591,9 @@ Generated when a value fails a type test.
 {
   error: "InvalidValueError",    // name of the error
   key: "menu.menuItems[3].desc", // the property where the error occurred
-  value: 5,                      // the actual value found in the data
-  expectedType: "string"         // the expected type, defined by $name
+  data: {...}                    // the data that was validated
+  value: 5,                      // the actual value found in the data at the property
+  expectedType: "string"         // the expected type, defined by $name in the schema
 }
 ```
 
@@ -602,6 +603,7 @@ Generated when a duplicate value is detected, and when `$unique` = *true*.
 {
   error: "DuplicateValueError",
   key: "restaurant.headChef",
+  data: {...},
   value: "Tom G. Bar"
 }
 ```
@@ -611,7 +613,8 @@ Generated when a property is missing from the data, and when `$optional` = *fals
 ```javascript
 {
   error: "MissingPropertyError",
-  key: "headChef"
+  key: "headChef",
+  data: {...}
 }
 ```
 
@@ -620,7 +623,8 @@ Generated when there is an extra property in the data, and when `allowExtraneous
 ```javascript
 {
   error: "ExtraneousPropertyError",
-  key: "username"
+  key: "favoriteColor",
+  data: {...}
 }
 ```
 
