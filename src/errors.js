@@ -3,13 +3,13 @@ export const INVALID_VALUE_ERROR = "InvalidValueError";
 export const MISSING_PROPERTY_ERROR = "MissingPropertyError";
 export const EXTRANEOUS_PROPERTY_ERROR = "ExtraneousPropertyError";
 
+const UNSET = Symbol();
+
 function Error(type, key, data, errors) {
     this.type = type;
     this.key = key;
-    this._value = null;
-    this._expectedType = null;
-    this.valueSet = false;
-    this.expectedTypeSet = false;
+    this._value = UNSET;
+    this._expectedType = UNSET;
     this.errors = errors;
     this.data = data;
 }
@@ -21,11 +21,11 @@ Error.prototype.add = function () {
         data: this.data
     };
 
-    if(this.valueSet) {
+    if(this._value !== UNSET) {
         error.value = this._value;
     }
 
-    if(this.expectedTypeSet) {
+    if(this._expectedType !== UNSET) {
         error.expectedType = this._expectedType;
     }
 
@@ -35,7 +35,6 @@ Error.prototype.add = function () {
 Error.prototype.value = function(value) {
     if(value) {
         this._value = value;
-        this.valueSet = true;
     }
     return this;
 };
@@ -43,7 +42,6 @@ Error.prototype.value = function(value) {
 Error.prototype.expectedType = function(expectedType) {
     if(expectedType) {
         this._expectedType = expectedType;
-        this.expectedTypeSet = true;
     }
     return this;
 };

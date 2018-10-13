@@ -5,8 +5,9 @@
   "main": "lib/unravel.js",
   "scripts": {
     "prepublish": "npm run test && npm run build",
-    "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib && uglifyjs lib/* -m toplevel -c -o dist/index.js",
     "benchmark": "babel-watch stats/benchmarks.js",
+    "size": "npm run build && du -s -B1 --apparent-size dist/index.js | awk '{print $1}'",
     "test": "jest",
     "test:verbose": "jest --verbose",
     "start": "babel-watch src/main.js"
