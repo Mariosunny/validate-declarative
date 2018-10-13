@@ -7,20 +7,15 @@ export const $NAME = "$name";
 export const $META = "$__meta__";
 export const $ROOT = "$__root__";
 
-export const $CONSTRAINTS = [
-    $TEST,
-    $TYPE,
-    $OPTIONAL,
-    $UNIQUE
-];
+export const $CONSTRAINTS = [$TEST, $TYPE, $OPTIONAL, $UNIQUE];
 
 export const $RESERVED_KEYS = [
-    $TEST,
-    $TYPE,
-    $OPTIONAL,
-    $UNIQUE,
-    $ELEMENT,
-    $NAME,
-    $META,
-    $ROOT
+  $TEST,
+  $TYPE,
+  $OPTIONAL,
+  $UNIQUE,
+  $ELEMENT,
+  $NAME,
+  $META,
+  $ROOT
 ];

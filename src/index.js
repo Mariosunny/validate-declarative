@@ -1,47 +1,44 @@
-import {
-    verify as _verify,
-    validate as _validate
-} from './validate';
+import { verify as _verify, validate as _validate } from "./validate";
 
 import {
-    INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
-    MISSING_PROPERTY_ERROR as _MISSING_PROPERTY_ERROR,
-    DUPLICATE_PROPERTY_ERROR as _DUPLICATE_PROPERTY_ERROR,
-    EXTRANEOUS_PROPERTY_ERROR as _EXTRANEOUS_PROPERTY_ERROR
-} from './errors';
+  INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
+  MISSING_PROPERTY_ERROR as _MISSING_PROPERTY_ERROR,
+  DUPLICATE_PROPERTY_ERROR as _DUPLICATE_PROPERTY_ERROR,
+  EXTRANEOUS_PROPERTY_ERROR as _EXTRANEOUS_PROPERTY_ERROR
+} from "./errors";
 
 import {
-    string as _string,
-    number as _number,
-    nonPositiveNumber as _nonPositiveNumber,
-    negativeNumber as _negativeNumber,
-    nonNegativeNumber as _nonNegativeNumber,
-    positiveNumber as _positiveNumber,
-    int as _int,
-    nonPositiveInt as _nonPositiveInt,
-    negativeInt as _negativeInt,
-    nonNegativeInt as _nonNegativeInt,
-    positiveInt as _positiveInt,
-    boolean as _boolean,
-    truthy as _truthy,
-    falsy as _falsy,
-    array as _array,
-    set as _set,
-    weakSet as _weakSet,
-    list as _list,
-    map as _map,
-    weakMap as _weakMap,
-    object as _object,
-    func as _func,
-    date as _date,
-    symbol as _symbol,
-    regexp as _regexp,
-    nullValue as _nullValue,
-    undefinedValue as _undefinedValue,
-    nanValue as _nanValue,
-    any as _any,
-    typeWithInstanceOf as _typeWithInstanceOf
-} from './types';
+  string as _string,
+  number as _number,
+  nonPositiveNumber as _nonPositiveNumber,
+  negativeNumber as _negativeNumber,
+  nonNegativeNumber as _nonNegativeNumber,
+  positiveNumber as _positiveNumber,
+  int as _int,
+  nonPositiveInt as _nonPositiveInt,
+  negativeInt as _negativeInt,
+  nonNegativeInt as _nonNegativeInt,
+  positiveInt as _positiveInt,
+  boolean as _boolean,
+  truthy as _truthy,
+  falsy as _falsy,
+  array as _array,
+  set as _set,
+  weakSet as _weakSet,
+  list as _list,
+  map as _map,
+  weakMap as _weakMap,
+  object as _object,
+  func as _func,
+  date as _date,
+  symbol as _symbol,
+  regexp as _regexp,
+  nullValue as _nullValue,
+  undefinedValue as _undefinedValue,
+  nanValue as _nanValue,
+  any as _any,
+  typeWithInstanceOf as _typeWithInstanceOf
+} from "./types";
 
 export const validate = _validate;
 export const verify = _verify;

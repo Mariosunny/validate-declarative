@@ -33,6 +33,7 @@
     "jest": "^23.6.0",
     "lodash": "^4.17.11",
     "outliers": "^0.0.3",
+    "prettier": "^1.14.3",
     "unravel-function": "^0.2.1"
   },
   "babel": {
