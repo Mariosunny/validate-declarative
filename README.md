@@ -3,6 +3,7 @@ A simple utility for declaratively validating the structure of any Javascript ob
 - Lightweight and highly extensible
 - Works with arbitrarily large and deeply nested objects
 - Detailed error reports
+- ES5 compatible
 
 ***See it in action:***
 ```javascript

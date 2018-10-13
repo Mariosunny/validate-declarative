@@ -21,10 +21,6 @@ describe("isKeyValueObject", () => {
     expect(isKeyValueObject(-Infinity)).toBe(false);
     expect(isKeyValueObject("")).toBe(false);
     expect(isKeyValueObject("hello")).toBe(false);
-    expect(isKeyValueObject(new Set())).toBe(false);
-    expect(isKeyValueObject(new Map())).toBe(false);
-    expect(isKeyValueObject(new WeakSet())).toBe(false);
-    expect(isKeyValueObject(new WeakMap())).toBe(false);
     expect(isKeyValueObject(undefined)).toBe(false);
     expect(isKeyValueObject(null)).toBe(false);
     expect(isKeyValueObject(NaN)).toBe(false);

@@ -263,31 +263,6 @@ testTypeWith
   .invalidValues(standardValuesExcept("array", "newArray"));
 
 testTypeWith
-  .type(set)
-  .validValues([new Set()])
-  .invalidValues(standardValuesExcept("set"));
-
-testTypeWith
-  .type(weakSet)
-  .validValues([new WeakSet()])
-  .invalidValues(standardValuesExcept("weakSet"));
-
-testTypeWith
-  .type(list)
-  .validValues([new Set(), new Array(), [], new WeakSet()])
-  .invalidValues(standardValuesExcept("set", "weakSet", "array", "newArray"));
-
-testTypeWith
-  .type(map)
-  .validValues([new Map()])
-  .invalidValues(standardValuesExcept("map"));
-
-testTypeWith
-  .type(weakMap)
-  .validValues([new WeakMap()])
-  .invalidValues(standardValuesExcept("weakMap"));
-
-testTypeWith
   .type(object)
   .validValues([
     {},

@@ -90,15 +90,10 @@ export const array = newType("array", function(object) {
   return Array.isArray(object);
 });
 
-export const set = typeWithInstanceOf(Set, "set");
-export const weakSet = typeWithInstanceOf(WeakSet, "weakSet");
-
 export const list = newType("list", function(object) {
-  return array.$test(object) || set.$test(object) || weakSet.$test(object);
+  return array.$test(object);
 });
 
-export const map = typeWithInstanceOf(Map, "map");
-export const weakMap = typeWithInstanceOf(WeakMap, "weakMap");
 export const object = typeWithTypeOf("object");
 export const func = typeWithTypeOf("function", "func");
 export const date = typeWithInstanceOf(Date, "date");
