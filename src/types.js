@@ -1,225 +1,110 @@
-export const string = {
-    $test: function (object) {
-        return typeof object === 'string';
-    },
-    $name: 'string'
-};
+export const string = typeWithTypeOf('string');
 
-export const number = {
-    $test: function (object) {
-        return typeof object === 'number' && !isNaN(object);
-    },
-    $name: 'number'
-};
+export const number = newType('number', function(object) {
+    return typeof object === 'number' && !isNaN(object);
+});
 
-export const nonPositiveNumber = {
-    $type: number,
-    $test: function (object) {
-        return object <= 0;
-    },
-    $name: 'nonPositiveNumber'
-};
+export const nonPositiveNumber = newType('nonPositiveNumber', function(object) {
+    return object <= 0;
+}, number);
 
-export const negativeNumber = {
-    $type: number,
-    $test: function(object) {
-        return object < 0;
-    },
-    $name: 'negativeNumber'
-};
+export const negativeNumber = newType('negativeNumber', function(object) {
+    return object < 0;
+}, number);
 
-export const nonNegativeNumber = {
-    $type: number,
-    $test: function(object) {
-        return object >= 0;
-    },
-    $name: 'nonNegativeNumber'
-};
+export const nonNegativeNumber = newType('nonNegativeNumber', function(object) {
+    return object >= 0;
+}, number);
 
-export const positiveNumber = {
-    $type: number,
-    $test: function(object) {
-        return object > 0;
-    },
-    $name: 'positiveNumber'
-};
+export const positiveNumber = newType('positiveNumber', function(object) {
+    return object > 0;
+}, number);
 
-export const int = {
-    $type: number,
-    $test: function (object) {
-        return Number.isInteger(object);
-    },
-    $name: 'int'
-};
+export const int = newType('int', function(object) {
+    return Number.isInteger(object);
+}, number);
 
-export const nonPositiveInt = {
-    $type: int,
-    $test: function(object) {
-        return object <= 0;
-    },
-    $name: 'nonPositiveInt'
-};
+export const nonPositiveInt = newType('nonPositiveInt', function(object) {
+    return object <= 0;
+}, int);
 
-export const negativeInt = {
-    $type: int,
-    $test: function(object) {
-        return object < 0;
-    },
-    $name: 'negativeInt'
-};
+export const negativeInt = newType('negativeInt', function(object) {
+    return object < 0;
+}, int);
 
-export const nonNegativeInt = {
-    $type: int,
-    $test: function(object) {
-        return object >= 0;
-    },
-    $name: 'nonNegativeInt'
-};
+export const nonNegativeInt = newType('nonNegativeInt', function(object) {
+    return object >= 0;
+}, int);
 
-export const positiveInt = {
-    $type: int,
-    $test: function(object) {
-        return object > 0;
-    },
-    $name: 'positiveInt'
-};
+export const positiveInt = newType('positiveInt', function(object) {
+    return object > 0;
+}, int);
 
-export const boolean = {
-    $test: function(object) {
-        return typeof object === 'boolean';
-    },
-    $name: 'boolean'
-};
+export const boolean = typeWithTypeOf('boolean');
 
-export const truthy = {
-    $test: function(object) {
-        return !!object;
-    },
-    $name: 'truthy'
-};
+export const truthy = newType('truthy', function(object) {
+    return !!object;
+});
 
-export const falsy = {
-    $test: function(object) {
-        return !object;
-    },
-    $name: 'falsy'
-};
+export const falsy = newType('falsy', function(object) {
+    return !object;
+});
 
-export const array = {
-    $test: function(object) {
-        return Array.isArray(object);
-    },
-    $name: 'array'
-};
+export const array = newType('array', function(object) {
+    return Array.isArray(object);
+});
 
-export const set = {
-    $test: function(object) {
-        return object instanceof Set;
-    },
-    $name: 'set'
-};
+export const set = typeWithInstanceOf(Set, 'set');
+export const weakSet = typeWithInstanceOf(WeakSet, 'weakSet');
 
-export const weakSet = {
-    $test: function(object) {
-        return object instanceof WeakSet;
-    },
-    $name: 'weakSet'
-};
+export const list = newType('list', function(object) {
+    return array.$test(object) || set.$test(object) || weakSet.$test(object);
+});
 
-export const list = {
-    $test: function(object) {
-        return array.$test(object) || set.$test(object) || weakSet.$test(object);
-    },
-    $name: 'list'
-};
+export const map = typeWithInstanceOf(Map, 'map');
+export const weakMap = typeWithInstanceOf(WeakMap, 'weakMap');
+export const object = typeWithTypeOf('object');
+export const func = typeWithTypeOf('function', 'func');
+export const date = typeWithInstanceOf(Date, 'date');
+export const symbol = typeWithTypeOf('symbol');
+export const regexp = typeWithInstanceOf(RegExp, 'regexp');
+export const nullValue = typeWithLiteralValueOf(null, 'nullValue');
+export const undefinedValue = typeWithLiteralValueOf(undefined, 'undefinedValue');
 
-export const map = {
-    $test: function(object) {
-        return object instanceof Map;
-    },
-    $name: 'map'
-};
+export const nanValue = newType('nanValue', function(object) {
+    return Number.isNaN(object);
+});
 
-export const weakMap = {
-    $test: function(object) {
-        return object instanceof WeakMap;
-    },
-    $name: 'weakMap'
-};
+export const any = newType('any', function(object) {
+    return true;
+});
 
-export const object = {
-    $test: function(object) {
-        return object !== null && typeof object === 'object';
-    },
-    $name: 'object'
-};
+function newType($name, $test, $type) {
+    let type = {$test};
 
-export const func = {
-    $test: function(object) {
-        return typeof object === "function";
-    },
-    $name: 'func'
-};
-
-export const date = {
-    $test: function(object) {
-        return object instanceof Date;
-    },
-    $name: 'date'
-};
-
-export const symbol = {
-    $test: function(object) {
-        return typeof object === 'symbol';
-    },
-    $name: 'symbol'
-};
-
-export const regexp = {
-    $test: function(object) {
-        return object instanceof RegExp;
-    },
-    $name: 'regexp'
-};
-
-export const nullValue = {
-    $test: function(object) {
-        return object === null;
-    },
-    $name: 'nullValue'
-};
-
-export const undefinedValue = {
-    $test: function(object) {
-        return object === undefined;
-    },
-    $name: 'undefinedValue'
-};
-
-export const nanValue = {
-    $test: function(object) {
-        return Number.isNaN(object);
-    },
-    $name: 'nanValue'
-};
-
-export const any = {
-    $test: function(object) {
-        return true;
-    },
-    $name: 'any'
-};
-
-export function typeWithInstanceOf(clazz) {
-    let customType = {
-        $test: function(object) {
-            return object !== null && object instanceof clazz;
-        }
-    };
-
-    if(clazz.name) {
-        customType.$name = clazz.name;
+    if($name) {
+        type.$name = $name;
     }
+    if($type) {
+        type.$type = $type;
+    }
+    return type;
+}
 
-    return customType;
+function typeWithLiteralValueOf(value, name) {
+    return newType(name, function(object) {
+        return object === value;
+    });
+}
+
+function typeWithTypeOf(type, name) {
+    return newType(name || type, function(object) {
+        return object !== null && typeof object === type;
+    });
+}
+
+export function typeWithInstanceOf(clazz, name) {
+    return newType(name || clazz.name, function(object) {
+        return object !== null && object instanceof clazz;
+    });
 }

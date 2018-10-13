@@ -310,10 +310,12 @@ rules when comparing objects.
 Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
 
-#### `typeWithInstanceOf(clazz) → Object`
+#### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
 Returns a *type* (an object with a `$test` [constraint](#constraints)) that returns
 *true* if the object is not null and the object is an **instanceof** `clazz`, *false* otherwise.
+If `name` is present, it becomes the `$name` of the resulting type- 
+otherwise the `$name` of the resulting type is set to `clazz.name`.
 
 Usage:
 ```javascript
