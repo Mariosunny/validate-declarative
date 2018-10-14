@@ -98,7 +98,7 @@ test(`ensure ${$META}.uniqueValues array is created for deeply nested object`, (
   expect(schema[$META].uniqueValues["a.b.c.d"]).toEqual([5]);
 });
 
-xtest(`ensure ${$META}.uniqueValues array is created for array`, () => {
+test(`ensure ${$META}.uniqueValues array is created for array`, () => {
   const simpleArraySchema = {
     $element: {
       $unique: true,
@@ -119,7 +119,7 @@ xtest(`ensure ${$META}.uniqueValues array is created for array`, () => {
   verify(simpleArraySchema, [1, 2, 3]);
   expect(simpleArraySchema[$META].uniqueValues["[x]"]).toEqual([1, 2, 3]);
 
-  console.log(verify(multiDimensionalArraySchema, [[[1]]]));
+  verify(multiDimensionalArraySchema, [[[1]]]);
   expect(multiDimensionalArraySchema[$META].uniqueValues["[x][x][x]"]).toEqual([
     1
   ]);

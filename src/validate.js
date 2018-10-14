@@ -167,7 +167,7 @@ function getUniqueContext(context, uniqueValues) {
   if (context === "") {
     context = $ROOT;
   } else {
-    context = context.replace(/\[[0-9]+\]/, "[x]");
+    context = context.replace(/\[[0-9]+\]/g, "[x]");
   }
 
   if (uniqueValues.hasOwnProperty(context)) {
