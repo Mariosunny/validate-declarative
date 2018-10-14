@@ -51,3 +51,17 @@ export const TYPES = [
   number,
   positiveNumber
 ];
+
+export const NUMBER_TYPES = [
+  positiveNumber,
+  nonPositiveNumber,
+  negativeNumber,
+  nonNegativeNumber
+];
+
+export const INT_TYPES = [
+  positiveInt,
+  nonPositiveInt,
+  negativeInt,
+  nonNegativeInt
+];
