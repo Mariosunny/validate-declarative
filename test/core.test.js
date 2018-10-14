@@ -1,5 +1,6 @@
 import { validate, verify } from "../src/validate";
 import { int, string } from "../src/types";
+import { $META } from "../src/keys";
 
 test("test verify returns boolean", () => {
   expect(verify({}, {})).toEqual(true);
@@ -7,6 +8,30 @@ test("test verify returns boolean", () => {
 
 test("test validate returns array", () => {
   expect(validate({}, {})).toEqual([]);
+});
+
+test(`verify or validate adds ${$META} property to schema`, () => {
+  const schema1 = {
+    a: int
+  };
+  const schema2 = {
+    a: int
+  };
+
+  expect(schema1.hasOwnProperty($META)).toBe(false);
+  expect(schema2.hasOwnProperty($META)).toBe(false);
+  verify(schema1, {});
+  validate(schema2, {});
+  expect(schema1.hasOwnProperty($META)).toBe(true);
+  expect(schema2.hasOwnProperty($META)).toBe(true);
+  expect(schema1[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  verify(schema1, {});
+  validate(schema2, {});
+  expect(schema1.hasOwnProperty($META)).toBe(true);
+  expect(schema2.hasOwnProperty($META)).toBe(true);
+  expect(schema1[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
 });
 
 test("test single value", () => {
