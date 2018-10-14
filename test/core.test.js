@@ -10,7 +10,7 @@ test("test validate returns array", () => {
   expect(validate({}, {})).toEqual([]);
 });
 
-test(`verify or validate adds ${$META} property to schema`, () => {
+test(`verify or validate adds $meta property to schema`, () => {
   const schema1 = {
     a: int
   };

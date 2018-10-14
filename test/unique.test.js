@@ -64,7 +64,7 @@ test("ensure duplicate values fail when $unique = true at top level of schema", 
   expect(verify(schema, 6)).toBe(false);
 });
 
-test(`ensure multiple ${$META}.uniqueValues arrays are being created`, () => {
+test(`ensure multiple $meta.uniqueValues arrays are being created`, () => {
   for (let i = 1; i <= 10; i++) {
     let schema = {};
 
@@ -80,7 +80,7 @@ test(`ensure multiple ${$META}.uniqueValues arrays are being created`, () => {
   }
 });
 
-test(`ensure ${$META}.uniqueValues array is created for deeply nested object`, () => {
+test(`ensure $meta.uniqueValues array is created for deeply nested object`, () => {
   const schema = {
     a: {
       b: {
@@ -98,7 +98,7 @@ test(`ensure ${$META}.uniqueValues array is created for deeply nested object`, (
   expect(schema[$META].uniqueValues["a.b.c.d"]).toEqual([5]);
 });
 
-test(`ensure ${$META}.uniqueValues array is created for array`, () => {
+test(`ensure $meta.uniqueValues array is created for array`, () => {
   const simpleArraySchema = {
     $element: {
       $unique: true,
@@ -125,7 +125,7 @@ test(`ensure ${$META}.uniqueValues array is created for array`, () => {
   ]);
 });
 
-test(`ensure values in data are being added to ${$META}.uniqueValues each validation for simple object`, () => {
+test(`ensure values in data are being added to $meta.uniqueValues each validation for simple object`, () => {
   const schema = {
     a: {
       $type: int,
@@ -142,7 +142,7 @@ test(`ensure values in data are being added to ${$META}.uniqueValues each valida
   }
 });
 
-test(`ensure ${$META}.uniqueValues arrays do not contain duplicates`, () => {
+test(`ensure $meta.uniqueValues arrays do not contain duplicates`, () => {
   const schema = {
     a: {
       $type: int,
@@ -202,7 +202,7 @@ test("ensure duplicate values fail when $unique = true for deeply nested objects
   expect(verify(schema, data2)).toBe(false);
 });
 
-test(`ensure values in data are being added to ${$META}.uniqueValues each validation for deeply nested objects`, () => {
+test(`ensure values in data are being added to $meta.uniqueValues each validation for deeply nested objects`, () => {
   const schema = {
     a: {
       b: {

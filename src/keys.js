@@ -4,8 +4,8 @@ export const $OPTIONAL = "$optional";
 export const $UNIQUE = "$unique";
 export const $ELEMENT = "$element";
 export const $NAME = "$name";
-export const $META = "$__meta__";
-export const $ROOT = "$__root__";
+export const $META = Symbol("$meta");
+export const $ROOT = Symbol("$root");
 
 export const $CONSTRAINTS = [$TEST, $TYPE, $OPTIONAL, $UNIQUE];
 
