@@ -1,14 +1,10 @@
-import {
-  verify as _verify,
-  validate as _validate,
-  resetSchema as _resetSchema
-} from "./validate";
+import { verify as _verify, validate as _validate, resetSchema as _resetSchema } from "./validate";
 
 import {
   INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
   MISSING_PROPERTY_ERROR as _MISSING_PROPERTY_ERROR,
   DUPLICATE_PROPERTY_ERROR as _DUPLICATE_PROPERTY_ERROR,
-  EXTRANEOUS_PROPERTY_ERROR as _EXTRANEOUS_PROPERTY_ERROR
+  EXTRANEOUS_PROPERTY_ERROR as _EXTRANEOUS_PROPERTY_ERROR,
 } from "./errors";
 
 import {
@@ -37,7 +33,7 @@ import {
   undefinedValue as _undefinedValue,
   nanValue as _nanValue,
   any as _any,
-  typeWithInstanceOf as _typeWithInstanceOf
+  typeWithInstanceOf as _typeWithInstanceOf,
 } from "./types";
 
 export const validate = _validate;

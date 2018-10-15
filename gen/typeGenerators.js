@@ -22,7 +22,7 @@ import {
   symbol,
   truthy,
   undefinedValue,
-  object
+  object,
 } from "../src/types";
 import { TYPES } from "./types";
 import { choose, pick, randomInt, roll } from "./util";
@@ -33,12 +33,10 @@ const FALSY_VALUES = [false, 0, "", null, undefined, NaN];
 
 addGenerator(string, function() {
   let text = "";
-  let possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let length = randomInt(0, 50) - 10;
 
-  for (let i = 0; i < length; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  for (let i = 0; i < length; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
 
   return text;
 });
@@ -165,9 +163,7 @@ addGenerator(object, function(depth) {
     return generateValue(any);
   }
   for (let i = 0; i < numberOfProperties; i++) {
-    obj[String.fromCharCode(97 + i)] = roll(0.5)
-      ? generateValue(any)
-      : generateValue(object, depth);
+    obj[String.fromCharCode(97 + i)] = roll(0.5) ? generateValue(any) : generateValue(object, depth);
   }
 
   return obj;
@@ -214,13 +210,11 @@ const ANY_TYPES = [
   symbol,
   int,
   string,
-  number
+  number,
 ];
 
 addGenerator(any, function() {
-  return generateValue(
-    choose([...ANY_TYPES].filter(type => type.$name !== any.$name))
-  );
+  return generateValue(choose([...ANY_TYPES].filter(type => type.$name !== any.$name)));
 });
 
 function addGenerator(type, generator) {

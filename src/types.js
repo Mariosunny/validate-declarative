@@ -100,10 +100,7 @@ export const date = typeWithInstanceOf(Date, "date");
 export const symbol = typeWithTypeOf("symbol");
 export const regexp = typeWithInstanceOf(RegExp, "regexp");
 export const nullValue = typeWithLiteralValueOf(null, "nullValue");
-export const undefinedValue = typeWithLiteralValueOf(
-  undefined,
-  "undefinedValue"
-);
+export const undefinedValue = typeWithLiteralValueOf(undefined, "undefinedValue");
 
 export const nanValue = newType("nanValue", function(object) {
   return Number.isNaN(object);

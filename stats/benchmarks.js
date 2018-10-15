@@ -26,11 +26,10 @@ function benchmark(message, schema, data) {
   let averageTime = totalTime / times.length;
 
   console.log(
-    `${message} \n${commaSeparated(ITERATIONS)} validations in ${Math.round(
-      totalTime / times.length
-    )} ms (${((1000 * averageTime) / ITERATIONS).toFixed(
-      3
-    )} μs per validation)\n`
+    `${message} \n${commaSeparated(ITERATIONS)} validations in ${Math.round(totalTime / times.length)} ms (${(
+      (1000 * averageTime) /
+      ITERATIONS
+    ).toFixed(3)} μs per validation)\n`
   );
 }
 

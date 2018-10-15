@@ -6,16 +6,16 @@ import _ from "lodash";
 
 test(`test non-unique constraint does not generate ${DUPLICATE_PROPERTY_ERROR}`, () => {
   const schema = {
-    a: int
+    a: int,
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
   schema.a = {
     $type: int,
-    $unique: false
+    $unique: false,
   };
 
   expect(verify(schema, data)).toBe(true);
@@ -25,14 +25,14 @@ test("test non-unique constraint does not create uniqueValues arrays when $uniqu
   const schema1 = {
     a: {
       $type: int,
-      $unique: false
-    }
+      $unique: false,
+    },
   };
   const schema2 = {
-    a: int
+    a: int,
   };
   let data = {
-    a: 5
+    a: 5,
   };
 
   verify(schema1, data);
@@ -44,11 +44,11 @@ test("ensure duplicate values fail when $unique = true for simple object", () =>
   const schema1 = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema1, data)).toBe(true);
   expect(verify(schema1, data)).toBe(false);
@@ -57,7 +57,7 @@ test("ensure duplicate values fail when $unique = true for simple object", () =>
 test("ensure duplicate values fail when $unique = true at top level of schema", () => {
   const schema = {
     $unique: true,
-    $type: int
+    $type: int,
   };
   expect(verify(schema, 5)).toBe(true);
   expect(verify(schema, 5)).toBe(false);
@@ -72,7 +72,7 @@ test(`ensure multiple $meta.uniqueValues arrays are being created`, () => {
     for (let j = 0; j < i; j++) {
       schema[String.fromCharCode(97 + j)] = {
         $type: string,
-        $unique: true
+        $unique: true,
       };
     }
 
@@ -88,11 +88,11 @@ test(`ensure $meta.uniqueValues array is created for deeply nested object`, () =
         c: {
           d: {
             $type: int,
-            $unique: true
-          }
-        }
-      }
-    }
+            $unique: true,
+          },
+        },
+      },
+    },
   };
 
   verify(schema, { a: { b: { c: { d: 5 } } } });
@@ -103,35 +103,33 @@ test(`ensure $meta.uniqueValues array is created for array`, () => {
   const simpleArraySchema = {
     $element: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
   const multiDimensionalArraySchema = {
     $element: {
       $element: {
         $element: {
           $unique: true,
-          $type: int
-        }
-      }
-    }
+          $type: int,
+        },
+      },
+    },
   };
 
   verify(simpleArraySchema, [1, 2, 3]);
   expect(simpleArraySchema[$META].uniqueValues["[x]"]).toEqual([1, 2, 3]);
 
   verify(multiDimensionalArraySchema, [[[1]]]);
-  expect(multiDimensionalArraySchema[$META].uniqueValues["[x][x][x]"]).toEqual([
-    1
-  ]);
+  expect(multiDimensionalArraySchema[$META].uniqueValues["[x][x][x]"]).toEqual([1]);
 });
 
 test(`ensure values in data are being added to $meta.uniqueValues each validation for simple object`, () => {
   const schema = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
 
   let uniqueValues = [];
@@ -147,21 +145,21 @@ test(`ensure $meta.uniqueValues arrays do not contain duplicates`, () => {
   const schema = {
     a: {
       $type: int,
-      $unique: true
+      $unique: true,
     },
     b: {
       $type: string,
-      $unique: true
+      $unique: true,
     },
     c: {
       $type: nullValue,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   let data = {
     a: 5,
     b: "hello",
-    c: null
+    c: null,
   };
 
   for (let i = 0; i < 10; i++) {
@@ -181,20 +179,20 @@ test("ensure duplicate values fail when $unique = true for deeply nested objects
             e: {
               f: {
                 $type: boolean,
-                $unique: true
-              }
-            }
-          }
-        }
-      }
-    }
+                $unique: true,
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   let data1 = {
-    a: { b: { c: { d: { e: { f: true } } } } }
+    a: { b: { c: { d: { e: { f: true } } } } },
   };
   let data2 = {
-    a: { b: { c: { d: { e: { f: false } } } } }
+    a: { b: { c: { d: { e: { f: false } } } } },
   };
 
   expect(verify(schema, data1)).toBe(true);
@@ -212,20 +210,20 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
             e: {
               f: {
                 $type: int,
-                $unique: true
-              }
-            }
-          }
-        }
-      }
-    }
+                $unique: true,
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   let uniqueValues = [];
 
   for (let i = 0; i < 100; i++) {
     verify(schema, {
-      a: { b: { c: { d: { e: { f: i } } } } }
+      a: { b: { c: { d: { e: { f: i } } } } },
     });
     uniqueValues.push(i);
     expect(schema[$META].uniqueValues["a.b.c.d.e.f"]).toEqual(uniqueValues);
@@ -235,7 +233,7 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
 test(`ensure $unique works even when $element is present at the same level`, () => {
   const schema = {
     $unique: true,
-    $element: int
+    $element: int,
   };
 
   expect(verify(schema, [1, 2, 3])).toBe(true);
@@ -247,8 +245,8 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   const schema = {
     $element: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
 
   expect(verify(_.cloneDeep(schema), [1, 2, 3])).toBe(true);
@@ -259,8 +257,8 @@ test("ensure deep $unique is not ignored", () => {
   const shallowSchema = {
     $type: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
   expect(verify(shallowSchema, 5)).toBe(true);
@@ -274,12 +272,12 @@ test("ensure deep $unique is not ignored", () => {
           $type: {
             $type: {
               $unique: true,
-              $type: int
-            }
-          }
-        }
-      }
-    }
+              $type: int,
+            },
+          },
+        },
+      },
+    },
   };
 
   expect(verify(deepSchema, 5)).toBe(true);
@@ -292,8 +290,8 @@ test("ensure only deepest $unique in the $type chain is ignored", () => {
     $unique: true,
     $type: {
       $unique: false,
-      $type: int
-    }
+      $type: int,
+    },
   };
   expect(verify(uniqueSchema1, 5)).toBe(true);
   expect(verify(uniqueSchema1, 5)).toBe(false);
@@ -304,9 +302,9 @@ test("ensure only deepest $unique in the $type chain is ignored", () => {
       $unique: true,
       $type: {
         $unique: false,
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   expect(verify(uniqueSchema2, 5)).toBe(true);
   expect(verify(uniqueSchema2, 5)).toBe(false);
@@ -316,8 +314,8 @@ test("ensure only deepest $unique in the $type chain is ignored", () => {
     $unique: false,
     $type: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
   expect(verify(nonUniqueSchema1, 5)).toBe(true);
   expect(verify(nonUniqueSchema1, 5)).toBe(true);
@@ -328,9 +326,9 @@ test("ensure only deepest $unique in the $type chain is ignored", () => {
       $unique: false,
       $type: {
         $unique: true,
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   expect(verify(nonUniqueSchema2, 5)).toBe(true);
   expect(verify(nonUniqueSchema2, 5)).toBe(true);
@@ -340,7 +338,7 @@ test("ensure only deepest $unique in the $type chain is ignored", () => {
 test("ensure resetSchema() resets uniqueValues", () => {
   const schema1 = {
     $unique: true,
-    $type: int
+    $type: int,
   };
 
   expect(verify(schema1, 5)).toBe(true);
@@ -352,8 +350,8 @@ test("ensure resetSchema() resets uniqueValues", () => {
   const schema2 = {
     a: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
   expect(verify(schema2, { a: 5 })).toBe(true);

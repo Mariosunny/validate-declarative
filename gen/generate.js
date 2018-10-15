@@ -22,7 +22,7 @@ import {
   symbol,
   truthy,
   undefinedValue,
-  object
+  object,
 } from "../src/types";
 import { choose, randomInt, roll } from "./util";
 import fs from "fs";
@@ -52,17 +52,12 @@ const BASIC_TYPES = [
   int,
   string,
   object,
-  number
+  number,
 ];
 
 const FILEPATH = "./test/complexObjects.js";
 
-const NUMBER_TYPES = [
-  positiveNumber,
-  nonPositiveNumber,
-  negativeNumber,
-  nonNegativeNumber
-];
+const NUMBER_TYPES = [positiveNumber, nonPositiveNumber, negativeNumber, nonNegativeNumber];
 
 const INT_TYPES = [positiveInt, nonPositiveInt, negativeInt, nonNegativeInt];
 
@@ -78,36 +73,19 @@ function chooseType() {
   return type;
 }
 
-function generateSchema(
-  maxDepth,
-  minNumberOfProperties,
-  maxNumberOfProperties,
-  uniqueDone = false,
-  depth = 0
-) {
+function generateSchema(maxDepth, minNumberOfProperties, maxNumberOfProperties, uniqueDone = false, depth = 0) {
   if (roll((maxDepth - depth) / maxDepth)) {
-    let numberOfProperties = randomInt(
-      minNumberOfProperties,
-      maxNumberOfProperties
-    );
+    let numberOfProperties = randomInt(minNumberOfProperties, maxNumberOfProperties);
     let schema = {};
     for (let i = 0; i < numberOfProperties; i++) {
-      let key =
-        String.fromCharCode(97 + Math.floor(i / 26)) +
-        String.fromCharCode(97 + (i % 26));
-      schema[key] = generateSchema(
-        maxDepth,
-        minNumberOfProperties,
-        maxNumberOfProperties,
-        uniqueDone,
-        depth + 1
-      );
+      let key = String.fromCharCode(97 + Math.floor(i / 26)) + String.fromCharCode(97 + (i % 26));
+      schema[key] = generateSchema(maxDepth, minNumberOfProperties, maxNumberOfProperties, uniqueDone, depth + 1);
     }
     return schema;
   } else {
     let type = chooseType();
     let typeSchema = {
-      $type: "type." + type.$name
+      $type: "type." + type.$name,
     };
     if (roll(0.5)) {
       typeSchema.$optional = roll(0.75);
@@ -134,19 +112,11 @@ function generateSchema(
   }
 }
 
-const generateSchemaAndData = unravel(function(
-  objectName,
-  maxDepth,
-  minNumberOfProperties,
-  maxNumberOfProperties
-) {
+const generateSchemaAndData = unravel(function(objectName, maxDepth, minNumberOfProperties, maxNumberOfProperties) {
   let schema =
     `export const ${objectName}Schema = ` +
     util
-      .inspect(
-        generateSchema(maxDepth, minNumberOfProperties, maxNumberOfProperties),
-        { depth: Infinity }
-      )
+      .inspect(generateSchema(maxDepth, minNumberOfProperties, maxNumberOfProperties), { depth: Infinity })
       .replace(/'/g, "");
 
   let data = `export const ${objectName}Data = {}`;
@@ -160,7 +130,7 @@ export default function generate() {
       .objectName("normal")
       .maxDepth(10)
       .minNumberOfProperties(1)
-      .maxNumberOfProperties(5)
+      .maxNumberOfProperties(5),
   ];
 
   fs.writeFileSync(FILEPATH, header + "\n\n" + outputs.join("\n\n"));

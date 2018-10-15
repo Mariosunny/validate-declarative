@@ -40,23 +40,23 @@ describe("isConstantValue", () => {
                 {
                   f: {
                     g: [],
-                    h: 5
-                  }
+                    h: 5,
+                  },
                 },
                 {
-                  i: "hello"
-                }
+                  i: "hello",
+                },
               ],
               j: new Set(),
-              k: new WeakMap()
+              k: new WeakMap(),
             },
-            l: "yes"
-          }
+            l: "yes",
+          },
         },
         m: {
           n: {
-            o: /\w/
-          }
+            o: /\w/,
+          },
         },
         p: [
           {
@@ -64,13 +64,13 @@ describe("isConstantValue", () => {
               {
                 r: [
                   {
-                    s: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+                    s: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
     ).toBe(true);
   });
@@ -87,23 +87,23 @@ describe("isConstantValue", () => {
                 {
                   f: {
                     g: [],
-                    h: 5
-                  }
+                    h: 5,
+                  },
                 },
                 {
-                  i: "hello"
-                }
+                  i: "hello",
+                },
               ],
               j: new Set(),
-              k: new WeakMap()
+              k: new WeakMap(),
             },
-            l: "yes"
-          }
+            l: "yes",
+          },
         },
         m: {
           n: {
-            o: /\w/
-          }
+            o: /\w/,
+          },
         },
         p: [
           {
@@ -111,13 +111,13 @@ describe("isConstantValue", () => {
               {
                 r: [
                   {
-                    s: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+                    s: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
     ).toBe(false);
     expect(
@@ -131,23 +131,23 @@ describe("isConstantValue", () => {
                   $test: 1,
                   f: {
                     g: [],
-                    h: 5
-                  }
+                    h: 5,
+                  },
                 },
                 {
-                  i: "hello"
-                }
+                  i: "hello",
+                },
               ],
               j: new Set(),
-              k: new WeakMap()
+              k: new WeakMap(),
             },
-            l: "yes"
-          }
+            l: "yes",
+          },
         },
         m: {
           n: {
-            o: /\w/
-          }
+            o: /\w/,
+          },
         },
         p: [
           {
@@ -155,13 +155,13 @@ describe("isConstantValue", () => {
               {
                 r: [
                   {
-                    s: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+                    s: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
     ).toBe(true);
   });
@@ -170,17 +170,17 @@ describe("isConstantValue", () => {
     expect(
       isConstantValue({
         a: {
-          $test: 1
-        }
+          $test: 1,
+        },
       })
     ).toBe(false);
     expect(
       isConstantValue({
         a: [
           {
-            $test: 1
-          }
-        ]
+            $test: 1,
+          },
+        ],
       })
     ).toBe(true);
   });
@@ -189,27 +189,27 @@ describe("isConstantValue", () => {
     expect(isConstantValue({})).toBe(true);
     expect(
       isConstantValue({
-        $test: 1
+        $test: 1,
       })
     ).toBe(false);
     expect(
       isConstantValue({
-        $type: 1
+        $type: 1,
       })
     ).toBe(false);
     expect(
       isConstantValue({
-        $optional: 1
+        $optional: 1,
       })
     ).toBe(false);
     expect(
       isConstantValue({
-        $unique: 1
+        $unique: 1,
       })
     ).toBe(false);
     expect(
       isConstantValue({
-        $element: 1
+        $element: 1,
       })
     ).toBe(false);
     expect(
@@ -218,7 +218,7 @@ describe("isConstantValue", () => {
         $type: 1,
         $optional: 1,
         $element: 1,
-        $unique: 1
+        $unique: 1,
       })
     ).toBe(false);
   });
@@ -227,8 +227,8 @@ describe("isConstantValue", () => {
     expect(
       isConstantValue({
         a: {
-          $test: 1
-        }
+          $test: 1,
+        },
       })
     ).toBe(false);
     expect(
@@ -239,13 +239,13 @@ describe("isConstantValue", () => {
               d: {
                 e: {
                   f: {
-                    $test: 1
-                  }
-                }
-              }
-            }
-          }
-        }
+                    $test: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
       })
     ).toBe(false);
   });
@@ -253,39 +253,39 @@ describe("isConstantValue", () => {
   it("should return true for any object with misspelled meta keys", () => {
     expect(
       isConstantValue({
-        test: 1
+        test: 1,
       })
     ).toBe(true);
     expect(
       isConstantValue({
-        type: 1
+        type: 1,
       })
     ).toBe(true);
     expect(
       isConstantValue({
-        optional: 1
+        optional: 1,
       })
     ).toBe(true);
     expect(
       isConstantValue({
-        unique: 1
+        unique: 1,
       })
     ).toBe(true);
     expect(
       isConstantValue({
-        element: 1
+        element: 1,
       })
     ).toBe(true);
     expect(
       isConstantValue({
-        $blahblahblah: 1
+        $blahblahblah: 1,
       })
     ).toBe(true);
   });
 
   it("should return true even when object's prototype contains meta keys", () => {
     let parentObject = {
-      $test: 1
+      $test: 1,
     };
 
     let childObject = Object.create(parentObject);

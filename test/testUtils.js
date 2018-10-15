@@ -1,11 +1,10 @@
 import { validate } from "../src";
-import unravel from "unravel-function";
 import _ from "lodash";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {
     error: errorType,
-    key: path
+    key: path,
   };
   if (value) {
     error.value = value;

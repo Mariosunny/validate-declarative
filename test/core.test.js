@@ -12,10 +12,10 @@ test("test validate returns array", () => {
 
 test(`verify or validate adds $meta property to schema`, () => {
   const schema1 = {
-    a: int
+    a: int,
   };
   const schema2 = {
-    a: int
+    a: int,
   };
 
   expect(schema1.hasOwnProperty($META)).toBe(false);
@@ -41,7 +41,7 @@ test("test single value", () => {
 
 test("test single array", () => {
   let schema = {
-    $element: int
+    $element: int,
   };
   expect(verify(schema, 5)).toBe(false);
   expect(verify(schema, [])).toBe(true);
@@ -51,33 +51,33 @@ test("test single array", () => {
 
 test("test custom type", () => {
   let customType = {
-    $test: object => object.includes("c")
+    $test: object => object.includes("c"),
   };
   let schema = {
-    a: customType
+    a: customType,
   };
   let data = {
-    a: ["a", "b", "c"]
+    a: ["a", "b", "c"],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: ["a", "b", "d"]
+    a: ["a", "b", "d"],
   };
   expect(verify(schema, data)).toBe(false);
 });
 
 test("test literal value", () => {
   let schema = {
-    a: 5
+    a: 5,
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: 6
+    a: 6,
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -86,22 +86,22 @@ test("test literal object", () => {
   let schema = {
     a: {
       b: 5,
-      c: 10
-    }
+      c: 10,
+    },
   };
   let data = {
     a: {
       b: 5,
-      c: 10
-    }
+      c: 10,
+    },
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
     a: {
       b: 6,
-      c: 10
-    }
+      c: 10,
+    },
   };
   expect(verify(schema, data)).toBe(false);
 
@@ -109,20 +109,20 @@ test("test literal object", () => {
     a: {
       b: 5,
       c: 10,
-      d: 5
-    }
+      d: 5,
+    },
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
     a: {
-      b: 5
-    }
+      b: 5,
+    },
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: {}
+    a: {},
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -134,18 +134,18 @@ test("test deeply nested object", () => {
         c: {
           d: {
             e: {
-              f: int
-            }
-          }
+              f: int,
+            },
+          },
         },
         g: {
           h: {
-            i: string
-          }
+            i: string,
+          },
         },
-        j: string
-      }
-    }
+        j: string,
+      },
+    },
   };
   let data = {
     a: {
@@ -153,18 +153,18 @@ test("test deeply nested object", () => {
         c: {
           d: {
             e: {
-              f: 5
-            }
-          }
+              f: 5,
+            },
+          },
         },
         g: {
           h: {
-            i: "hello"
-          }
+            i: "hello",
+          },
         },
-        j: "there"
-      }
-    }
+        j: "there",
+      },
+    },
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -173,17 +173,17 @@ test("test deeply nested object", () => {
       b: {
         c: {
           d: {
-            e: 5
-          }
+            e: 5,
+          },
         },
         g: {
           h: {
-            i: "hello"
-          }
+            i: "hello",
+          },
         },
-        j: "there"
-      }
-    }
+        j: "there",
+      },
+    },
   };
   expect(verify(schema, data)).toBe(false);
 
@@ -193,17 +193,17 @@ test("test deeply nested object", () => {
         c: {
           d: {
             e: {
-              f: 5
-            }
-          }
+              f: 5,
+            },
+          },
         },
         g: {
           h: {
-            i: "hello"
-          }
-        }
-      }
-    }
+            i: "hello",
+          },
+        },
+      },
+    },
   };
   expect(verify(schema, data)).toBe(false);
 
@@ -214,19 +214,19 @@ test("test deeply nested object", () => {
           d: {
             e: {
               f: {
-                g: 5
-              }
-            }
-          }
+                g: 5,
+              },
+            },
+          },
         },
         g: {
           h: {
-            i: "hello"
-          }
+            i: "hello",
+          },
         },
-        j: "there"
-      }
-    }
+        j: "there",
+      },
+    },
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -234,11 +234,11 @@ test("test deeply nested object", () => {
 test("test required key functionality", () => {
   let schema = {
     a: {
-      $type: int
-    }
+      $type: int,
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -249,11 +249,11 @@ test("test required key functionality", () => {
 test("test optional key functionality", () => {
   let schema = {
     a: {
-      $optional: true
-    }
+      $optional: true,
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -262,11 +262,11 @@ test("test optional key functionality", () => {
 
   schema = {
     a: {
-      $optional: false
-    }
+      $optional: false,
+    },
   };
   data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -276,15 +276,15 @@ test("test optional key functionality", () => {
 
 test("test inline type", () => {
   let schema = {
-    a: int
+    a: int,
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: "hello"
+    a: "hello",
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -292,16 +292,16 @@ test("test inline type", () => {
 test("test nested type", () => {
   let schema = {
     a: {
-      $type: int
-    }
+      $type: int,
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: "hello"
+    a: "hello",
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -311,16 +311,16 @@ test("test test without type", () => {
     a: {
       $test: function(object) {
         return /[a-z]/.test(object);
-      }
-    }
+      },
+    },
   };
   let data = {
-    a: "hello"
+    a: "hello",
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: "HELLO"
+    a: "HELLO",
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -331,21 +331,21 @@ test("test type inheritance", () => {
       $type: int,
       $test: function(object) {
         return object === 5;
-      }
-    }
+      },
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: "hello"
+    a: "hello",
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: 6
+    a: 6,
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -354,14 +354,14 @@ test("test unique key functionality", () => {
   let schema = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   let data1 = {
-    a: 5
+    a: 5,
   };
   let data2 = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data1)).toBe(true);
   expect(verify(schema, data2)).toBe(false);
@@ -369,14 +369,14 @@ test("test unique key functionality", () => {
   schema = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   data1 = {
-    a: 5
+    a: 5,
   };
   data2 = {
-    a: 6
+    a: 6,
   };
   expect(verify(schema, data1)).toBe(true);
   expect(verify(schema, data2)).toBe(true);
@@ -384,14 +384,14 @@ test("test unique key functionality", () => {
   schema = {
     a: {
       $type: int,
-      $unique: false
-    }
+      $unique: false,
+    },
   };
   data1 = {
-    a: 5
+    a: 5,
   };
   data2 = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data1)).toBe(true);
   expect(verify(schema, data2)).toBe(true);
@@ -405,13 +405,13 @@ test("test complex object", () => {
           $element: {
             c: {
               d: {
-                $element: int
-              }
-            }
-          }
-        }
-      }
-    }
+                $element: int,
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   let data = [
@@ -420,28 +420,28 @@ test("test complex object", () => {
         b: [
           {
             c: {
-              d: [1, 2, 3]
-            }
-          }
-        ]
-      }
+              d: [1, 2, 3],
+            },
+          },
+        ],
+      },
     },
     {
       a: {
         b: [
           {
             c: {
-              d: []
-            }
-          }
-        ]
-      }
+              d: [],
+            },
+          },
+        ],
+      },
     },
     {
       a: {
-        b: []
-      }
-    }
+        b: [],
+      },
+    },
   ];
 
   expect(verify(schema, [])).toBe(true);
@@ -453,12 +453,12 @@ test("test complex object", () => {
         b: [
           {
             c: {
-              d: [1, 2, "hello"]
-            }
-          }
-        ]
-      }
-    }
+              d: [1, 2, "hello"],
+            },
+          },
+        ],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(false);
@@ -469,15 +469,15 @@ test("test complex object", () => {
         b: [
           {
             c: {
-              d: [1, 2, 3]
-            }
+              d: [1, 2, 3],
+            },
           },
           {
-            d: 5
-          }
-        ]
-      }
-    }
+            d: 5,
+          },
+        ],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(false);
@@ -488,13 +488,13 @@ test("test complex object", () => {
         b: [
           {
             c: {
-              d: [1, 2, 3]
-            }
+              d: [1, 2, 3],
+            },
           },
-          []
-        ]
-      }
-    }
+          [],
+        ],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(false);
@@ -502,9 +502,9 @@ test("test complex object", () => {
   data = [
     {
       a: {
-        b: [1]
-      }
-    }
+        b: [1],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(false);
@@ -512,9 +512,9 @@ test("test complex object", () => {
   data = [
     {
       a: {
-        b: []
-      }
-    }
+        b: [],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(true);
@@ -522,14 +522,14 @@ test("test complex object", () => {
   data = [
     {
       a: {
-        b: []
-      }
+        b: [],
+      },
     },
     {
       a: {
-        b: []
-      }
-    }
+        b: [],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(true);
@@ -537,14 +537,14 @@ test("test complex object", () => {
   data = [
     {
       a: {
-        b: []
-      }
+        b: [],
+      },
     },
     {
       a: {
-        b: [1]
-      }
-    }
+        b: [1],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(false);
@@ -552,20 +552,20 @@ test("test complex object", () => {
   data = [
     {
       a: {
-        b: []
-      }
+        b: [],
+      },
     },
     {
       a: {
         b: [
           {
             c: {
-              d: [1, 2, 3]
-            }
-          }
-        ]
-      }
-    }
+              d: [1, 2, 3],
+            },
+          },
+        ],
+      },
+    },
   ];
 
   expect(verify(schema, data)).toBe(true);

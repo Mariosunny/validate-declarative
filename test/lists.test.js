@@ -4,32 +4,32 @@ test("test basic array functionality", () => {
   let schema = {
     a: {
       $element: {
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   let data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: []
+    a: [],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: [1, 2, "3"]
+    a: [1, 2, "3"],
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: [1, 2, "egg"]
+    a: [1, 2, "egg"],
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -39,12 +39,12 @@ test("test array element uniqueness", () => {
     a: {
       $element: {
         $type: int,
-        $unique: true
-      }
-    }
+        $unique: true,
+      },
+    },
   };
   let data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -52,12 +52,12 @@ test("test array element uniqueness", () => {
     a: {
       $element: {
         $type: int,
-        $unique: true
-      }
-    }
+        $unique: true,
+      },
+    },
   };
   data = {
-    a: [1, 2, 2]
+    a: [1, 2, 2],
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -67,12 +67,12 @@ test("test optional array", () => {
     a: {
       $optional: true,
       $element: {
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   let data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -83,9 +83,9 @@ test("test optional array", () => {
     a: {
       $optional: false,
       $element: {
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   data = {};
   expect(verify(schema, data)).toBe(false);
@@ -95,17 +95,17 @@ test("test custom array element test function", () => {
   let schema = {
     a: {
       $element: {
-        $test: element => /[a-z]/.test(element)
-      }
-    }
+        $test: element => /[a-z]/.test(element),
+      },
+    },
   };
   let data = {
-    a: ["a", "b", "c"]
+    a: ["a", "b", "c"],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: ["a", "b", "0"]
+    a: ["a", "b", "0"],
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -115,17 +115,17 @@ test("confirm optional element is noop", () => {
     a: {
       $element: {
         $type: int,
-        $optional: true
-      }
-    }
+        $optional: true,
+      },
+    },
   };
   let data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: []
+    a: [],
   };
   expect(verify(schema, data)).toBe(true);
 
@@ -133,17 +133,17 @@ test("confirm optional element is noop", () => {
     a: {
       $element: {
         $type: int,
-        $optional: false
-      }
-    }
+        $optional: false,
+      },
+    },
   };
   data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: []
+    a: [],
   };
   expect(verify(schema, data)).toBe(true);
 });
@@ -151,21 +151,21 @@ test("confirm optional element is noop", () => {
 test("test regex test substitution", () => {
   let schema = {
     a: {
-      $test: /[a-z]/
-    }
+      $test: /[a-z]/,
+    },
   };
   let data = {
-    a: "abc"
+    a: "abc",
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: "123"
+    a: "123",
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -175,17 +175,17 @@ test("test $element inclusion does not override $type", () => {
     a: {
       $type: int,
       $element: {
-        $type: string
-      }
-    }
+        $type: string,
+      },
+    },
   };
   let data = {
-    a: ["a", "b", "c"]
+    a: ["a", "b", "c"],
   };
   expect(verify(schema, data)).toBe(false);
 
   data = {
-    a: 5
+    a: 5,
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -195,17 +195,17 @@ test("test $test with array", () => {
     a: {
       $test: object => object.length >= 2,
       $element: {
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
   let data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: [1]
+    a: [1],
   };
   expect(verify(schema, data)).toBe(false);
 });
@@ -214,17 +214,17 @@ test("test multi-dimensional array", () => {
   let schema = {
     a: {
       $element: {
-        $element: int
-      }
-    }
+        $element: int,
+      },
+    },
   };
   let data = {
-    a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: [1, 2, 3]
+    a: [1, 2, 3],
   };
   expect(verify(schema, data)).toBe(false);
 
@@ -232,18 +232,18 @@ test("test multi-dimensional array", () => {
     a: {
       $element: {
         $element: {
-          $element: int
-        }
-      }
-    }
+          $element: int,
+        },
+      },
+    },
   };
   data = {
-    a: [[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]]
+    a: [[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]],
   };
   expect(verify(schema, data)).toBe(true);
 
   data = {
-    a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
   };
   expect(verify(schema, data)).toBe(false);
 });

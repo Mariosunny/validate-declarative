@@ -22,7 +22,7 @@ import {
   string,
   object,
   number,
-  positiveNumber
+  positiveNumber,
 } from "../src/types";
 
 export const TYPES = [
@@ -49,19 +49,9 @@ export const TYPES = [
   string,
   object,
   number,
-  positiveNumber
-];
-
-export const NUMBER_TYPES = [
   positiveNumber,
-  nonPositiveNumber,
-  negativeNumber,
-  nonNegativeNumber
 ];
 
-export const INT_TYPES = [
-  positiveInt,
-  nonPositiveInt,
-  negativeInt,
-  nonNegativeInt
-];
+export const NUMBER_TYPES = [positiveNumber, nonPositiveNumber, negativeNumber, nonNegativeNumber];
+
+export const INT_TYPES = [positiveInt, nonPositiveInt, negativeInt, nonNegativeInt];

@@ -1,33 +1,9 @@
-import {
-  forOwn,
-  hasOwnProperty,
-  isConstantValue,
-  isEqual,
-  isKeyValueObject
-} from "./util";
+import { forOwn, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
 import { Errors } from "./errors";
-import {
-  $TYPE,
-  $TEST,
-  $NAME,
-  $OPTIONAL,
-  $CONSTRAINTS,
-  $ELEMENT,
-  $META,
-  $UNIQUE,
-  $RESERVED_KEYS,
-  $ROOT
-} from "./keys";
+import { $TYPE, $TEST, $NAME, $OPTIONAL, $CONSTRAINTS, $ELEMENT, $META, $UNIQUE, $RESERVED_KEYS, $ROOT } from "./keys";
 import { string, list } from "./types";
 
-function validateData(
-  context,
-  schema,
-  data,
-  errors,
-  allowExtraneous,
-  uniqueValues
-) {
+function validateData(context, schema, data, errors, allowExtraneous, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
     errors
       .invalidValue(context)
@@ -47,34 +23,14 @@ function validateData(
     checkUniqueness(context, schema, data, errors, uniqueValues);
 
     if (hasOwnProperty(schema, $ELEMENT)) {
-      validateArray(
-        context,
-        schema,
-        data,
-        errors,
-        allowExtraneous,
-        uniqueValues
-      );
+      validateArray(context, schema, data, errors, allowExtraneous, uniqueValues);
     } else {
-      validateObject(
-        context,
-        schema,
-        data,
-        errors,
-        allowExtraneous,
-        uniqueValues
-      );
+      validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
     }
   }
 }
 
-function findExtraneousProperties(
-  context,
-  schema,
-  data,
-  errors,
-  allowExtraneous
-) {
+function findExtraneousProperties(context, schema, data, errors, allowExtraneous) {
   if (!allowExtraneous && isKeyValueObject(data)) {
     forOwn(data, function(key) {
       if (!hasOwnProperty(schema, key)) {
@@ -84,26 +40,12 @@ function findExtraneousProperties(
   }
 }
 
-function validateArray(
-  context,
-  schema,
-  data,
-  errors,
-  allowExtraneous,
-  uniqueValues
-) {
+function validateArray(context, schema, data, errors, allowExtraneous, uniqueValues) {
   if (list.$test(data)) {
     let elementSchema = schema[$ELEMENT];
 
     data.forEach(function(element, i) {
-      validateData(
-        context + "[" + i + "]",
-        elementSchema,
-        element,
-        errors,
-        allowExtraneous,
-        uniqueValues
-      );
+      validateData(context + "[" + i + "]", elementSchema, element, errors, allowExtraneous, uniqueValues);
     });
   } else {
     errors
@@ -114,14 +56,7 @@ function validateArray(
   }
 }
 
-function validateObject(
-  context,
-  schema,
-  data,
-  errors,
-  allowExtraneous,
-  uniqueValues
-) {
+function validateObject(context, schema, data, errors, allowExtraneous, uniqueValues) {
   forOwnNonReservedProperty(schema, function(key, value) {
     let newContext = context + (context.length === 0 ? "" : ".") + key;
     let newSchema = value;
@@ -131,14 +66,7 @@ function validateObject(
     if (!isOptional(newSchema) && !dataHasProperty) {
       errors.missingProperty(newContext).add();
     } else if (dataHasProperty) {
-      validateData(
-        newContext,
-        newSchema,
-        newData,
-        errors,
-        allowExtraneous,
-        uniqueValues
-      );
+      validateData(newContext, newSchema, newData, errors, allowExtraneous, uniqueValues);
     }
   });
 }
@@ -224,11 +152,7 @@ function getTypeName(schema) {
 
   if (schema[$NAME]) {
     name = schema[$NAME];
-  } else if (
-    schema[$TEST] &&
-    !schema[$TYPE] &&
-    schema[$TEST] instanceof RegExp
-  ) {
+  } else if (schema[$TEST] && !schema[$TYPE] && schema[$TEST] instanceof RegExp) {
     name = schema[$TEST];
   } else if (schema[$TYPE] && isKeyValueObject(schema[$TYPE])) {
     name = getTypeName(schema[$TYPE]);
@@ -248,7 +172,7 @@ function addElementToContext(context, index) {
 function addMeta(schema) {
   if (!schema.hasOwnProperty($META)) {
     schema[$META] = {
-      uniqueValues: {}
+      uniqueValues: {},
     };
     initializeUniqueValues("", schema, schema[$META].uniqueValues);
   }
@@ -263,17 +187,9 @@ function initializeUniqueValues(context, schema, uniqueValues) {
   } else {
     forOwnNonConstraintProperty(schema, function(key, value) {
       if (key === $ELEMENT) {
-        initializeUniqueValues(
-          addElementToContext(context, "x"),
-          value,
-          uniqueValues
-        );
+        initializeUniqueValues(addElementToContext(context, "x"), value, uniqueValues);
       } else {
-        initializeUniqueValues(
-          addKeyToContext(context, key),
-          value,
-          uniqueValues
-        );
+        initializeUniqueValues(addKeyToContext(context, key), value, uniqueValues);
       }
     });
   }
@@ -308,9 +224,7 @@ export function resetSchema(schema) {
   forOwn(schema[$META].uniqueValues, function(context) {
     schema[$META].uniqueValues[context] = [];
   });
-  Object.getOwnPropertySymbols(schema[$META].uniqueValues).forEach(function(
-    context
-  ) {
+  Object.getOwnPropertySymbols(schema[$META].uniqueValues).forEach(function(context) {
     schema[$META].uniqueValues[context] = [];
   });
 }

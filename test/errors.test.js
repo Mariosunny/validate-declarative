@@ -8,7 +8,7 @@ import {
   nonNegativeInt,
   string,
   verify,
-  validate
+  validate,
 } from "../src";
 import { createError, validateErrors } from "./testUtils";
 
@@ -17,22 +17,22 @@ function getSchema() {
     a: {
       $element: {
         b: 5,
-        c: int
-      }
+        c: int,
+      },
     },
     d: {
       e: {
         f: boolean,
         g: {
           $type: nonNegativeInt,
-          $unique: true
-        }
-      }
+          $unique: true,
+        },
+      },
     },
     h: {
       $type: string,
-      $optional: true
-    }
+      $optional: true,
+    },
   };
 }
 
@@ -41,20 +41,20 @@ function getData() {
     a: [
       {
         b: 5,
-        c: 10
+        c: 10,
       },
       {
         b: 5,
-        c: 12
-      }
+        c: 12,
+      },
     ],
     d: {
       e: {
         f: true,
-        g: 0
-      }
+        g: 0,
+      },
     },
-    h: "hello world"
+    h: "hello world",
   };
 }
 
@@ -80,10 +80,7 @@ test("test missing property ", () => {
   data = getData();
   delete data.a;
   delete data.d.e.f;
-  errors = [
-    createError("a", MISSING_PROPERTY_ERROR),
-    createError("d.e.f", MISSING_PROPERTY_ERROR)
-  ];
+  errors = [createError("a", MISSING_PROPERTY_ERROR), createError("d.e.f", MISSING_PROPERTY_ERROR)];
   validateErrors(schema, data, errors);
 
   schema = getSchema();
@@ -94,7 +91,7 @@ test("test missing property ", () => {
   errors = [
     createError("a", MISSING_PROPERTY_ERROR),
     createError("d.e.f", MISSING_PROPERTY_ERROR),
-    createError("d.e.g", MISSING_PROPERTY_ERROR)
+    createError("d.e.g", MISSING_PROPERTY_ERROR),
   ];
   validateErrors(schema, data, errors);
 
@@ -112,20 +109,14 @@ test("test missing property ", () => {
 
   schema = getSchema();
   data = {};
-  errors = [
-    createError("a", MISSING_PROPERTY_ERROR),
-    createError("d", MISSING_PROPERTY_ERROR)
-  ];
+  errors = [createError("a", MISSING_PROPERTY_ERROR), createError("d", MISSING_PROPERTY_ERROR)];
   validateErrors(schema, data, errors);
 
   schema = getSchema();
   data = getData();
   delete data.a[0].b;
   delete data.a[1].c;
-  errors = [
-    createError("a[0].b", MISSING_PROPERTY_ERROR),
-    createError("a[1].c", MISSING_PROPERTY_ERROR)
-  ];
+  errors = [createError("a[0].b", MISSING_PROPERTY_ERROR), createError("a[1].c", MISSING_PROPERTY_ERROR)];
   validateErrors(schema, data, errors);
 
   schema = getSchema();
@@ -161,16 +152,14 @@ test("test invalid value", () => {
   data.d.e.f = "hi";
   errors = [
     createError("a[0].b", INVALID_VALUE_ERROR, "hello"),
-    createError("d.e.f", INVALID_VALUE_ERROR, "hi", boolean.$name)
+    createError("d.e.f", INVALID_VALUE_ERROR, "hi", boolean.$name),
   ];
   validateErrors(schema, data, errors);
 
   schema = getSchema();
   data = getData();
   data.d.e.g = -1;
-  errors = [
-    createError("d.e.g", INVALID_VALUE_ERROR, -1, nonNegativeInt.$name)
-  ];
+  errors = [createError("d.e.g", INVALID_VALUE_ERROR, -1, nonNegativeInt.$name)];
   validateErrors(schema, data, errors);
 
   schema = getSchema();
@@ -191,7 +180,7 @@ test("test multiple error types", () => {
     createError("a[0].b", MISSING_PROPERTY_ERROR),
     createError("d.e.f", MISSING_PROPERTY_ERROR),
     createError("a[1].b", INVALID_VALUE_ERROR, "hi"),
-    createError("h", INVALID_VALUE_ERROR, 5, string.$name)
+    createError("h", INVALID_VALUE_ERROR, 5, string.$name),
   ];
   validateErrors(schema, data, errors);
   errors.push(createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g));

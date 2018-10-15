@@ -9,13 +9,4 @@ export const $ROOT = Symbol("$root");
 
 export const $CONSTRAINTS = [$TEST, $TYPE, $OPTIONAL, $UNIQUE];
 
-export const $RESERVED_KEYS = [
-  $TEST,
-  $TYPE,
-  $OPTIONAL,
-  $UNIQUE,
-  $ELEMENT,
-  $NAME,
-  $META,
-  $ROOT
-];
+export const $RESERVED_KEYS = [$TEST, $TYPE, $OPTIONAL, $UNIQUE, $ELEMENT, $NAME, $META, $ROOT];

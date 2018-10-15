@@ -18,7 +18,7 @@ Error.prototype.add = function() {
   let error = {
     error: this.type,
     key: this.key,
-    data: this.data
+    data: this.data,
   };
 
   if (this._value !== UNSET) {

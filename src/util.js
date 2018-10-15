@@ -24,10 +24,7 @@ export function forOwn(object, func, condition = () => true) {
 export function isConstantValue(object) {
   if (isKeyValueObject(object)) {
     for (let key in object) {
-      if (
-        object.hasOwnProperty(key) &&
-        ($RESERVED_KEYS.includes(key) || !isConstantValue(object[key]))
-      ) {
+      if (object.hasOwnProperty(key) && ($RESERVED_KEYS.includes(key) || !isConstantValue(object[key]))) {
         return false;
       }
     }
@@ -37,10 +34,6 @@ export function isConstantValue(object) {
 
 export function isKeyValueObject(obj) {
   return (
-    obj !== null &&
-    typeof obj === "object" &&
-    !list.$test(obj) &&
-    !(obj instanceof Map) &&
-    !(obj instanceof WeakMap)
+    obj !== null && typeof obj === "object" && !list.$test(obj) && !(obj instanceof Map) && !(obj instanceof WeakMap)
   );
 }

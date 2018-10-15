@@ -8,7 +8,7 @@ import {
   number,
   boolean,
   typeWithInstanceOf,
-  DUPLICATE_PROPERTY_ERROR
+  DUPLICATE_PROPERTY_ERROR,
 } from "../src";
 import { createError, validateErrors } from "./testUtils";
 
@@ -19,18 +19,18 @@ test("test leading example", () => {
     balance: {
       checkings: {
         $type: number,
-        $optional: true
+        $optional: true,
       },
-      savings: number
-    }
+      savings: number,
+    },
   };
 
   let bankAccount1 = {
     accountHolder: "Susan B. Foo",
     active: true,
     balance: {
-      savings: 39328.03
-    }
+      savings: 39328.03,
+    },
   };
 
   expect(verify(bankAccountSchema, bankAccount1)).toBe(true);
@@ -39,21 +39,16 @@ test("test leading example", () => {
     accountHolder: 1,
     balance: {
       savings: "ten dollars",
-      checkings: 39328.03
-    }
+      checkings: 39328.03,
+    },
   };
 
   expect(verify(bankAccountSchema, bankAccount2)).toBe(false);
 
   let errors = [
     createError("active", MISSING_PROPERTY_ERROR),
-    createError(
-      "balance.savings",
-      INVALID_VALUE_ERROR,
-      "ten dollars",
-      number.$name
-    ),
-    createError("accountHolder", INVALID_VALUE_ERROR, 1, string.$name)
+    createError("balance.savings", INVALID_VALUE_ERROR, "ten dollars", number.$name),
+    createError("accountHolder", INVALID_VALUE_ERROR, 1, string.$name),
   ];
   validateErrors(bankAccountSchema, bankAccount2, errors);
 });
@@ -62,7 +57,7 @@ test("test overview example", () => {
   const tweetSchema = {
     $test: function(object) {
       return typeof object === "string" && object.length <= 24;
-    }
+    },
   };
 
   let myTweet1 = "Hello world!";
@@ -92,16 +87,16 @@ test("test 'Validating a single value' example", () => {
 test("test 'Validating an object' example", () => {
   const courseSchema = {
     courseName: {
-      $test: /^[A-Za-z0-9 ]+$/
+      $test: /^[A-Za-z0-9 ]+$/,
     },
     roomCapacity: nonNegativeInt,
-    professor: string
+    professor: string,
   };
 
   let objectOrientedCourse = {
     courseName: "Object Oriented Programming",
     roomCapacity: 30,
-    professor: "Dr. Placeholder"
+    professor: "Dr. Placeholder",
   };
 
   expect(verify(courseSchema, objectOrientedCourse)).toBe(true);
@@ -110,17 +105,17 @@ test("test 'Validating an object' example", () => {
 test("test 'Validating an object with constant properties' example", () => {
   const sedanSchema = {
     wheels: 4,
-    model: string
+    model: string,
   };
 
   let car1 = {
     wheels: 4,
-    model: "Chrysler 300"
+    model: "Chrysler 300",
   };
 
   let car2 = {
     wheels: 5,
-    model: "Chevrolet Impala"
+    model: "Chevrolet Impala",
   };
 
   expect(verify(sedanSchema, car1)).toBe(true);
@@ -141,11 +136,11 @@ test("test 'Creating a custom type' example", () => {
       }
       return object !== 1 && object !== 0;
     },
-    $name: "primeNumber"
+    $name: "primeNumber",
   };
 
   const schema = {
-    a: primeNumber
+    a: primeNumber,
   };
 
   expect(verify(schema, { a: 7 })).toBe(true);
@@ -160,18 +155,14 @@ test("test 'Validating an array' example", () => {
     voxels: {
       $element: {
         $element: {
-          $element: int
-        }
-      }
-    }
+          $element: int,
+        },
+      },
+    },
   };
 
   let data = {
-    voxels: [
-      [[123, 48, 20], [93, 184, 230]],
-      [[101, 200, 228], [76, 134, 120]],
-      [[4, 67, 77], [129, 166, 249]]
-    ]
+    voxels: [[[123, 48, 20], [93, 184, 230]], [[101, 200, 228], [76, 134, 120]], [[4, 67, 77], [129, 166, 249]]],
   };
 
   expect(verify(schema, data)).toBe(true);
@@ -189,11 +180,11 @@ test("test 'Validating a complex object' example", () => {
           $optional: true,
           $element: {
             name: string,
-            relationship: string
-          }
-        }
-      }
-    }
+            relationship: string,
+          },
+        },
+      },
+    },
   };
 
   let industryTech = {
@@ -206,19 +197,19 @@ test("test 'Validating a complex object' example", () => {
         beneficiaries: [
           {
             name: "Nancy Workingman",
-            relationship: "Mother"
+            relationship: "Mother",
           },
           {
             name: "Bob Workingman",
-            relationship: "Father"
-          }
-        ]
+            relationship: "Father",
+          },
+        ],
       },
       {
         name: "Fred T. Orphan",
-        salary: 38000
-      }
-    ]
+        salary: 38000,
+      },
+    ],
   };
 
   expect(verify(companySchema, industryTech)).toBe(true);
@@ -245,19 +236,19 @@ test("test $test example #1", () => {
   let countryCode = {
     $test: function(object) {
       return typeof object === "string" && object.length === 3;
-    }
+    },
   };
 
   const countrySchema = {
-    country: countryCode
+    country: countryCode,
   };
 
   let country1 = {
-    country: "USA"
+    country: "USA",
   };
 
   let country2 = {
-    country: "Brazil"
+    country: "Brazil",
   };
 
   expect(verify(countrySchema, country1)).toBe(true);
@@ -269,27 +260,25 @@ test("test $test example #1", () => {
 
 test("test $test example #2", () => {
   const countryCode = {
-    $test: /^[A-Za-z]{3}$/
+    $test: /^[A-Za-z]{3}$/,
   };
 
   const countrySchema = {
-    country: countryCode
+    country: countryCode,
   };
 
   let country1 = {
-    country: "USA"
+    country: "USA",
   };
 
   let country2 = {
-    country: "Brazil"
+    country: "Brazil",
   };
 
   expect(verify(countrySchema, country1)).toBe(true);
   expect(verify(countrySchema, country2)).toBe(false);
 
-  let errors = [
-    createError("country", INVALID_VALUE_ERROR, "Brazil", countryCode.$test)
-  ];
+  let errors = [createError("country", INVALID_VALUE_ERROR, "Brazil", countryCode.$test)];
   validateErrors(countrySchema, country2, errors);
 });
 
@@ -306,11 +295,11 @@ test("test $type example #1", () => {
           .join("")
       );
     },
-    $name: "palindrome"
+    $name: "palindrome",
   };
 
   const schema = {
-    streetNumber: palindrome
+    streetNumber: palindrome,
   };
 
   expect(verify(schema, { streetNumber: 12321 })).toBe(true);
@@ -321,25 +310,25 @@ test("test $type example #2", () => {
   const array_ = {
     $test: function(object) {
       return Array.isArray(object);
-    }
+    },
   };
 
   const smallArray = {
     $type: array_,
     $test: function(object) {
       return object.length < 5;
-    }
+    },
   };
 
   const smallNoDuplicatesArray = {
     $type: smallArray,
     $test: function(object) {
       return new Set(object).size === object.length;
-    }
+    },
   };
 
   const schema = {
-    cars: smallNoDuplicatesArray
+    cars: smallNoDuplicatesArray,
   };
 
   expect(verify(schema, { cars: [] })).toBe(true);
@@ -357,17 +346,17 @@ test("test $optional example", () => {
     foo: int,
     bar: {
       $type: string,
-      $optional: true
-    }
+      $optional: true,
+    },
   };
 
   let data1 = {
     foo: -100,
-    bar: "hello world"
+    bar: "hello world",
   };
 
   let data2 = {
-    foo: 5
+    foo: 5,
   };
 
   expect(verify(schema, data1)).toBe(true);
@@ -378,27 +367,25 @@ test("test $unique example", () => {
   const playerSchema = {
     username: {
       $type: string,
-      $unique: true
+      $unique: true,
     },
-    password: string
+    password: string,
   };
 
   let player1 = {
     username: "Mariosunny",
-    password: "123abc"
+    password: "123abc",
   };
 
   let player2 = {
     username: "Mariosunny",
-    password: "password1"
+    password: "password1",
   };
 
   expect(verify(playerSchema, player1)).toBe(true);
   expect(verify(playerSchema, player2)).toBe(false);
 
-  let errors = [
-    createError("username", DUPLICATE_PROPERTY_ERROR, "Mariosunny")
-  ];
+  let errors = [createError("username", DUPLICATE_PROPERTY_ERROR, "Mariosunny")];
   validateErrors(playerSchema, player2, errors);
 });
 
@@ -408,9 +395,9 @@ test("test $element example", () => {
     menuItems: {
       $element: {
         name: string,
-        price: number
-      }
-    }
+        price: number,
+      },
+    },
   };
 
   let restaurant1 = {
@@ -418,13 +405,13 @@ test("test $element example", () => {
     menuItems: [
       {
         name: "Cheeze Pizza",
-        price: 12.99
+        price: 12.99,
       },
       {
         name: "Beef Stew",
-        price: 7.5
-      }
-    ]
+        price: 7.5,
+      },
+    ],
   };
 
   expect(verify(restaurantSchema, restaurant1)).toBe(true);

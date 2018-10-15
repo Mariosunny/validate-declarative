@@ -29,7 +29,7 @@ import {
   undefinedValue,
   nanValue,
   any,
-  typeWithInstanceOf
+  typeWithInstanceOf,
 } from "../src/types";
 import unravel from "unravel-function";
 import _ from "lodash";
@@ -54,7 +54,7 @@ class TestClass {
   constructor() {}
 }
 const testObject = {
-  func() {}
+  func() {},
 };
 
 const standardValues = {
@@ -81,7 +81,7 @@ const standardValues = {
   newFunc: new Function("a", "return a"),
   regexp: /\w+/,
   array: [],
-  newArray: new Array()
+  newArray: new Array(),
 };
 
 function standardValuesExcept(...exceptions) {
@@ -101,109 +101,55 @@ testTypeWith
 
 testTypeWith
   .type(number)
-  .validValues([
-    -Number.MAX_VALUE,
-    Number.MAX_VALUE,
-    -5,
-    0,
-    5,
-    7 / 3,
-    8.4,
-    Infinity,
-    -Infinity
-  ])
-  .invalidValues(
-    standardValuesExcept("number", "int", "infinity", "negativeInfinity")
-  );
+  .validValues([-Number.MAX_VALUE, Number.MAX_VALUE, -5, 0, 5, 7 / 3, 8.4, Infinity, -Infinity])
+  .invalidValues(standardValuesExcept("number", "int", "infinity", "negativeInfinity"));
 
 testTypeWith
   .type(nonPositiveNumber)
   .validValues([-Infinity, -Number.MAX_VALUE, -5.5, 0])
-  .invalidValues(
-    standardValuesExcept("number", "int", "infinity", "negativeInfinity")
-  );
+  .invalidValues(standardValuesExcept("number", "int", "infinity", "negativeInfinity"));
 
 testTypeWith
   .type(negativeNumber)
   .validValues([-Infinity, -Number.MAX_VALUE, -5.5, -Number.MIN_VALUE])
-  .invalidValues(
-    standardValuesExcept("number", "int", "infinity", "negativeInfinity")
-  );
+  .invalidValues(standardValuesExcept("number", "int", "infinity", "negativeInfinity"));
 
 testTypeWith
   .type(nonNegativeNumber)
   .validValues([0, 5.5, Number.MAX_VALUE, Infinity])
-  .invalidValues(
-    standardValuesExcept("number", "int", "infinity", "negativeInfinity")
-  );
+  .invalidValues(standardValuesExcept("number", "int", "infinity", "negativeInfinity"));
 
 testTypeWith
   .type(positiveNumber)
   .validValues([Number.MIN_VALUE, 5.5, Number.MAX_VALUE, Infinity])
-  .invalidValues(
-    standardValuesExcept("number", "int", "infinity", "negativeInfinity")
-  );
+  .invalidValues(standardValuesExcept("number", "int", "infinity", "negativeInfinity"));
 
 testTypeWith
   .type(int)
-  .validValues([
-    Number.MIN_SAFE_INTEGER,
-    -1,
-    0,
-    1,
-    100000,
-    Number.MAX_SAFE_INTEGER,
-    Number.MAX_VALUE
-  ])
+  .validValues([Number.MIN_SAFE_INTEGER, -1, 0, 1, 100000, Number.MAX_SAFE_INTEGER, Number.MAX_VALUE])
   .invalidValues(standardValuesExcept("int").concat([Number.MIN_VALUE]));
 
 testTypeWith
   .type(nonPositiveInt)
   .validValues([Number.MIN_SAFE_INTEGER, -1, 0])
-  .invalidValues(
-    standardValuesExcept("int").concat([
-      Number.MIN_VALUE,
-      1,
-      Number.MAX_VALUE,
-      Number.MAX_SAFE_INTEGER
-    ])
-  );
+  .invalidValues(standardValuesExcept("int").concat([Number.MIN_VALUE, 1, Number.MAX_VALUE, Number.MAX_SAFE_INTEGER]));
 
 testTypeWith
   .type(negativeInt)
   .validValues([Number.MIN_SAFE_INTEGER, -1])
   .invalidValues(
-    standardValuesExcept("int").concat([
-      Number.MIN_VALUE,
-      0,
-      1,
-      Number.MAX_VALUE,
-      Number.MAX_SAFE_INTEGER
-    ])
+    standardValuesExcept("int").concat([Number.MIN_VALUE, 0, 1, Number.MAX_VALUE, Number.MAX_SAFE_INTEGER])
   );
 
 testTypeWith
   .type(nonNegativeInt)
   .validValues([0, 1, 100000, Number.MAX_SAFE_INTEGER, Number.MAX_VALUE])
-  .invalidValues(
-    standardValuesExcept("int").concat([
-      -1,
-      Number.MIN_SAFE_INTEGER,
-      Number.MIN_VALUE
-    ])
-  );
+  .invalidValues(standardValuesExcept("int").concat([-1, Number.MIN_SAFE_INTEGER, Number.MIN_VALUE]));
 
 testTypeWith
   .type(positiveInt)
   .validValues([1, 100000, Number.MAX_SAFE_INTEGER, Number.MAX_VALUE])
-  .invalidValues(
-    standardValuesExcept("int").concat([
-      -1,
-      0,
-      Number.MIN_SAFE_INTEGER,
-      Number.MIN_VALUE
-    ])
-  );
+  .invalidValues(standardValuesExcept("int").concat([-1, 0, Number.MIN_SAFE_INTEGER, Number.MIN_VALUE]));
 
 testTypeWith
   .type(boolean)
@@ -212,39 +158,18 @@ testTypeWith
 
 testTypeWith
   .type(truthy)
-  .validValues(
-    standardValuesExcept(
-      "emptyString",
-      "nullValue",
-      "undefinedValue",
-      "nanValue"
-    ).concat([true])
-  )
+  .validValues(standardValuesExcept("emptyString", "nullValue", "undefinedValue", "nanValue").concat([true]))
   .invalidValues([false, 0, "", null, undefined, NaN]);
 
 testTypeWith
   .type(falsy)
   .validValues([false, 0, "", null, undefined, NaN])
-  .invalidValues(
-    standardValuesExcept(
-      "emptyString",
-      "nullValue",
-      "undefinedValue",
-      "nanValue"
-    ).concat([true])
-  );
+  .invalidValues(standardValuesExcept("emptyString", "nullValue", "undefinedValue", "nanValue").concat([true]));
 
 testTypeWith
   .type(array)
   .validValues(
-    [
-      [],
-      [[]],
-      [[[[[[[[[]]]]]]]]],
-      new Array(),
-      new Array([]),
-      new Array([[[[[[[[[]]]]]]]]])
-    ]
+    [[], [[]], [[[[[[[[[]]]]]]]]], new Array(), new Array([]), new Array([[[[[[[[[]]]]]]]]])]
       .concat(
         _.values(standardValues)
           .concat({ a: 5 })
@@ -278,7 +203,7 @@ testTypeWith
     new Date(),
     [],
     new Array(),
-    /\w+/
+    /\w+/,
   ])
   .invalidValues([
     5.5,
@@ -294,7 +219,7 @@ testTypeWith
     function() {},
     () => {},
     testObject.func,
-    new Function("a", "return a")
+    new Function("a", "return a"),
   ]);
 
 testTypeWith
@@ -313,51 +238,27 @@ testTypeWith
     parseInt,
     String,
     Number,
-    Boolean
+    Boolean,
   ])
-  .invalidValues(
-    standardValuesExcept("func", "fatArrowFunc", "embeddedFunc", "newFunc")
-  );
+  .invalidValues(standardValuesExcept("func", "fatArrowFunc", "embeddedFunc", "newFunc"));
 
 testTypeWith
   .type(date)
-  .validValues([
-    new Date(),
-    new Date(null),
-    new Date("hello world"),
-    new Date(2018, 11, 24, 10, 33, 30, 0)
-  ])
+  .validValues([new Date(), new Date(null), new Date("hello world"), new Date(2018, 11, 24, 10, 33, 30, 0)])
   .invalidValues(
-    standardValuesExcept("date").concat([
-      Date,
-      Date(),
-      Date.now(),
-      "Sat Oct 06 2018 17:43:52 GMT-0500 (CDT)"
-    ])
+    standardValuesExcept("date").concat([Date, Date(), Date.now(), "Sat Oct 06 2018 17:43:52 GMT-0500 (CDT)"])
   );
 
 let fooSymbol = Symbol("foo");
 
 testTypeWith
   .type(symbol)
-  .validValues([
-    Symbol(),
-    Symbol(null),
-    fooSymbol,
-    Symbol.for(null),
-    Symbol.for("foo")
-  ])
+  .validValues([Symbol(), Symbol(null), fooSymbol, Symbol.for(null), Symbol.for("foo")])
   .invalidValues(standardValuesExcept("symbol").concat([Object(Symbol())]));
 
 testTypeWith
   .type(regexp)
-  .validValues([
-    /./,
-    /./gimuy,
-    new RegExp("."),
-    new RegExp(".", "yimug"),
-    /^\(*\d{3}\)*( |-)*\d{3}( |-)*\d{4}$/
-  ])
+  .validValues([/./, /./gimuy, new RegExp("."), new RegExp(".", "yimug"), /^\(*\d{3}\)*( |-)*\d{3}( |-)*\d{4}$/])
   .invalidValues(standardValuesExcept("regexp"));
 
 testTypeWith
@@ -406,7 +307,7 @@ test("test typeWithInstanceOf", () => {
     ArrayBuffer,
     SharedArrayBuffer,
     Promise,
-    TestClass
+    TestClass,
   ];
 
   let instances = [
@@ -434,7 +335,7 @@ test("test typeWithInstanceOf", () => {
     new ArrayBuffer(),
     new SharedArrayBuffer(),
     new Promise(function() {}),
-    new TestClass()
+    new TestClass(),
   ];
 
   classes.forEach(function(clazz, i) {

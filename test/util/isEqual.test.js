@@ -117,9 +117,7 @@ describe("isEqual", () => {
     expect(isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
     expect(isEqual([[1], 2, 3], [[1], 2, 3])).toBe(true);
     expect(isEqual([[[[1]]], [[2]], [3]], [[[[1]]], [[2]], [3]])).toBe(true);
-    expect(isEqual([[[[[[[[[[[[]]]]]]]]]]]], [[[[[[[[[[[[]]]]]]]]]]]])).toBe(
-      true
-    );
+    expect(isEqual([[[[[[[[[[[[]]]]]]]]]]]], [[[[[[[[[[[[]]]]]]]]]]]])).toBe(true);
   });
 
   it("should return false for non-equivalent arrays", () => {
@@ -132,9 +130,7 @@ describe("isEqual", () => {
     expect(isEqual([1, 2, 3], ["1", "2", "3"])).toBe(false);
     expect(isEqual([[1], 2, 3], [1, 2, 3])).toBe(false);
     expect(isEqual([NaN], [NaN])).toBe(false);
-    expect(isEqual([[[[[[[[[[[[]]]]]]]]]]]], [[[[[[[[[[[]]]]]]]]]]])).toBe(
-      false
-    );
+    expect(isEqual([[[[[[[[[[[[]]]]]]]]]]]], [[[[[[[[[[[]]]]]]]]]]])).toBe(false);
   });
 
   it("should return true for equivalent objects", () => {
@@ -147,12 +143,7 @@ describe("isEqual", () => {
     expect(isEqual(new Date(1), new Date(1))).toBe(true);
     expect(isEqual({}, {})).toBe(true);
     expect(isEqual({ a: 5 }, { a: 5 })).toBe(true);
-    expect(
-      isEqual(
-        { a: { a: { a: { a: { a: 5 } } } } },
-        { a: { a: { a: { a: { a: 5 } } } } }
-      )
-    ).toBe(true);
+    expect(isEqual({ a: { a: { a: { a: { a: 5 } } } } }, { a: { a: { a: { a: { a: 5 } } } } })).toBe(true);
   });
 
   it("should return false for non-equivalent objects", () => {
@@ -166,12 +157,7 @@ describe("isEqual", () => {
     expect(isEqual(new Date(0), new Date(1))).toBe(false);
     expect(isEqual(Symbol(), Symbol())).toBe(false);
     expect(isEqual({ a: 5 }, { a: 6 })).toBe(false);
-    expect(
-      isEqual(
-        { a: { a: { a: { a: { a: 5 } } } } },
-        { a: { a: { a: { a: 5 } } } }
-      )
-    ).toBe(false);
+    expect(isEqual({ a: { a: { a: { a: { a: 5 } } } } }, { a: { a: { a: { a: 5 } } } })).toBe(false);
   });
 
   it("should return true for equivalent complex object", () => {
@@ -182,14 +168,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -199,16 +185,16 @@ describe("isEqual", () => {
                 [
                   {
                     h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
       },
-      true
+      true,
     ];
     let object2 = [
       {
@@ -217,14 +203,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -234,16 +220,16 @@ describe("isEqual", () => {
                 [
                   {
                     h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
       },
-      true
+      true,
     ];
     expect(isEqual(object1, object2)).toBe(true);
   });
@@ -256,190 +242,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
-      },
-      {
-        g: [
-          [
-            [
-              [
-                [
-                  {
-                    h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
-      },
-      true
-    ];
-    let object2 = [
-      {
-        a: new Date(1),
-        b: [
-          {
-            c: 5,
-            d: {
-              e: ""
-            }
-          },
-          {
-            f: new Set()
-          },
-          new Date(10000)
-        ]
-      },
-      {
-        g: [
-          [
-            [
-              [
-                [
-                  {
-                    h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
-      }
-    ];
-    let object3 = [
-      {
-        a: new Date(1),
-        b: [
-          {
-            c: 5,
-            d: {
-              e: "h"
-            }
-          },
-          {
-            f: new Set()
-          },
-          new Date(10000)
-        ]
-      },
-      {
-        g: [
-          [
-            [
-              [
-                [
-                  {
-                    h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
-      },
-      true
-    ];
-    let object4 = [
-      {
-        a: new Date(1),
-        b: [
-          {
-            c: 5,
-            d: {
-              e: ""
-            }
-          },
-          {
-            f: new Set()
-          },
-          new Date(10000)
-        ]
-      },
-      {
-        g: [
-          [
-            [
-              [
-                [
-                  {
-                    h: {
-                      i: 100.00002
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
-      },
-      true
-    ];
-    let object5 = [
-      {
-        a: new Date(1),
-        b: [
-          {
-            c: 5,
-            d: {
-              e: ""
-            }
-          },
-          {
-            f: new Set()
-          },
-          new Date(10000)
-        ]
-      },
-      {
-        g: [
-          [
-            [
-              [
-                [
-                  [
-                    {
-                      h: {
-                        i: 100.00001
-                      }
-                    }
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      },
-      true
-    ];
-    let object6 = [
-      {
-        a: new Date(1),
-        b: [
-          {
-            c: 5,
-            d: {
-              e: ""
-            }
-          },
-          {
-            f: new Set()
-          },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -450,32 +260,31 @@ describe("isEqual", () => {
                   {
                     h: {
                       i: 100.00001,
-                      j: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
       },
-      true
+      true,
     ];
-    let object7 = [
+    let object2 = [
       {
         a: new Date(1),
         b: [
           {
-            c: 6,
+            c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -485,16 +294,193 @@ describe("isEqual", () => {
                 [
                   {
                     h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
       },
-      true
+    ];
+    let object3 = [
+      {
+        a: new Date(1),
+        b: [
+          {
+            c: 5,
+            d: {
+              e: "h",
+            },
+          },
+          {
+            f: new Set(),
+          },
+          new Date(10000),
+        ],
+      },
+      {
+        g: [
+          [
+            [
+              [
+                [
+                  {
+                    h: {
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
+      true,
+    ];
+    let object4 = [
+      {
+        a: new Date(1),
+        b: [
+          {
+            c: 5,
+            d: {
+              e: "",
+            },
+          },
+          {
+            f: new Set(),
+          },
+          new Date(10000),
+        ],
+      },
+      {
+        g: [
+          [
+            [
+              [
+                [
+                  {
+                    h: {
+                      i: 100.00002,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
+      true,
+    ];
+    let object5 = [
+      {
+        a: new Date(1),
+        b: [
+          {
+            c: 5,
+            d: {
+              e: "",
+            },
+          },
+          {
+            f: new Set(),
+          },
+          new Date(10000),
+        ],
+      },
+      {
+        g: [
+          [
+            [
+              [
+                [
+                  [
+                    {
+                      h: {
+                        i: 100.00001,
+                      },
+                    },
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
+      true,
+    ];
+    let object6 = [
+      {
+        a: new Date(1),
+        b: [
+          {
+            c: 5,
+            d: {
+              e: "",
+            },
+          },
+          {
+            f: new Set(),
+          },
+          new Date(10000),
+        ],
+      },
+      {
+        g: [
+          [
+            [
+              [
+                [
+                  {
+                    h: {
+                      i: 100.00001,
+                      j: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
+      true,
+    ];
+    let object7 = [
+      {
+        a: new Date(1),
+        b: [
+          {
+            c: 6,
+            d: {
+              e: "",
+            },
+          },
+          {
+            f: new Set(),
+          },
+          new Date(10000),
+        ],
+      },
+      {
+        g: [
+          [
+            [
+              [
+                [
+                  {
+                    h: {
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
+      true,
     ];
     let object8 = [
       {
@@ -503,14 +489,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -520,16 +506,16 @@ describe("isEqual", () => {
                 [
                   {
                     i: {
-                      h: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
+                      h: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
       },
-      true
+      true,
     ];
     let object9 = [
       {
@@ -538,14 +524,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       true,
       {
@@ -556,15 +542,15 @@ describe("isEqual", () => {
                 [
                   {
                     h: {
-                      i: 100.00001
-                    }
-                  }
-                ]
-              ]
-            ]
-          ]
-        ]
-      }
+                      i: 100.00001,
+                    },
+                  },
+                ],
+              ],
+            ],
+          ],
+        ],
+      },
     ];
     let object10 = [
       {
@@ -573,14 +559,14 @@ describe("isEqual", () => {
           {
             c: 5,
             d: {
-              e: ""
-            }
+              e: "",
+            },
           },
           {
-            f: new Set()
+            f: new Set(),
           },
-          new Date(10000)
-        ]
+          new Date(10000),
+        ],
       },
       {
         g: [
@@ -589,15 +575,15 @@ describe("isEqual", () => {
               [
                 {
                   h: {
-                    i: 100.00001
-                  }
-                }
-              ]
-            ]
-          ]
-        ]
+                    i: 100.00001,
+                  },
+                },
+              ],
+            ],
+          ],
+        ],
       },
-      true
+      true,
     ];
     expect(isEqual(object1, object2)).toBe(false);
     expect(isEqual(object1, object3)).toBe(false);
