@@ -1,7 +1,8 @@
-import { verify } from "../src/validate";
+import { resetSchema, verify } from "../src/validate";
 import { int, string, nullValue, boolean } from "../src/types";
-import { $META } from "../src/keys";
+import { $META, $ROOT } from "../src/keys";
 import { DUPLICATE_PROPERTY_ERROR } from "../src/errors";
+import _ from "lodash";
 
 test(`test non-unique constraint does not generate ${DUPLICATE_PROPERTY_ERROR}`, () => {
   const schema = {
@@ -229,4 +230,51 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
     uniqueValues.push(i);
     expect(schema[$META].uniqueValues["a.b.c.d.e.f"]).toEqual(uniqueValues);
   }
+});
+
+xtest(`ensure values in data are being added to $meta.uniqueValues each validation for arrays`, () => {
+  const schema1 = {
+    $element: {
+      $type: int,
+      $unique: true
+    }
+  };
+
+  expect(verify(_.cloneDeep(schema1), [1, 2, 3])).toBe(true);
+  expect(verify(_.cloneDeep(schema1), [1, 1, 3])).toBe(false);
+
+  const schema2 = {
+    $unique: true,
+    $element: int
+  };
+
+  expect(verify(schema2, [1, 2, 3])).toBe(true);
+  expect(verify(schema2, [1, 2, 2])).toBe(true);
+  expect(verify(schema2, [1, 2, 3])).toBe(false);
+});
+
+test("ensure resetSchema() resets uniqueValues", () => {
+  const schema1 = {
+    $unique: true,
+    $type: int
+  };
+
+  expect(verify(schema1, 5)).toBe(true);
+  expect(verify(schema1, 5)).toBe(false);
+  resetSchema(schema1);
+  expect(verify(schema1, 5)).toBe(true);
+  expect(verify(schema1, 5)).toBe(false);
+
+  const schema2 = {
+    a: {
+      $unique: true,
+      $type: int
+    }
+  };
+
+  expect(verify(schema2, { a: 5 })).toBe(true);
+  expect(verify(schema2, { a: 5 })).toBe(false);
+  resetSchema(schema2);
+  expect(verify(schema2, { a: 5 })).toBe(true);
+  expect(verify(schema2, { a: 5 })).toBe(false);
 });

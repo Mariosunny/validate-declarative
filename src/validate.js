@@ -299,4 +299,9 @@ export function resetSchema(schema) {
   forOwn(schema[$META].uniqueValues, function(context) {
     schema[$META].uniqueValues[context] = [];
   });
+  Object.getOwnPropertySymbols(schema[$META].uniqueValues).forEach(function(
+    context
+  ) {
+    schema[$META].uniqueValues[context] = [];
+  });
 }
