@@ -75,7 +75,7 @@ A schema describes the structure of some data.
 ```javascript
 // a schema that describes a tweet
 const tweetSchema = {
-  $test: function(object) {
+  $test(object) {
     return typeof object === 'string' && object.length <= 24;
   }
 };
