@@ -75,24 +75,26 @@ A schema describes the structure of some data.
 ```javascript
 // a schema that describes a tweet
 const tweetSchema = {
-  $test(object) {
-    return typeof object === 'string' && object.length <= 24;
+  message: {
+    $test: function(object) {
+      return typeof object === 'string' && object.length <= 24;
+    }
   }
 };
 ```
 Keys in a schema beginning with `$` are constraints. [Constraints](#constraints) define the rules for validating data. 
 The most commonly used constraint is the `$test` constraint, which defines a type test.
-In the example above, `$test` defines a type that is a *string* and also has a *length* of 24 characters or less. 
+In the example above, the schema defines a property `message` that has a `$test` property. `$test` defines a type that is a *string* and also has a *length* of 24 characters or less. For a tweet to be valid, then, it must have a property `message` that satisfies these conditions.
 
-The following data satisfies `$test`, and therefore satisfies the schema:
+The following tweet is therefore valid:
 ```javascript
-let myTweet1 = "Hello world!";
+let myTweet1 = { message: "Hello world!" };
 ```
 
-But neither of these data passes `$test`, so they fail the schema:
+But neither of these tweets are valid:
 ```javascript
-let myTweet2 = 5;
-let myTweet3 = "Lorem ipsum dolor sit amet, consectetur adipiscing.";
+let myTweet2 = {message: 5};
+let myTweet3 = {message: "Lorem ipsum dolor sit amet, consectetur adipiscing." };
 ```
 
 To validate data against a schema, use `verify()`- 
@@ -111,8 +113,8 @@ let result3 = verify(tweetSchema, myTweet3); // false
 ```javascript
 import {validate} from 'validate-declarative';
 
-console.log( validate(tweetSchema, tweet2) );
-// prints: [{ error: "InvalidValueError", key: "", value: 5 }]
+console.log(validate(tweetSchema, tweet2));
+// prints: [{ error: "InvalidValueError", key: "message", value: 5, data: {message: 5} }]
 ```
 
 This is a simple example, but schemas can be as large and complex as you want.
