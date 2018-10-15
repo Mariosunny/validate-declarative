@@ -232,25 +232,27 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   }
 });
 
+test(`ensure $unique works even when $element is present at the same level`, () => {
+  const schema = {
+    $unique: true,
+    $element: int
+  };
+
+  expect(verify(schema, [1, 2, 3])).toBe(true);
+  expect(verify(schema, [1, 2, 2])).toBe(true);
+  expect(verify(schema, [1, 2, 3])).toBe(false);
+});
+
 test(`ensure values in data are being added to $meta.uniqueValues each validation for arrays`, () => {
-  const schema1 = {
+  const schema = {
     $element: {
       $type: int,
       $unique: true
     }
   };
 
-  expect(verify(_.cloneDeep(schema1), [1, 2, 3])).toBe(true);
-  expect(verify(_.cloneDeep(schema1), [1, 1, 3])).toBe(false);
-
-  const schema2 = {
-    $unique: true,
-    $element: int
-  };
-
-  expect(verify(schema2, [1, 2, 3])).toBe(true);
-  expect(verify(schema2, [1, 2, 2])).toBe(true);
-  expect(verify(schema2, [1, 2, 3])).toBe(false);
+  expect(verify(_.cloneDeep(schema), [1, 2, 3])).toBe(true);
+  expect(verify(_.cloneDeep(schema), [1, 1, 3])).toBe(false);
 });
 
 test("ensure resetSchema() resets uniqueValues", () => {
