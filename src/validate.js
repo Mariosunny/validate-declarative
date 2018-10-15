@@ -172,7 +172,7 @@ function addElementToContext(context, index) {
 function addMeta(schema) {
   if (!schema.hasOwnProperty($META)) {
     schema[$META] = {
-      uniqueValues: {},
+      uniqueValues: {}
     };
     initializeUniqueValues("", schema, schema[$META].uniqueValues);
   }
@@ -182,9 +182,11 @@ function initializeUniqueValues(context, schema, uniqueValues) {
   if (isConstantValue(schema)) {
     return;
   }
-  if (hasUnique(schema)) {
+  let unique = getUnique(schema);
+  if (unique) {
     uniqueValues[context.length === 0 ? $ROOT : context] = [];
-  } else {
+  }
+  if (unique === null) {
     forOwnNonConstraintProperty(schema, function(key, value) {
       if (key === $ELEMENT) {
         initializeUniqueValues(addElementToContext(context, "x"), value, uniqueValues);
@@ -195,13 +197,13 @@ function initializeUniqueValues(context, schema, uniqueValues) {
   }
 }
 
-function hasUnique(schema) {
+function getUnique(schema) {
   if (hasOwnProperty(schema, $UNIQUE)) {
     return !!schema[$UNIQUE];
   } else if (hasOwnProperty(schema, $TYPE)) {
-    return hasUnique(schema[$TYPE]);
+    return getUnique(schema[$TYPE]);
   }
-  return false;
+  return null;
 }
 
 export function verify(schema, data, allowExtraneous = false) {

@@ -310,7 +310,7 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   expect(getUniqueValues(schema2, "[x][x][x]")).toEqual([]);
 });
 
-xtest("ensure nested $unique in ordinary properties is ignored", () => {
+test("ensure nested $unique in ordinary properties is ignored", () => {
   const schema1 = {
     $unique: true,
     a: {
@@ -335,9 +335,9 @@ xtest("ensure nested $unique in ordinary properties is ignored", () => {
 
   expect(verify(schema2, { a: 5 })).toBe(true);
   expect(verify(schema2, { a: 5 })).toBe(true);
-  expect(getNumberOfUniqueValues(schema2)).toBe(1);
+  expect(getNumberOfUniqueValues(schema2)).toBe(0);
   expect(getUniqueValues(schema2, "a")).toEqual([]);
-  expect(getUniqueValues(schema2, "")).toEqual([{ a: 5 }]);
+  expect(getUniqueValues(schema2, "")).toEqual([]);
 });
 
 test("ensure deep $unique is not ignored", () => {
