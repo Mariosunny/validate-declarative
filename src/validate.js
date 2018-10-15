@@ -61,7 +61,7 @@ function validateObject(context, schema, data, errors, allowExtraneous, uniqueVa
     let newContext = context + (context.length === 0 ? "" : ".") + key;
     let newSchema = value;
     let dataHasProperty = hasOwnProperty(data, key);
-    let newData = data[key];
+    let newData = dataHasProperty ? data[key] : null;
 
     if (!isOptional(newSchema) && !dataHasProperty) {
       errors.missingProperty(newContext).add();

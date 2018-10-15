@@ -310,6 +310,110 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   expect(getUniqueValues(schema2, "[x][x][x]")).toEqual([]);
 });
 
+test("ensure values in data are being added to $meta.uniqueValues each validation for complex objects (array)", () => {
+  const schema = {
+    a: {
+      $element: {
+        b: {
+          c: {
+            $element: {
+              $type: int,
+              $unique: true
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const key = "a[x].b.c[x]";
+
+  let data1 = {
+    a: [
+      {
+        b: {
+          c: [1, 2, 3]
+        }
+      }
+    ]
+  };
+
+  const temp = _.cloneDeep(schema);
+  verify(temp, null);
+  expect(getNumberOfUniqueValues(temp)).toBe(1);
+  expect(getUniqueValues(temp, key)).toEqual([]);
+
+  let schema1 = _.cloneDeep(schema);
+  expect(verify(schema1, data1)).toBe(true);
+  expect(getUniqueValues(schema1, key)).toEqual([1, 2, 3]);
+
+  let data2 = {
+    a: [
+      {
+        b: {
+          c: [1, 2, 1]
+        }
+      }
+    ]
+  };
+
+  let schema2 = _.cloneDeep(schema);
+  expect(verify(schema2, data2)).toBe(false);
+  expect(getUniqueValues(schema2, key)).toEqual([1, 2]);
+
+  let data3 = {
+    a: [
+      {
+        b: {
+          c: [1, 2]
+        }
+      }
+    ]
+  };
+
+  let data4 = {
+    a: [
+      {
+        b: {
+          c: [2, 3]
+        }
+      }
+    ]
+  };
+
+  let schema3 = _.cloneDeep(schema);
+  expect(verify(schema3, data3)).toBe(true);
+  expect(getUniqueValues(schema3, key)).toEqual([1, 2]);
+  expect(verify(schema3, data4)).toBe(false);
+  expect(getUniqueValues(schema3, key)).toEqual([1, 2, 3]);
+
+  let data5 = {
+    a: [
+      {
+        b: {
+          c: [1, 2]
+        }
+      }
+    ]
+  };
+
+  let data6 = {
+    a: [
+      {
+        b: {
+          c: [3, 4]
+        }
+      }
+    ]
+  };
+
+  let schema4 = _.cloneDeep(schema);
+  expect(verify(schema4, data5)).toBe(true);
+  expect(getUniqueValues(schema4, key)).toEqual([1, 2]);
+  expect(verify(schema4, data6)).toBe(true);
+  expect(getUniqueValues(schema4, key)).toEqual([1, 2, 3, 4]);
+});
+
 test("ensure nested $unique in ordinary properties is ignored", () => {
   const schema1 = {
     $unique: true,
