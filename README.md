@@ -59,7 +59,6 @@ let result2 = verify(bankAccountSchema, bankAccount2);
 - [Constraints](#constraints)
 - [Built-in Types](#built-in-types)
 - [Errors](#errors)
-- [Reserved Key Names](#reserved-key-names)
 - [About](#about)
 
 ## Installation
@@ -673,17 +672,6 @@ Generated when there is an extra property in the data, and when `allowExtraneous
 }
 ```
 
-
-## Reserved Key Names
-The following key names are reserved and should not be used as key names in schema objects
-for ordinary properties:
-
-- `$element`
-- `$name`
-- `$optional`
-- `$test`
-- `$type`
-- `$unique`
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
