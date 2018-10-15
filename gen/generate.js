@@ -22,7 +22,7 @@ import {
   symbol,
   truthy,
   undefinedValue,
-  object,
+  object
 } from "../src/types";
 import { choose, randomInt, roll } from "./util";
 import fs from "fs";
@@ -52,10 +52,10 @@ const BASIC_TYPES = [
   int,
   string,
   object,
-  number,
+  number
 ];
 
-const FILEPATH = "./test/complexObjects.js";
+const FILEPATH = "./test/rainbow.js";
 
 const NUMBER_TYPES = [positiveNumber, nonPositiveNumber, negativeNumber, nonNegativeNumber];
 
@@ -85,7 +85,7 @@ function generateSchema(maxDepth, minNumberOfProperties, maxNumberOfProperties, 
   } else {
     let type = chooseType();
     let typeSchema = {
-      $type: "type." + type.$name,
+      $type: "type." + type.$name
     };
     if (roll(0.5)) {
       typeSchema.$optional = roll(0.75);
@@ -127,10 +127,10 @@ export default function generate() {
   const header = "import * as type from '../src/types'";
   let outputs = [
     generateSchemaAndData
-      .objectName("normal")
-      .maxDepth(10)
+      .objectName("rainbow")
+      .maxDepth(5)
       .minNumberOfProperties(1)
-      .maxNumberOfProperties(5),
+      .maxNumberOfProperties(4)
   ];
 
   fs.writeFileSync(FILEPATH, header + "\n\n" + outputs.join("\n\n"));
