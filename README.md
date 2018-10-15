@@ -392,6 +392,9 @@ During validation, the `$test` in `$type` is called first before the local `$tes
 You can add a `$name` property to your custom type, which determines the *expectedType*
 in [error objects](#errors), though it is entirely optional.
 
+If neither `$test` nor `$type` is present for a property in the schema, 
+the corresponding value will *always* be valid.
+
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
 
@@ -474,6 +477,9 @@ let result2 = verify(schema, data2); // true
 
 #### `$unique`
 Declares the value of a property to be unique across all data validated against that particular schema.
+
+For nested `$unique` declarations embedded in `$type` objects,
+only the most shallow `$unique` declaration will be considered.
 
 (Note: Each `$unique` declaration is mapped to an internal array of values stored within
 a hidden property within the schema. 

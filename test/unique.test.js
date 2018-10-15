@@ -1,4 +1,4 @@
-import { resetSchema, verify } from "../src/validate";
+import { resetSchema, validate, verify } from "../src/validate";
 import { int, string, nullValue, boolean } from "../src/types";
 import { $META, $ROOT } from "../src/keys";
 import { DUPLICATE_PROPERTY_ERROR } from "../src/errors";
@@ -253,6 +253,88 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
 
   expect(verify(_.cloneDeep(schema), [1, 2, 3])).toBe(true);
   expect(verify(_.cloneDeep(schema), [1, 1, 3])).toBe(false);
+});
+
+test("ensure deep $unique is not ignored", () => {
+  const shallowSchema = {
+    $type: {
+      $unique: true,
+      $type: int
+    }
+  };
+
+  expect(verify(shallowSchema, 5)).toBe(true);
+  expect(verify(shallowSchema, 5)).toBe(false);
+  expect(verify(shallowSchema, 6)).toBe(true);
+
+  const deepSchema = {
+    $type: {
+      $type: {
+        $type: {
+          $type: {
+            $type: {
+              $unique: true,
+              $type: int
+            }
+          }
+        }
+      }
+    }
+  };
+
+  expect(verify(deepSchema, 5)).toBe(true);
+  expect(verify(deepSchema, 5)).toBe(false);
+  expect(verify(deepSchema, 6)).toBe(true);
+});
+
+test("ensure only deepest $unique in the $type chain is ignored", () => {
+  const uniqueSchema1 = {
+    $unique: true,
+    $type: {
+      $unique: false,
+      $type: int
+    }
+  };
+  expect(verify(uniqueSchema1, 5)).toBe(true);
+  expect(verify(uniqueSchema1, 5)).toBe(false);
+  expect(verify(uniqueSchema1, 6)).toBe(true);
+
+  const uniqueSchema2 = {
+    $type: {
+      $unique: true,
+      $type: {
+        $unique: false,
+        $type: int
+      }
+    }
+  };
+  expect(verify(uniqueSchema2, 5)).toBe(true);
+  expect(verify(uniqueSchema2, 5)).toBe(false);
+  expect(verify(uniqueSchema2, 6)).toBe(true);
+
+  const nonUniqueSchema1 = {
+    $unique: false,
+    $type: {
+      $unique: true,
+      $type: int
+    }
+  };
+  expect(verify(nonUniqueSchema1, 5)).toBe(true);
+  expect(verify(nonUniqueSchema1, 5)).toBe(true);
+  expect(verify(nonUniqueSchema1, 6)).toBe(true);
+
+  const nonUniqueSchema2 = {
+    $type: {
+      $unique: false,
+      $type: {
+        $unique: true,
+        $type: int
+      }
+    }
+  };
+  expect(verify(nonUniqueSchema2, 5)).toBe(true);
+  expect(verify(nonUniqueSchema2, 5)).toBe(true);
+  expect(verify(nonUniqueSchema2, 6)).toBe(true);
 });
 
 test("ensure resetSchema() resets uniqueValues", () => {

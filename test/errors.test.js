@@ -180,33 +180,6 @@ test("test invalid value", () => {
   validateErrors(schema, data, errors);
 });
 
-test("test unique attribute", () => {
-  let schema = getSchema();
-  let data = getData();
-  let errors = [];
-  validateErrors(schema, data, errors);
-  errors = [createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g)];
-  validateErrors(schema, data, errors);
-  validateErrors(schema, data, errors);
-
-  schema = getSchema();
-  data = getData();
-  errors = [];
-  validateErrors(schema, data, errors);
-  data = getData();
-  data.d.e.g = 1;
-  errors = [];
-  validateErrors(schema, data, errors);
-  data = getData();
-  data.d.e.g = 2;
-  errors = [];
-  validateErrors(schema, data, errors);
-  data = getData();
-  data.d.e.g = 0;
-  errors = [createError("d.e.g", DUPLICATE_PROPERTY_ERROR, data.d.e.g)];
-  validateErrors(schema, data, errors);
-});
-
 test("test multiple error types", () => {
   let schema = getSchema();
   let data = getData();

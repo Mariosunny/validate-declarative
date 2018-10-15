@@ -258,7 +258,7 @@ function initializeUniqueValues(context, schema, uniqueValues) {
   if (isConstantValue(schema)) {
     return;
   }
-  if (schema[$UNIQUE]) {
+  if (hasUnique(schema)) {
     uniqueValues[context.length === 0 ? $ROOT : context] = [];
   } else {
     forOwnNonConstraintProperty(schema, function(key, value) {
@@ -277,6 +277,15 @@ function initializeUniqueValues(context, schema, uniqueValues) {
       }
     });
   }
+}
+
+function hasUnique(schema) {
+  if (hasOwnProperty(schema, $UNIQUE)) {
+    return !!schema[$UNIQUE];
+  } else if (hasOwnProperty(schema, $TYPE)) {
+    return hasUnique(schema[$TYPE]);
+  }
+  return false;
 }
 
 export function verify(schema, data, allowExtraneous = false) {
