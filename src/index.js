@@ -1,4 +1,8 @@
-import { verify as _verify, validate as _validate } from "./validate";
+import {
+  verify as _verify,
+  validate as _validate,
+  resetSchema as _resetSchema
+} from "./validate";
 
 import {
   INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
@@ -23,11 +27,7 @@ import {
   truthy as _truthy,
   falsy as _falsy,
   array as _array,
-  set as _set,
-  weakSet as _weakSet,
   list as _list,
-  map as _map,
-  weakMap as _weakMap,
   object as _object,
   func as _func,
   date as _date,
@@ -58,11 +58,7 @@ export const boolean = _boolean;
 export const truthy = _truthy;
 export const falsy = _falsy;
 export const array = _array;
-export const set = _set;
-export const weakSet = _weakSet;
 export const list = _list;
-export const map = _map;
-export const weakMap = _weakMap;
 export const object = _object;
 export const func = _func;
 export const date = _date;
@@ -73,6 +69,7 @@ export const undefinedValue = _undefinedValue;
 export const nanValue = _nanValue;
 export const any = _any;
 export const typeWithInstanceOf = _typeWithInstanceOf;
+export const resetSchema = _resetSchema;
 
 export const INVALID_VALUE_ERROR = _INVALID_VALUE_ERROR;
 export const MISSING_PROPERTY_ERROR = _MISSING_PROPERTY_ERROR;

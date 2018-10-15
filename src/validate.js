@@ -250,12 +250,6 @@ function addMeta(schema) {
     schema[$META] = {
       uniqueValues: {}
     };
-    schema[$META].reset = function() {
-      forOwn(schema[$META].uniqueValues, function(context) {
-        schema[$META].uniqueValues[context] = [];
-      });
-    };
-
     initializeUniqueValues("", schema, schema[$META].uniqueValues);
   }
 }
@@ -290,14 +284,19 @@ export function verify(schema, data, allowExtraneous = false) {
 }
 
 export function validate(schema, data, allowExtraneous = false) {
-  let errors = new Errors(data);
-
   addMeta(schema);
 
+  let errors = new Errors(data);
   let meta = schema[$META];
   schema[$META] = undefined;
   validateData("", schema, data, errors, allowExtraneous, meta.uniqueValues);
   schema[$META] = meta;
 
   return errors.errors;
+}
+
+export function resetSchema(schema) {
+  forOwn(schema[$META].uniqueValues, function(context) {
+    schema[$META].uniqueValues[context] = [];
+  });
 }

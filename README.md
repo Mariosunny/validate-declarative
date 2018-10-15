@@ -336,6 +336,11 @@ let result2 = verify(appleType, data2); // false
 
 ```
 
+#### `resetSchema(schema)`
+Resets the internal unique values within the schema, which are used to determine uniqueness
+of values within data. **Invoking this function is not recommended for normal use**.
+After this function is invokved, uniqueness is no longer guaranteed.
+
 ## Constraints
 Constraints define the rules for validating data. 
 They are embedded in schema objects alongside ordinary properties. 
@@ -471,11 +476,11 @@ let result2 = verify(schema, data2); // true
 Declares the value of a property to be unique across all data validated against that particular schema.
 
 (Note: Each `$unique` declaration is mapped to an internal array of values stored within
-a hidden property `$__meta__` within the schema. 
+a hidden property within the schema. 
 **Be warned**- a large number of validations may result in high memory usage,
 as every validation adds another element to each internal array of unique values within the schema.
-Though it is not recommended, you can call `schema.$__meta__.reset()` to clear these internal arrays.
-This, however, will not garuantee uniqueness for subsequent validations.)
+Though it is not recommended, you can call `resetSchema()` to clear these internal arrays (see [API](#api)).
+This, however, will not guarantee uniqueness for subsequent validations.)
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -642,8 +647,6 @@ for ordinary properties:
 - `$test`
 - `$type`
 - `$unique`
-- `$__meta__`
-- `$__root__`
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
