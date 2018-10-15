@@ -3,7 +3,6 @@ A simple utility for declaratively validating the structure of any Javascript ob
 - Lightweight and highly extensible
 - Works with arbitrarily large and deeply nested objects
 - Detailed error reports
-- ES5 compatible
 
 ***See it in action:***
 ```javascript
@@ -299,7 +298,12 @@ let result = verify(companySchema, industryTech); // true
 ## API
 
 #### `verify(schema, data, allowExtraneous=false) → boolean`
-Validates `data` (any Javascript object) against the `schema` (a constant, non-circular, key-value object), returning *true* if and only if every property in the schema exists in the data, and every property's value in the data satisfies the constraints of the property (see [Constraints](#constraints)), *false* otherwise. 
+Validates `data` (any Javascript object) against the `schema` 
+(a non-circular, plain object), 
+returning *true* if and only if every property in the schema 
+exists in the data, and every property's value in the data 
+satisfies the constraints of the property 
+(see [Constraints](#constraints)), *false* otherwise. 
 
 If `allowExtraneous` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. 
 If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.
@@ -348,7 +352,13 @@ Constraints begin with `$` to differentiate them from ordinary properties.
 There are five types of constraints: `$test`, `$type`, `$optional`, `$unique`, and `$element`.
 
 #### `$test`
-Defines a simple type test. `$test` is a function that takes an object and returns `true` if the object is valid, `false` otherwise. Alternatively, `$test` is a regular expression that describes a valid object.
+**Default:** `(object) => true`
+
+Defines a simple type test. 
+`$test` is a function that takes an object and returns *true* if the object is valid, 
+*false* otherwise. By default, the object is always valid.
+Alternatively, `$test` is a regular expression that describes a valid object.
+If the object is invalid, an [InvalidValueError](#invalidvalueerror) is generated.
 ```javascript
 // a custom type
 const countryCode = {
@@ -387,13 +397,20 @@ const countrySchema = {
 ```
 
 #### `$type`
-Allows you to extend an existing type. `$type` is any object with a `$test` property. 
-During validation, the `$test` in `$type` is called first before the local `$test`.
-You can add a `$name` property to your custom type, which determines the *expectedType*
-in [error objects](#errors), though it is entirely optional.
+**Default:** `{ $test: (object) => true }`
 
-If neither `$test` nor `$type` is present for a property in the schema, 
-the corresponding value will *always* be valid.
+Allows you to extend an existing type. 
+`$type` is any object with a `$test` property that is a type test (see above).
+During validation, the `$test` in `$type` is always called first before 
+the local `$test`. This allows you to progressively 'build' a custom type through a 
+series of type tests (see second example below). 
+If neither `$test` nor `$type` is present for a property, 
+a value will *always* be valid and never generate
+an [InvalidValueError](#invalidvalueerror).
+
+You can add a `$name` property to your custom type, which determines 
+the *expectedType*
+in the error, though it is entirely optional.
 
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
@@ -445,11 +462,15 @@ const schema = {
 ```
 
 #### `$optional`
+**Default**: `false`
+
 Declares a property optional. 
 By default, all properties in the schema are required. 
-If `$optional` is *true*, no error will be generated if the property does not exist in the data.
-
-(Note: `$optional` declarations at the top level of the schema will be ignored.)
+If `$optional` is *true*, a [MissingPropertyError](#missingpropertyerror)
+ will **not** be generated if the property does not exist in the data.
+For nested `$optional` declarations,
+only the most shallow `$optional` declaration is considered.
+`$optional` declarations at the top level of the schema are ignored.
 
 ```javascript
 import {verify, int, string} from 'validate-declarative';
@@ -476,10 +497,16 @@ let result2 = verify(schema, data2); // true
 ```
 
 #### `$unique`
-Declares the value of a property to be unique across all data validated against that particular schema.
+**Default**: `false`
 
-For nested `$unique` declarations embedded in `$type` objects,
-only the most shallow `$unique` declaration will be considered.
+Declares the value of a property to be unique across all data validated
+against a particular schema.
+By default, all properties are non-unique.
+If `$unique` is *true*, the property will generate a 
+[DuplicateValueError](#duplicatevalueerror) when a duplicate value is
+detected across two data.
+For nested `$unique` declarations,
+only the most shallow `$unique` declaration is considered.
 
 (Note: Each `$unique` declaration is mapped to an internal array of values stored within
 a hidden property within the schema. 
@@ -516,6 +543,8 @@ let result2 = verify(playerSchema, player2);
 ```
 
 #### `$element`
+**Default:** `undefined`
+
 Defines the schema of each element in an array, set, or weak set. 
 When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
 `$element` declarations can be nested within eachother to validate multi-dimensional arrays 
