@@ -44,6 +44,8 @@ function validateData(
       findExtraneousProperties(context, schema, data, errors, allowExtraneous);
     }
 
+    checkUniqueness(context, schema, data, errors, uniqueValues);
+
     if (hasOwnProperty(schema, $ELEMENT)) {
       validateArray(
         context,
@@ -120,8 +122,6 @@ function validateObject(
   allowExtraneous,
   uniqueValues
 ) {
-  checkUniqueness(context, schema, data, errors, uniqueValues);
-
   forOwnNonReservedProperty(schema, function(key, value) {
     let newContext = context + (context.length === 0 ? "" : ".") + key;
     let newSchema = value;

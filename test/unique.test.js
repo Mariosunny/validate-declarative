@@ -232,7 +232,7 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   }
 });
 
-xtest(`ensure values in data are being added to $meta.uniqueValues each validation for arrays`, () => {
+test(`ensure values in data are being added to $meta.uniqueValues each validation for arrays`, () => {
   const schema1 = {
     $element: {
       $type: int,
