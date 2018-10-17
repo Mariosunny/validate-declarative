@@ -1,7 +1,7 @@
 import { DUPLICATE_PROPERTY_ERROR, MISSING_PROPERTY_ERROR } from "../../src/errors";
 import { int } from "../../src/types";
 import { createError, validateErrors } from "../testUtils";
-import { verify } from "../../src/validate";
+import { validate, verify } from "../../src/validate";
 
 const { expectSchemaPasses, expectSchemaFails } = (() => {
   const expectSchema = function(schema, data, missingProperties = []) {
@@ -314,4 +314,52 @@ test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for c
   expectSchemaPasses(optionalSchema, data2);
   expectSchemaPasses(requiredSchema, data1);
   expectSchemaFails(requiredSchema, data2, "a[0].b.c[0].d");
+});
+
+test("ensure only shallowest $optional in the $type chain is considered", () => {
+  const optionalSchema1 = {
+    a: {
+      $optional: true,
+      $type: {
+        $optional: false,
+        $type: int,
+      },
+    },
+  };
+  const optionalSchema2 = {
+    a: {
+      $optional: true,
+      $type: {
+        $optional: true,
+        $type: int,
+      },
+    },
+  };
+  const requiredSchema1 = {
+    a: {
+      $optional: false,
+      $type: {
+        $optional: false,
+        $type: int,
+      },
+    },
+  };
+  const requiredSchema2 = {
+    a: {
+      $optional: false,
+      $type: {
+        $optional: true,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaPasses(optionalSchema1, {});
+  expectSchemaPasses(optionalSchema1, { a: 5 });
+  expectSchemaPasses(optionalSchema2, {});
+  expectSchemaPasses(optionalSchema2, { a: 5 });
+  expectSchemaFails(requiredSchema1, {}, "a");
+  expectSchemaPasses(requiredSchema1, { a: 5 });
+  expectSchemaFails(requiredSchema2, {}, "a");
+  expectSchemaPasses(requiredSchema2, { a: 5 });
 });

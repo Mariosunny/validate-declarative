@@ -106,8 +106,8 @@ function getUniqueContext(context, uniqueValues) {
 }
 
 function isOptional(schema) {
-  if (schema[$OPTIONAL]) {
-    return true;
+  if (hasOwnProperty(schema, $OPTIONAL)) {
+    return schema[$OPTIONAL];
   } else if (hasOwnProperty(schema, $TYPE)) {
     return isOptional(schema[$TYPE]);
   }

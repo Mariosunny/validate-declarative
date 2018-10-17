@@ -34,6 +34,8 @@ test(`verify or validate adds $meta property to schema`, () => {
   expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
 });
 
+xtest("ensure symbolic properties in data are ignored", () => {});
+
 test("test single value", () => {
   expect(verify(int, 5)).toBe(true);
   expect(verify(int, "hello")).toBe(false);
