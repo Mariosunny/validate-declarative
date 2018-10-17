@@ -29,7 +29,7 @@ import {
   undefinedValue,
   nanValue,
   any,
-  typeWithInstanceOf
+  typeWithInstanceOf,
 } from "../src/types";
 import unravel from "unravel-function";
 import _ from "lodash";
@@ -54,7 +54,7 @@ class TestClass {
   constructor() {}
 }
 const testObject = {
-  func() {}
+  func() {},
 };
 
 const standardValues = {
@@ -81,7 +81,7 @@ const standardValues = {
   newFunc: new Function("a", "return a"),
   regexp: /\w+/,
   array: [],
-  newArray: new Array()
+  newArray: new Array(),
 };
 
 function standardValuesExcept(...exceptions) {
@@ -203,7 +203,7 @@ testTypeWith
     new Date(),
     [],
     new Array(),
-    /\w+/
+    /\w+/,
   ])
   .invalidValues([
     5.5,
@@ -219,7 +219,7 @@ testTypeWith
     function() {},
     () => {},
     testObject.func,
-    new Function("a", "return a")
+    new Function("a", "return a"),
   ]);
 
 testTypeWith
@@ -238,7 +238,7 @@ testTypeWith
     parseInt,
     String,
     Number,
-    Boolean
+    Boolean,
   ])
   .invalidValues(standardValuesExcept("func", "fatArrowFunc", "embeddedFunc", "newFunc"));
 
@@ -307,7 +307,7 @@ test("test typeWithInstanceOf", () => {
     ArrayBuffer,
     SharedArrayBuffer,
     Promise,
-    TestClass
+    TestClass,
   ];
 
   let instances = [
@@ -335,7 +335,7 @@ test("test typeWithInstanceOf", () => {
     new ArrayBuffer(),
     new SharedArrayBuffer(),
     new Promise(function() {}),
-    new TestClass()
+    new TestClass(),
   ];
 
   classes.forEach(function(clazz, i) {

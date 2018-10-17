@@ -16,9 +16,9 @@ export const rainbowSchema = {
                 $type: type.object,
                 $test: function(object) {
                   return Object.keys(object).length === 2;
-                }
-              }
-            }
+                },
+              },
+            },
           },
           ab: {
             $optional: true,
@@ -27,17 +27,17 @@ export const rainbowSchema = {
               return object.length > 0;
             },
             $element: {
-              $type: type.regexp
-            }
+              $type: type.regexp,
+            },
           },
           ac: {
             $type: type.truthy,
             $test: function(object) {
               return object === true;
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
     ac: {
       aa: {
@@ -45,11 +45,11 @@ export const rainbowSchema = {
           $type: {
             $test: function(object) {
               return Array.isArray(object);
-            }
+            },
           },
           $test: function(object) {
             return object[1] === "5";
-          }
+          },
         },
         $test: function(object) {
           for (let i = 0; i < object.length; i++) {
@@ -58,28 +58,28 @@ export const rainbowSchema = {
             }
           }
           return true;
-        }
+        },
       },
       ab: {
         aa: {
           $type: {
             $type: {
               $type: {
-                $optional: true
-              }
-            }
-          }
+                $optional: true,
+              },
+            },
+          },
         },
         ab: {
-          $type: type.symbol
+          $type: type.symbol,
         },
         ac: type.nullValue,
         ad: {
           $optional: true,
           $element: {
-            $type: type.array
-          }
-        }
+            $type: type.array,
+          },
+        },
       },
       ac: {
         $optional: true,
@@ -87,52 +87,52 @@ export const rainbowSchema = {
         $element: {
           aa: {
             aa: {
-              $type: type.string
+              $type: type.string,
             },
             ab: type.array,
             ac: {
               $optional: true,
-              $element: type.any
-            }
+              $element: type.any,
+            },
           },
           ab: {
             $element: {
-              $type: type.date
-            }
+              $type: type.date,
+            },
           },
           ac: {
             $optional: true,
             $element: {
               $element: {
-                $type: type.undefinedValue
-              }
-            }
+                $type: type.undefinedValue,
+              },
+            },
           },
-          ad: type.nonNegativeInt
-        }
-      }
+          ad: type.nonNegativeInt,
+        },
+      },
     },
     ad: {
       aa: {
         aa: {
-          $type: type.nanValue
+          $type: type.nanValue,
         },
         ab: {
-          $type: type.falsy
+          $type: type.falsy,
         },
         ac: {
-          $type: type.string
+          $type: type.string,
         },
         ad: {
-          $type: type.array
-        }
+          $type: type.array,
+        },
       },
       ab: {
         $unique: true,
-        $element: type.array
-      }
-    }
-  }
+        $element: type.array,
+      },
+    },
+  },
 };
 
 export const rainbowData = {};

@@ -3,84 +3,111 @@ import { int, string, nullValue, boolean } from "../src/types";
 import { $META, $ROOT } from "../src/keys";
 import { DUPLICATE_PROPERTY_ERROR } from "../src/errors";
 import _ from "lodash";
+import { createError, validateErrors } from "./testUtils";
 
-function getNumberOfUniqueValues(schema) {
-  return (
+const { expectSchemaPasses, expectSchemaFails } = (() => {
+  const expectSchema = function(schema, data, errors = []) {
+    if (!Array.isArray(errors)) {
+      errors = [errors];
+    }
+    validateErrors(
+      schema,
+      data,
+      errors.map(error => {
+        let key = error.key || "";
+        return createError(key, DUPLICATE_PROPERTY_ERROR, error.value);
+      })
+    );
+  };
+
+  return {
+    expectSchemaPasses(schema, data) {
+      expectSchema(schema, data);
+    },
+    expectSchemaFails(schema, data, errors) {
+      expectSchema(schema, data, errors);
+    },
+  };
+})();
+
+function expectNumberOfUniqueValues(schema, expectedNumberOfUniqueValues) {
+  expect(
     Object.keys(schema[$META].uniqueValues).length + Object.getOwnPropertySymbols(schema[$META].uniqueValues).length
-  );
+  ).toBe(expectedNumberOfUniqueValues);
 }
 
-function getUniqueValues(schema, key) {
+function expectUniqueValues(schema, key, expectedValues) {
   key = key || $ROOT;
+  let values = [];
 
   if (schema[$META].uniqueValues[key]) {
-    return schema[$META].uniqueValues[key];
+    values = schema[$META].uniqueValues[key];
   }
-  return [];
+
+  expect(values).toEqual(expectedValues);
 }
 
 test(`test non-unique constraint does not generate ${DUPLICATE_PROPERTY_ERROR}`, () => {
   const schema = {
-    a: int
+    a: int,
   };
   let data = {
-    a: 5
+    a: 5,
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   schema.a = {
     $type: int,
-    $unique: false
+    $unique: false,
   };
-
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 });
 
 test("test non-unique constraint does not create uniqueValues arrays when $unique = false or when $unique is not present", () => {
   const schema1 = {
     a: {
       $type: int,
-      $unique: false
-    }
+      $unique: false,
+    },
   };
   const schema2 = {
-    a: int
+    a: int,
   };
   let data = {
-    a: 5
+    a: 5,
   };
 
   verify(schema1, data);
   verify(schema2, data);
-  expect(getNumberOfUniqueValues(schema1)).toBe(0);
-  expect(getNumberOfUniqueValues(schema2)).toBe(0);
+  expectNumberOfUniqueValues(schema1, 0);
+  expectNumberOfUniqueValues(schema2, 0);
 });
 
 test("ensure duplicate values fail when $unique = true for simple object", () => {
   const schema = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   let data = {
-    a: 5
+    a: 5,
   };
-  expect(verify(schema, data)).toBe(true);
-  expect(verify(schema, data)).toBe(false);
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectSchemaPasses(schema, data);
+  expectSchemaFails(schema, data, { key: "a", value: 5 });
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test("ensure duplicate values fail when $unique = true at top level of schema", () => {
   const schema = {
     $unique: true,
-    $type: int
+    $type: int,
   };
-  expect(verify(schema, 5)).toBe(true);
-  expect(verify(schema, 5)).toBe(false);
-  expect(verify(schema, 6)).toBe(true);
-  expect(verify(schema, 6)).toBe(false);
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectSchemaPasses(schema, 5);
+  expectSchemaFails(schema, 5, { value: 5 });
+  expectSchemaPasses(schema, 6);
+  expectSchemaFails(schema, 6, { value: 6 });
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test(`ensure multiple $meta.uniqueValues arrays are being created`, () => {
@@ -90,12 +117,12 @@ test(`ensure multiple $meta.uniqueValues arrays are being created`, () => {
     for (let j = 0; j < i; j++) {
       schema[String.fromCharCode(97 + j)] = {
         $type: string,
-        $unique: true
+        $unique: true,
       };
     }
 
     verify(schema, {});
-    expect(getNumberOfUniqueValues(schema)).toBe(i);
+    expectNumberOfUniqueValues(schema, i);
   }
 });
 
@@ -106,50 +133,50 @@ test(`ensure $meta.uniqueValues array is created for deeply nested object`, () =
         c: {
           d: {
             $type: int,
-            $unique: true
-          }
-        }
-      }
-    }
+            $unique: true,
+          },
+        },
+      },
+    },
   };
 
   verify(schema, { a: { b: { c: { d: 5 } } } });
-  expect(getUniqueValues(schema, "a.b.c.d")).toEqual([5]);
+  expectUniqueValues(schema, "a.b.c.d", [5]);
 });
 
 test(`ensure $meta.uniqueValues array is created for array`, () => {
   const simpleArraySchema = {
     $element: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
   const multiDimensionalArraySchema = {
     $element: {
       $element: {
         $element: {
           $unique: true,
-          $type: int
-        }
-      }
-    }
+          $type: int,
+        },
+      },
+    },
   };
 
   verify(simpleArraySchema, [1, 2, 3]);
-  expect(getUniqueValues(simpleArraySchema, "[x]")).toEqual([1, 2, 3]);
-  expect(getNumberOfUniqueValues(simpleArraySchema)).toBe(1);
+  expectUniqueValues(simpleArraySchema, "[x]", [1, 2, 3]);
+  expectNumberOfUniqueValues(simpleArraySchema, 1);
 
   verify(multiDimensionalArraySchema, [[[1]]]);
-  expect(getUniqueValues(multiDimensionalArraySchema, "[x][x][x]")).toEqual([1]);
-  expect(getNumberOfUniqueValues(multiDimensionalArraySchema)).toBe(1);
+  expectUniqueValues(multiDimensionalArraySchema, "[x][x][x]", [1]);
+  expectNumberOfUniqueValues(multiDimensionalArraySchema, 1);
 });
 
 test(`ensure values in data are being added to $meta.uniqueValues each validation for simple object`, () => {
   const schema = {
     a: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
 
   let uniqueValues = [];
@@ -157,39 +184,39 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
   for (let i = 0; i < 100; i++) {
     verify(schema, { a: i });
     uniqueValues.push(i);
-    expect(getUniqueValues(schema, "a")).toEqual(uniqueValues);
+    expectUniqueValues(schema, "a", uniqueValues);
   }
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test(`ensure $meta.uniqueValues arrays do not contain duplicates`, () => {
   const schema = {
     a: {
       $type: int,
-      $unique: true
+      $unique: true,
     },
     b: {
       $type: string,
-      $unique: true
+      $unique: true,
     },
     c: {
       $type: nullValue,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
   let data = {
     a: 5,
     b: "hello",
-    c: null
+    c: null,
   };
 
   for (let i = 0; i < 10; i++) {
     verify(schema, data);
-    expect(getUniqueValues(schema, "a")).toEqual([5]);
-    expect(getUniqueValues(schema, "b")).toEqual(["hello"]);
-    expect(getUniqueValues(schema, "c")).toEqual([null]);
+    expectUniqueValues(schema, "a", [5]);
+    expectUniqueValues(schema, "b", ["hello"]);
+    expectUniqueValues(schema, "c", [null]);
   }
-  expect(getNumberOfUniqueValues(schema)).toBe(3);
+  expectNumberOfUniqueValues(schema, 3);
 });
 
 test("ensure duplicate values fail when $unique = true for deeply nested objects", () => {
@@ -201,27 +228,27 @@ test("ensure duplicate values fail when $unique = true for deeply nested objects
             e: {
               f: {
                 $type: boolean,
-                $unique: true
-              }
-            }
-          }
-        }
-      }
-    }
+                $unique: true,
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   let data1 = {
-    a: { b: { c: { d: { e: { f: true } } } } }
+    a: { b: { c: { d: { e: { f: true } } } } },
   };
   let data2 = {
-    a: { b: { c: { d: { e: { f: false } } } } }
+    a: { b: { c: { d: { e: { f: false } } } } },
   };
 
-  expect(verify(schema, data1)).toBe(true);
-  expect(verify(schema, data1)).toBe(false);
-  expect(verify(schema, data2)).toBe(true);
-  expect(verify(schema, data2)).toBe(false);
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectSchemaPasses(schema, data1);
+  expectSchemaFails(schema, data1, { key: "a.b.c.d.e.f", value: true });
+  expectSchemaPasses(schema, data2);
+  expectSchemaFails(schema, data2, { key: "a.b.c.d.e.f", value: false });
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test(`ensure values in data are being added to $meta.uniqueValues each validation for deeply nested objects`, () => {
@@ -233,53 +260,53 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
             e: {
               f: {
                 $type: int,
-                $unique: true
-              }
-            }
-          }
-        }
-      }
-    }
+                $unique: true,
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   let uniqueValues = [];
 
   for (let i = 0; i < 100; i++) {
     verify(schema, {
-      a: { b: { c: { d: { e: { f: i } } } } }
+      a: { b: { c: { d: { e: { f: i } } } } },
     });
     uniqueValues.push(i);
-    expect(getUniqueValues(schema, "a.b.c.d.e.f")).toEqual(uniqueValues);
+    expectUniqueValues(schema, "a.b.c.d.e.f", uniqueValues);
   }
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test(`ensure $unique works even when $element is present at the same level`, () => {
   const schema = {
     $unique: true,
-    $element: int
+    $element: int,
   };
 
-  expect(verify(schema, [1, 2, 3])).toBe(true);
-  expect(verify(schema, [1, 2, 2])).toBe(true);
-  expect(verify(schema, [1, 2, 3])).toBe(false);
-  expect(getNumberOfUniqueValues(schema)).toBe(1);
+  expectSchemaPasses(schema, [1, 2, 3]);
+  expectSchemaPasses(schema, [1, 2, 2]);
+  expectSchemaFails(schema, [1, 2, 3], { value: [1, 2, 3] });
+  expectNumberOfUniqueValues(schema, 1);
 });
 
 test(`ensure values in data are being added to $meta.uniqueValues each validation for arrays`, () => {
   const schema = {
     $element: {
       $type: int,
-      $unique: true
-    }
+      $unique: true,
+    },
   };
 
   const temp = _.cloneDeep(schema);
   verify(temp, null);
-  expect(getNumberOfUniqueValues(temp)).toBe(1);
+  expectNumberOfUniqueValues(temp, 1);
 
-  expect(verify(_.cloneDeep(schema), [1, 2, 3])).toBe(true);
-  expect(verify(_.cloneDeep(schema), [1, 1, 3])).toBe(false);
+  expectSchemaPasses(_.cloneDeep(schema), [1, 2, 3]);
+  expectSchemaFails(_.cloneDeep(schema), [1, 1, 3], { key: "[1]", value: 1 });
 });
 
 test(`ensure values in data are being added to $meta.uniqueValues each validation for multi-dimensional arrays`, () => {
@@ -288,26 +315,26 @@ test(`ensure values in data are being added to $meta.uniqueValues each validatio
       $element: {
         $element: {
           $type: int,
-          $unique: true
-        }
-      }
-    }
+          $unique: true,
+        },
+      },
+    },
   };
 
   const temp = _.cloneDeep(schema);
   verify(temp, null);
-  expect(getNumberOfUniqueValues(temp)).toBe(1);
+  expectNumberOfUniqueValues(temp, 1);
 
   const schema1 = _.cloneDeep(schema);
-  expect(verify(schema1, [[[1]]])).toBe(true);
-  expect(verify(schema1, [[[1]]])).toBe(false);
-  expect(getUniqueValues(schema1, "[x][x][x]")).toEqual([1]);
-  expect(verify(schema1, [[[2]]])).toBe(true);
-  expect(getUniqueValues(schema1, "[x][x][x]")).toEqual([1, 2]);
+  expectSchemaPasses(schema1, [[[1]]]);
+  expectSchemaFails(schema1, [[[1]]], { key: "[0][0][0]", value: 1 });
+  expectUniqueValues(schema1, "[x][x][x]", [1]);
+  expectSchemaPasses(schema1, [[[2]]]);
+  expectUniqueValues(schema1, "[x][x][x]", [1, 2]);
 
   const schema2 = _.cloneDeep(schema);
-  expect(verify(schema2, [[[]]])).toBe(true);
-  expect(getUniqueValues(schema2, "[x][x][x]")).toEqual([]);
+  expectSchemaPasses(schema2, [[[]]]);
+  expectUniqueValues(schema2, "[x][x][x]", []);
 });
 
 test("ensure values in data are being added to $meta.uniqueValues each validation for complex objects (array)", () => {
@@ -318,12 +345,12 @@ test("ensure values in data are being added to $meta.uniqueValues each validatio
           c: {
             $element: {
               $type: int,
-              $unique: true
-            }
-          }
-        }
-      }
-    }
+              $unique: true,
+            },
+          },
+        },
+      },
+    },
   };
 
   const key = "a[x].b.c[x]";
@@ -332,86 +359,86 @@ test("ensure values in data are being added to $meta.uniqueValues each validatio
     a: [
       {
         b: {
-          c: [1, 2, 3]
-        }
-      }
-    ]
+          c: [1, 2, 3],
+        },
+      },
+    ],
   };
 
   const temp = _.cloneDeep(schema);
   verify(temp, null);
-  expect(getNumberOfUniqueValues(temp)).toBe(1);
-  expect(getUniqueValues(temp, key)).toEqual([]);
+  expectNumberOfUniqueValues(temp, 1);
+  expectUniqueValues(temp, key, []);
 
   let schema1 = _.cloneDeep(schema);
-  expect(verify(schema1, data1)).toBe(true);
-  expect(getUniqueValues(schema1, key)).toEqual([1, 2, 3]);
+  expectSchemaPasses(schema1, data1);
+  expectUniqueValues(schema1, key, [1, 2, 3]);
 
   let data2 = {
     a: [
       {
         b: {
-          c: [1, 2, 1]
-        }
-      }
-    ]
+          c: [1, 2, 1],
+        },
+      },
+    ],
   };
 
   let schema2 = _.cloneDeep(schema);
-  expect(verify(schema2, data2)).toBe(false);
-  expect(getUniqueValues(schema2, key)).toEqual([1, 2]);
+  expectSchemaFails(schema2, data2, { key: "a[0].b.c[2]", value: 1 });
+  expectUniqueValues(schema2, key, [1, 2]);
 
   let data3 = {
     a: [
       {
         b: {
-          c: [1, 2]
-        }
-      }
-    ]
+          c: [1, 2],
+        },
+      },
+    ],
   };
 
   let data4 = {
     a: [
       {
         b: {
-          c: [2, 3]
-        }
-      }
-    ]
+          c: [2, 3],
+        },
+      },
+    ],
   };
 
   let schema3 = _.cloneDeep(schema);
-  expect(verify(schema3, data3)).toBe(true);
-  expect(getUniqueValues(schema3, key)).toEqual([1, 2]);
-  expect(verify(schema3, data4)).toBe(false);
-  expect(getUniqueValues(schema3, key)).toEqual([1, 2, 3]);
+  expectSchemaPasses(schema3, data3);
+  expectUniqueValues(schema3, key, [1, 2]);
+  expectSchemaFails(schema3, data4, { key: "a[0].b.c[0]", value: 2 });
+  expectUniqueValues(schema3, key, [1, 2, 3]);
 
   let data5 = {
     a: [
       {
         b: {
-          c: [1, 2]
-        }
-      }
-    ]
+          c: [1, 2],
+        },
+      },
+    ],
   };
 
   let data6 = {
     a: [
       {
         b: {
-          c: [3, 4]
-        }
-      }
-    ]
+          c: [3, 4],
+        },
+      },
+    ],
   };
 
   let schema4 = _.cloneDeep(schema);
-  expect(verify(schema4, data5)).toBe(true);
-  expect(getUniqueValues(schema4, key)).toEqual([1, 2]);
-  expect(verify(schema4, data6)).toBe(true);
-  expect(getUniqueValues(schema4, key)).toEqual([1, 2, 3, 4]);
+  expectSchemaPasses(schema4, data5);
+  expectUniqueValues(schema4, key, [1, 2]);
+  expectSchemaPasses(schema4, data6);
+  expectUniqueValues(schema4, key, [1, 2, 3, 4]);
 });
 
 test("ensure nested $unique in ordinary properties is ignored", () => {
@@ -419,43 +446,43 @@ test("ensure nested $unique in ordinary properties is ignored", () => {
     $unique: true,
     a: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
-  expect(verify(schema1, { a: 5 })).toBe(true);
-  expect(verify(schema1, { a: 5 })).toBe(false);
-  expect(getNumberOfUniqueValues(schema1)).toBe(1);
-  expect(getUniqueValues(schema1, "a")).toEqual([]);
-  expect(getUniqueValues(schema1, "")).toEqual([{ a: 5 }]);
+  expectSchemaPasses(schema1, { a: 5 });
+  expectSchemaFails(schema1, { a: 5 }, { value: { a: 5 } });
+  expectNumberOfUniqueValues(schema1, 1);
+  expectUniqueValues(schema1, "a", []);
+  expectUniqueValues(schema1, "", [{ a: 5 }]);
 
   const schema2 = {
     $unique: false,
     a: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
-  expect(verify(schema2, { a: 5 })).toBe(true);
-  expect(verify(schema2, { a: 5 })).toBe(true);
-  expect(getNumberOfUniqueValues(schema2)).toBe(0);
-  expect(getUniqueValues(schema2, "a")).toEqual([]);
-  expect(getUniqueValues(schema2, "")).toEqual([]);
+  expectSchemaPasses(schema2, { a: 5 });
+  expectSchemaPasses(schema2, { a: 5 });
+  expectNumberOfUniqueValues(schema2, 0);
+  expectUniqueValues(schema2, "a", []);
+  expectUniqueValues(schema2, "", []);
 });
 
 test("ensure deep $unique is not ignored", () => {
   const shallowSchema = {
     $type: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
-  expect(verify(shallowSchema, 5)).toBe(true);
-  expect(verify(shallowSchema, 5)).toBe(false);
-  expect(verify(shallowSchema, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(shallowSchema)).toBe(1);
+  expectSchemaPasses(shallowSchema, 5);
+  expectSchemaFails(shallowSchema, 5, { value: 5 });
+  expectSchemaPasses(shallowSchema, 6);
+  expectNumberOfUniqueValues(shallowSchema, 1);
 
   const deepSchema = {
     $type: {
@@ -464,18 +491,18 @@ test("ensure deep $unique is not ignored", () => {
           $type: {
             $type: {
               $unique: true,
-              $type: int
-            }
-          }
-        }
-      }
-    }
+              $type: int,
+            },
+          },
+        },
+      },
+    },
   };
 
-  expect(verify(deepSchema, 5)).toBe(true);
-  expect(verify(deepSchema, 5)).toBe(false);
-  expect(verify(deepSchema, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(deepSchema)).toBe(1);
+  expectSchemaPasses(deepSchema, 5);
+  expectSchemaFails(deepSchema, 5, { value: 5 });
+  expectSchemaPasses(deepSchema, 6);
+  expectNumberOfUniqueValues(deepSchema, 1);
 });
 
 test("ensure only shallowest $unique in the $type chain is considered", () => {
@@ -483,104 +510,104 @@ test("ensure only shallowest $unique in the $type chain is considered", () => {
     $unique: true,
     $type: {
       $unique: false,
-      $type: int
-    }
+      $type: int,
+    },
   };
-  expect(verify(uniqueSchema1, 5)).toBe(true);
-  expect(verify(uniqueSchema1, 5)).toBe(false);
-  expect(verify(uniqueSchema1, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(uniqueSchema1)).toBe(1);
+  expectSchemaPasses(uniqueSchema1, 5);
+  expectSchemaFails(uniqueSchema1, 5, { value: 5 });
+  expectSchemaPasses(uniqueSchema1, 6);
+  expectNumberOfUniqueValues(uniqueSchema1, 1);
 
   const uniqueSchema2 = {
     $type: {
       $unique: true,
       $type: {
         $unique: false,
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
-  expect(verify(uniqueSchema2, 5)).toBe(true);
-  expect(verify(uniqueSchema2, 5)).toBe(false);
-  expect(verify(uniqueSchema2, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(uniqueSchema2)).toBe(1);
+  expectSchemaPasses(uniqueSchema2, 5);
+  expectSchemaFails(uniqueSchema2, 5, { value: 5 });
+  expectSchemaPasses(uniqueSchema2, 6);
+  expectNumberOfUniqueValues(uniqueSchema2, 1);
 
   const nonUniqueSchema1 = {
     $unique: false,
     $type: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
-  expect(verify(nonUniqueSchema1, 5)).toBe(true);
-  expect(verify(nonUniqueSchema1, 5)).toBe(true);
-  expect(verify(nonUniqueSchema1, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(nonUniqueSchema1)).toBe(0);
+  expectSchemaPasses(nonUniqueSchema1, 5);
+  expectSchemaPasses(nonUniqueSchema1, 5);
+  expectSchemaPasses(nonUniqueSchema1, 6);
+  expectNumberOfUniqueValues(nonUniqueSchema1, 0);
 
   const nonUniqueSchema2 = {
     $type: {
       $unique: false,
       $type: {
         $unique: true,
-        $type: int
-      }
-    }
+        $type: int,
+      },
+    },
   };
-  expect(verify(nonUniqueSchema2, 5)).toBe(true);
-  expect(verify(nonUniqueSchema2, 5)).toBe(true);
-  expect(verify(nonUniqueSchema2, 6)).toBe(true);
-  expect(getNumberOfUniqueValues(nonUniqueSchema2)).toBe(0);
+  expectSchemaPasses(nonUniqueSchema2, 5);
+  expectSchemaPasses(nonUniqueSchema2, 5);
+  expectSchemaPasses(nonUniqueSchema2, 6);
+  expectNumberOfUniqueValues(nonUniqueSchema2, 0);
 });
 
 test("ensure resetSchema() resets uniqueValues", () => {
   const schema1 = {
     $unique: true,
-    $type: int
+    $type: int,
   };
 
-  expect(verify(schema1, 5)).toBe(true);
-  expect(verify(schema1, 5)).toBe(false);
-  expect(getNumberOfUniqueValues(schema1)).toBe(1);
+  expectSchemaPasses(schema1, 5);
+  expectSchemaFails(schema1, 5, { value: 5 });
+  expectNumberOfUniqueValues(schema1, 1);
   resetSchema(schema1);
-  expect(getNumberOfUniqueValues(schema1)).toBe(1);
-  expect(verify(schema1, 5)).toBe(true);
-  expect(verify(schema1, 5)).toBe(false);
+  expectNumberOfUniqueValues(schema1, 1);
+  expectSchemaPasses(schema1, 5);
+  expectSchemaFails(schema1, 5, { value: 5 });
 
   const schema2 = {
     a: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
-  expect(verify(schema2, { a: 5 })).toBe(true);
-  expect(verify(schema2, { a: 5 })).toBe(false);
-  expect(getNumberOfUniqueValues(schema1)).toBe(1);
+  expectSchemaPasses(schema2, { a: 5 });
+  expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
+  expectNumberOfUniqueValues(schema2, 1);
   resetSchema(schema2);
-  expect(getNumberOfUniqueValues(schema1)).toBe(1);
-  expect(verify(schema2, { a: 5 })).toBe(true);
-  expect(verify(schema2, { a: 5 })).toBe(false);
+  expectNumberOfUniqueValues(schema2, 1);
+  expectSchemaPasses(schema2, { a: 5 });
+  expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
 
   const schema3 = {
     a: {
       $unique: true,
-      $type: int
+      $type: int,
     },
     b: {
       $unique: true,
-      $type: string
+      $type: string,
     },
     c: {
       $unique: true,
-      $type: int
-    }
+      $type: int,
+    },
   };
 
-  expect(verify(schema3, { a: 1, b: "1", c: 1 })).toBe(true);
-  expect(verify(schema3, { a: 1, b: "2", c: 2 })).toBe(false);
-  expect(getNumberOfUniqueValues(schema3)).toBe(3);
+  expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
+  expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
+  expectNumberOfUniqueValues(schema3, 3);
   resetSchema(schema3);
-  expect(getNumberOfUniqueValues(schema3)).toBe(3);
-  expect(verify(schema3, { a: 1, b: "1", c: 1 })).toBe(true);
-  expect(verify(schema3, { a: 1, b: "2", c: 2 })).toBe(false);
+  expectNumberOfUniqueValues(schema3, 3);
+  expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
+  expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
 });

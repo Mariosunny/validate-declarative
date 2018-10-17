@@ -172,7 +172,7 @@ function addElementToContext(context, index) {
 function addMeta(schema) {
   if (!schema.hasOwnProperty($META)) {
     schema[$META] = {
-      uniqueValues: {}
+      uniqueValues: {},
     };
     initializeUniqueValues("", schema, schema[$META].uniqueValues);
   }
