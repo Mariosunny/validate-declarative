@@ -206,11 +206,22 @@ function getUnique(schema) {
   return null;
 }
 
+function checkInputForErrors(schema, data, allowExtraneous) {
+  if (!isKeyValueObject(schema)) {
+    throw new Error(`schema must be a plain object\n${schema}`);
+  }
+  if (typeof allowExtraneous !== "boolean") {
+    throw new Error(`allowExtraneous must be a boolean\n${allowExtraneous}`);
+  }
+}
+
 export function verify(schema, data, allowExtraneous = false) {
   return validate(schema, data, allowExtraneous).length === 0;
 }
 
 export function validate(schema, data, allowExtraneous = false) {
+  checkInputForErrors(schema, data, allowExtraneous);
+
   addMeta(schema);
 
   let errors = new Errors(data);
