@@ -69,6 +69,56 @@ test("test optional constraint is ignored at top level of schema", () => {
   expectSchemaPasses(optionalSchema2, {});
 });
 
+test("test optional constraint is ignored inside $element object", () => {
+  const requiredSchema1 = {
+    $element: {
+      $optional: true,
+      a: {
+        $optional: false,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaFails(requiredSchema1, [{}], "[0].a");
+
+  const requiredSchema2 = {
+    $element: {
+      $optional: false,
+      a: {
+        $optional: false,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaFails(requiredSchema2, [{}], "[0].a");
+
+  const optionalSchema1 = {
+    $element: {
+      $optional: false,
+      a: {
+        $optional: true,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaPasses(optionalSchema1, [{}]);
+
+  const optionalSchema2 = {
+    $element: {
+      $optional: true,
+      a: {
+        $optional: true,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaPasses(optionalSchema2, [{}]);
+});
+
 test(`test non-optional constraint generates ${MISSING_PROPERTY_ERROR}`, () => {
   const schema = {
     a: int,
