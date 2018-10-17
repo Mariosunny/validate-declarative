@@ -164,24 +164,44 @@ test("ensure falsy values for optional constraint are coerced to false", () => {
 });
 
 test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for simple object`, () => {
-  const schema = {
+  const optionalSchema = {
     a: {
       $type: int,
       $optional: true,
     },
   };
-  expectSchemaPasses(schema, {});
-  expectSchemaPasses(schema, { a: 5 });
+  const requiredSchema = {
+    a: {
+      $type: int,
+      $optional: false,
+    },
+  };
+  expectSchemaPasses(optionalSchema, {});
+  expectSchemaPasses(optionalSchema, { a: 5 });
+  expectSchemaFails(requiredSchema, {}, "a");
+  expectSchemaPasses(requiredSchema, { a: 5 });
 });
 
 test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for deeply nested object`, () => {
-  const schema = {
+  const optionalSchema = {
     a: {
       b: {
         c: {
           d: {
             $type: int,
             $optional: true,
+          },
+        },
+      },
+    },
+  };
+  const requiredSchema = {
+    a: {
+      b: {
+        c: {
+          d: {
+            $type: int,
+            $optional: false,
           },
         },
       },
@@ -206,6 +226,92 @@ test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for d
     },
   };
 
-  expectSchemaPasses(schema, data1);
-  expectSchemaPasses(schema, data2);
+  expectSchemaPasses(optionalSchema, data1);
+  expectSchemaPasses(optionalSchema, data2);
+  expectSchemaFails(requiredSchema, data1, "a.b.c.d");
+  expectSchemaPasses(requiredSchema, data2);
+});
+
+test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for array`, () => {
+  const optionalSchema = {
+    a: {
+      $optional: true,
+      $element: int,
+    },
+  };
+  const requiredSchema = {
+    a: {
+      $optional: false,
+      $element: int,
+    },
+  };
+  expectSchemaPasses(optionalSchema, {});
+  expectSchemaPasses(optionalSchema, { a: [] });
+  expectSchemaPasses(optionalSchema, { a: [1, 2, 3] });
+  expectSchemaFails(requiredSchema, {}, "a");
+  expectSchemaPasses(requiredSchema, { a: [] });
+  expectSchemaPasses(requiredSchema, { a: [1, 2, 3] });
+});
+
+test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for complex object`, () => {
+  const optionalSchema = {
+    a: {
+      $element: {
+        b: {
+          c: {
+            $element: {
+              d: {
+                $type: int,
+                $optional: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  const requiredSchema = {
+    a: {
+      $element: {
+        b: {
+          c: {
+            $element: {
+              d: {
+                $type: int,
+                $optional: false,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  let data1 = {
+    a: [
+      {
+        b: {
+          c: [
+            {
+              d: 5,
+            },
+          ],
+        },
+      },
+    ],
+  };
+  let data2 = {
+    a: [
+      {
+        b: {
+          c: [{}],
+        },
+      },
+    ],
+  };
+
+  expectSchemaPasses(optionalSchema, data1);
+  expectSchemaPasses(optionalSchema, data2);
+  expectSchemaPasses(requiredSchema, data1);
+  expectSchemaFails(requiredSchema, data2, "a[0].b.c[0].d");
 });
