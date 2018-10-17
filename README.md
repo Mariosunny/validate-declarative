@@ -471,7 +471,8 @@ If `$optional` is *true*, a [MissingPropertyError](#missingpropertyerror)
  will **not** be generated if the property does not exist in the data.
 For nested `$optional` declarations,
 only the most shallow `$optional` declaration is considered.
-`$optional` declarations at the top level of the schema are ignored.
+`$optional` declarations at the top level of the schema
+ or at the top level of an `$element` object are ignored.
 
 ```javascript
 import {verify, int, string} from 'validate-declarative';

@@ -1,6 +1,7 @@
 import { DUPLICATE_PROPERTY_ERROR, MISSING_PROPERTY_ERROR } from "../../src/errors";
 import { int } from "../../src/types";
 import { createError, validateErrors } from "../testUtils";
+import { verify } from "../../src/validate";
 
 const { expectSchemaPasses, expectSchemaFails } = (() => {
   const expectSchema = function(schema, data, missingProperties = []) {
@@ -121,4 +122,40 @@ test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for s
   };
   expectSchemaPasses(schema, {});
   expectSchemaPasses(schema, { a: 5 });
+});
+
+test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for deeply nested object`, () => {
+  const schema = {
+    a: {
+      b: {
+        c: {
+          d: {
+            $type: int,
+            $optional: true,
+          },
+        },
+      },
+    },
+  };
+
+  let data1 = {
+    a: {
+      b: {
+        c: {},
+      },
+    },
+  };
+
+  let data2 = {
+    a: {
+      b: {
+        c: {
+          d: 5,
+        },
+      },
+    },
+  };
+
+  expectSchemaPasses(schema, data1);
+  expectSchemaPasses(schema, data2);
 });
