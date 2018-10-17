@@ -1,5 +1,5 @@
 import { resetSchema, validate, verify } from "../src/validate";
-import { int, string, nullValue, boolean } from "../src/types";
+import { int, string, nullValue, boolean, truthy } from "../src/types";
 import { $META, $ROOT } from "../src/keys";
 import { DUPLICATE_PROPERTY_ERROR } from "../src/errors";
 import _ from "lodash";
@@ -441,6 +441,74 @@ test("ensure values in data are being added to $meta.uniqueValues each validatio
   expectUniqueValues(schema4, key, [1, 2, 3, 4]);
 });
 
+test("ensure values in data are being added to $meta.uniqueValues each validation for complex objects (object)", () => {
+  const schema = {
+    a: {
+      $element: {
+        b: {
+          c: {
+            $element: {
+              d: {
+                $type: int,
+                $unique: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const key = "a[x].b.c[x].d";
+
+  let data1 = {
+    a: [
+      {
+        b: {
+          c: [
+            {
+              d: 5,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  const temp = _.cloneDeep(schema);
+  verify(temp, null);
+  expectNumberOfUniqueValues(temp, 1);
+  expectUniqueValues(temp, key, []);
+
+  let schema1 = _.cloneDeep(schema);
+  expectSchemaPasses(schema1, data1);
+  expectUniqueValues(schema1, key, [5]);
+  expectSchemaFails(schema1, data1, { key: "a[0].b.c[0].d", value: 5 });
+  expectUniqueValues(schema1, key, [5]);
+
+  let data2 = {
+    a: [
+      {
+        b: {
+          c: [
+            {
+              d: 6,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  let schema2 = _.cloneDeep(schema);
+  expectSchemaPasses(schema2, data1);
+  expectUniqueValues(schema2, key, [5]);
+  expectSchemaPasses(schema2, data2);
+  expectUniqueValues(schema2, key, [5, 6]);
+  expectSchemaFails(schema2, data2, { key: "a[0].b.c[0].d", value: 6 });
+  expectUniqueValues(schema2, key, [5, 6]);
+});
+
 test("ensure nested $unique in ordinary properties is ignored", () => {
   const schema1 = {
     $unique: true,
@@ -610,4 +678,90 @@ test("ensure resetSchema() resets uniqueValues", () => {
   expectNumberOfUniqueValues(schema3, 3);
   expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
+});
+
+test(`test multiple ${DUPLICATE_PROPERTY_ERROR}s`, () => {
+  const schema = {};
+  let data = {};
+  let errors = [];
+
+  for (let i = 0; i < 20; i++) {
+    schema[i] = {
+      $unique: true,
+      $type: int,
+    };
+    data[i] = i;
+    errors.push({
+      key: i + "",
+      value: i,
+    });
+  }
+
+  expectSchemaPasses(schema, data);
+  expectSchemaFails(schema, data, errors);
+});
+
+test(`test multiple ${DUPLICATE_PROPERTY_ERROR}s on complex object`, () => {
+  const schema1 = {
+    a: {
+      $element: {
+        e: {
+          $unique: true,
+          $type: truthy,
+        },
+      },
+    },
+    b: {
+      c: {
+        $type: int,
+        $unique: true,
+      },
+    },
+    d: {
+      $unique: true,
+      $element: boolean,
+    },
+  };
+
+  let data1 = {
+    a: [
+      {
+        e: 5,
+      },
+      {
+        e: 5,
+      },
+    ],
+    b: { c: 5 },
+    d: [true, false],
+  };
+
+  let data2 = {
+    a: [
+      {
+        e: 5,
+      },
+      {
+        e: [],
+      },
+    ],
+    b: { c: 5 },
+    d: [true, false],
+  };
+
+  expectSchemaFails(schema1, data1, { key: "a[1].e", value: 5 });
+  expectSchemaFails(schema1, data2, [
+    {
+      key: "a[0].e",
+      value: 5,
+    },
+    {
+      key: "b.c",
+      value: 5,
+    },
+    {
+      key: "d",
+      value: [true, false],
+    },
+  ]);
 });
