@@ -1,22 +1,18 @@
 ## validate-declarative
-A simple utility for declaratively validating the structure of any Javascript object.
+A simple utility for declaratively validating any Javascript object.
 - Fast, robust, and highly extensible
 - Works with arbitrarily large and deeply nested objects
-- Detailed error reports
 
 ***See it in action:***
 ```javascript
-import {verify, string, number, boolean} from 'validate-declarative';
+import {verify, string, number, optionalNumber, boolean} from 'validate-declarative';
 
 // Define the structure and constraints of your objects
 const bankAccountSchema = {
   accountHolder: string,
   active: boolean,
   balance: {
-    checkings: {
-        $type: number,
-        $optional: true
-    },
+    checkings: optionalNumber,
     savings: number
   }
 };
@@ -342,8 +338,8 @@ let result2 = verify(appleType, data2); // false
 ```
 
 #### `resetSchema(schema)`
-Resets the internal unique values within the schema, which are used to determine uniqueness
-of values within data. **Invoking this function is not recommended for normal use**.
+Resets the internal unique values within the schema, which are used to enforce uniqueness
+of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
 
 ## Constraints
@@ -503,10 +499,10 @@ let result2 = verify(schema, data2); // true
 
 Declares the value of a property to be unique across all data validated
 against a particular schema.
-By default, all properties are non-unique.
+By default, all properties in a schema are non-unique.
 If `$unique` is *true*, the property will generate a 
 [DuplicateValueError](#duplicatevalueerror) when a duplicate value is
-detected across two data.
+detected across two data or detected within the same data (ex. duplicate values in an array).
 For nested `$unique` declarations,
 only the most shallow `$unique` declaration is considered.
 
@@ -588,6 +584,7 @@ This section contains a list of the built-in types that are included in this pac
 See [this example](#validating-an-object) for how to use built-in types.
 For creating your own types, see [Creating a custom type](#creating-a-custom-type).
 
+#### Core Types
 |Type|Description|Examples|
 |----|-----------|------------|
 |`string`|A string.|`""`, `"hello world"`|
@@ -620,6 +617,75 @@ For creating your own types, see [Creating a custom type](#creating-a-custom-typ
 |`nanValue`|A **NaN** value.|`NaN`|
 |`any`|Any value.|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
+#### Optional types
+Optional types are the same as core types, but with `$optional` = *true*.
+
+|Type|Description|Examples|
+|----|-----------|------------|
+|`optionalString`|An optional string.|`""`, `"hello world"`|
+|`optionalNumber`|An optional number.|`-5`, `0`, `8.4`, `7/3`, `Infinity`, `-Infinity`|
+|`optionalNonPositiveNumber`|An optional non-positive number.|`-Infinity`, `-5.5`, `0`|
+|`optionalNegativeNumber`|An optional negative number.|`-Infinity`, `-5.5`|
+|`optionalNonNegativeNumber`|An optional non-negative number.|`0`, `5.5`, `Infinity`|
+|`optionalPositiveNumber`|An optional positive number.|`5.5`, `Infinity`|
+|`optionalInt`|An optional integer.|`-10000000`, `-5`, `0`, `12345`|
+|`optionalNonPositiveInt`|An optional non-positive integer.|`-5`, `0`|
+|`optionalNegativeInt`|An optional negative integer.|`-5`|
+|`optionalNonNegativeInt`|An optional non-negative integer.|`0`, `5`|
+|`optionalPositiveInt`|An optional positive integer.|`5`|
+|`optionalBoolean`|An optional boolean value.|`true`, `false`|
+|`optionalTruthy`|An optional truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
+|`optionalFalsy`|An optional falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
+|`optionalArray`|An optional array.|`[1, 2, "3"]`, `new Array()`|
+|`optionalSet`|An optional set.|`new Set(1, 2, 3)`|
+|`optionalWeakSet`|An optional weak set.|`new WeakSet(1, 2, 3)`|
+|`optionalList`|An optional array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
+|`optionalMap`|An optional map.|`new Map()`|
+|`optionalWeakMap`|An optional weak map.|`new WeakMap()`|
+|`optionalObject`|Any object that is not a function (optional).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
+|`optionalFunc`|An optional function.|`function(){}`, `() => {}`, `Date`|
+|`optionalDate`|An optional date object.|`new Date()`|
+|`optionalSymbol`|An optional symbol.|`Symbol()`|
+|`optionalRegexp`|An optional regular expression object.|`/.*/g`, `new Regexp(".*")`|
+|`optionalNullValue`|An optional **null** value.|`null`|
+|`optionalUndefinedValue`|An optional **undefined** value.|`undefined`|
+|`optionalNanValue`|An optional **NaN** value.|`NaN`|
+|`optionalAny`|Any value (optional).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
+
+#### Unique types
+Unique types are the same as core types, but with `$unique` = *true*.
+
+|Type|Description|Examples|
+|----|-----------|------------|
+|`uniqueString`|A unique string.|`""`, `"hello world"`|
+|`uniqueNumber`|A unique number.|`-5`, `0`, `8.4`, `7/3`, `Infinity`, `-Infinity`|
+|`uniqueNonPositiveNumber`|A unique non-positive number.|`-Infinity`, `-5.5`, `0`|
+|`uniqueNegativeNumber`|A unique negative number.|`-Infinity`, `-5.5`|
+|`uniqueNonNegativeNumber`|A unique non-negative number.|`0`, `5.5`, `Infinity`|
+|`uniquePositiveNumber`|A unique positive number.|`5.5`, `Infinity`|
+|`uniqueInt`|A unique integer.|`-10000000`, `-5`, `0`, `12345`|
+|`uniqueNonPositiveInt`|A unique non-positive integer.|`-5`, `0`|
+|`uniqueNegativeInt`|A unique negative integer.|`-5`|
+|`uniqueNonNegativeInt`|A unique non-negative integer.|`0`, `5`|
+|`uniquePositiveInt`|A unique positive integer.|`5`|
+|`uniqueBoolean`|A unique boolean value.|`true`, `false`|
+|`uniqueTruthy`|A unique truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
+|`uniqueFalsy`|A unique falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
+|`uniqueArray`|A unique array.|`[1, 2, "3"]`, `new Array()`|
+|`uniqueSet`|A unique set.|`new Set(1, 2, 3)`|
+|`uniqueWeakSet`|A unique weak set.|`new WeakSet(1, 2, 3)`|
+|`uniqueList`|A unique array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
+|`uniqueMap`|A unique map.|`new Map()`|
+|`uniqueWeakMap`|A unique weak map.|`new WeakMap()`|
+|`uniqueObject`|Any object that is not a function (unique).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
+|`uniqueFunc`|A unique function.|`function(){}`, `() => {}`, `Date`|
+|`uniqueDate`|A unique date object.|`new Date()`|
+|`uniqueSymbol`|A unique symbol.|`Symbol()`|
+|`uniqueRegexp`|A unique regular expression object.|`/.*/g`, `new Regexp(".*")`|
+|`uniqueNullValue`|A unique **null** value.|`null`|
+|`uniqueUndefinedValue`|A unique **undefined** value.|`undefined`|
+|`uniqueNanValue`|A unique **NaN** value.|`NaN`|
+|`uniqueAny`|Any value (unique).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
 ## Errors
 This section contains a comprehensive list of errors that could be generated by [`validate()`](#api).
