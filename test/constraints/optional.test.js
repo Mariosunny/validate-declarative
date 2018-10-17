@@ -363,3 +363,37 @@ test("ensure only shallowest $optional in the $type chain is considered", () => 
   expectSchemaFails(requiredSchema2, {}, "a");
   expectSchemaPasses(requiredSchema2, { a: 5 });
 });
+
+test("ensure deep $optional is not ignored", () => {
+  const shallowSchema = {
+    a: {
+      $type: {
+        $optional: true,
+        $type: int,
+      },
+    },
+  };
+
+  expectSchemaPasses(shallowSchema, { a: 5 });
+  expectSchemaPasses(shallowSchema, {});
+
+  const deepSchema = {
+    a: {
+      $type: {
+        $type: {
+          $type: {
+            $type: {
+              $type: {
+                $optional: true,
+                $type: int,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  expectSchemaPasses(deepSchema, { a: 5 });
+  expectSchemaPasses(deepSchema, {});
+});
