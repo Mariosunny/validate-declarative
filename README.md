@@ -623,6 +623,7 @@ For creating your own types, see [Creating a custom type](#creating-a-custom-typ
 
 #### Optional types
 Optional types are the same as core types, but with `$optional` = *true*.
+
 |Type|Description|Examples|
 |----|-----------|------------|
 |`optionalString`|An optional string.|`""`, `"hello world"`|
@@ -657,6 +658,7 @@ Optional types are the same as core types, but with `$optional` = *true*.
 
 #### Unique types
 Unique types are the same as core types, but with `$unique` = *true*.
+
 |Type|Description|Examples|
 |----|-----------|------------|
 |`uniqueString`|A unique string.|`""`, `"hello world"`|
