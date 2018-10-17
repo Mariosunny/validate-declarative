@@ -342,8 +342,8 @@ let result2 = verify(appleType, data2); // false
 ```
 
 #### `resetSchema(schema)`
-Resets the internal unique values within the schema, which are used to determine uniqueness
-of values within data. **Invoking this function is not recommended for normal use**.
+Resets the internal unique values within the schema, which are used to enforce uniqueness
+of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
 
 ## Constraints
@@ -503,10 +503,10 @@ let result2 = verify(schema, data2); // true
 
 Declares the value of a property to be unique across all data validated
 against a particular schema.
-By default, all properties are non-unique.
+By default, all properties in a schema are non-unique.
 If `$unique` is *true*, the property will generate a 
 [DuplicateValueError](#duplicatevalueerror) when a duplicate value is
-detected across two data.
+detected across two data or detected within the same data (ex. duplicate values in an array).
 For nested `$unique` declarations,
 only the most shallow `$unique` declaration is considered.
 
