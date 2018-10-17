@@ -26,7 +26,49 @@ const { expectSchemaPasses, expectSchemaFails } = (() => {
   };
 })();
 
-test(`test optional constraint generates ${MISSING_PROPERTY_ERROR}`, () => {
+test("test optional constraint is ignored at top level of schema", () => {
+  const requiredSchema1 = {
+    $optional: true,
+    a: {
+      $optional: false,
+      $type: int,
+    },
+  };
+
+  expectSchemaFails(requiredSchema1, {}, "a");
+
+  const requiredSchema2 = {
+    $optional: false,
+    a: {
+      $optional: false,
+      $type: int,
+    },
+  };
+
+  expectSchemaFails(requiredSchema2, {}, "a");
+
+  const optionalSchema1 = {
+    $optional: false,
+    a: {
+      $optional: true,
+      $type: int,
+    },
+  };
+
+  expectSchemaPasses(optionalSchema1, {});
+
+  const optionalSchema2 = {
+    $optional: true,
+    a: {
+      $optional: true,
+      $type: int,
+    },
+  };
+
+  expectSchemaPasses(optionalSchema2, {});
+});
+
+test(`test non-optional constraint generates ${MISSING_PROPERTY_ERROR}`, () => {
   const schema = {
     a: int,
   };
@@ -38,4 +80,45 @@ test(`test optional constraint generates ${MISSING_PROPERTY_ERROR}`, () => {
     $optional: false,
   };
   expectSchemaFails(schema, data, "a");
+});
+
+test("ensure truthy values for optional constraint are coerced to true", () => {
+  let truthyValues = [5.5, 5, Infinity, -Infinity, {}, "hello", new Date(), Symbol(), function() {}, /\w+/, []];
+
+  truthyValues.forEach(function(value) {
+    let schema = {
+      a: {
+        $optional: value,
+        $type: int,
+      },
+    };
+
+    expectSchemaPasses(schema, {});
+  });
+});
+
+test("ensure falsy values for optional constraint are coerced to false", () => {
+  let falsyValues = [0, "", null, undefined, NaN];
+
+  falsyValues.forEach(function(value) {
+    let schema = {
+      a: {
+        $optional: value,
+        $type: int,
+      },
+    };
+
+    expectSchemaFails(schema, {}, "a");
+  });
+});
+
+test(`test optional constraint does not generate ${MISSING_PROPERTY_ERROR} for simple object`, () => {
+  const schema = {
+    a: {
+      $type: int,
+      $optional: true,
+    },
+  };
+  expectSchemaPasses(schema, {});
+  expectSchemaPasses(schema, { a: 5 });
 });

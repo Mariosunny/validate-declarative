@@ -63,6 +63,34 @@ test(`test non-unique constraint does not generate ${DUPLICATE_PROPERTY_ERROR}`,
   expectSchemaPasses(schema, data);
 });
 
+test("ensure truthy values for unique constraint are coerced to true", () => {
+  let truthyValues = [5.5, 5, Infinity, -Infinity, {}, "hello", new Date(), Symbol(), function() {}, /\w+/, []];
+
+  truthyValues.forEach(function(value) {
+    let schema = {
+      $unique: value,
+      $type: int,
+    };
+
+    expectSchemaPasses(schema, 5);
+    expectSchemaFails(schema, 5, { value: 5 });
+  });
+});
+
+test("ensure falsy values for unique constraint are coerced to false", () => {
+  let falsyValues = [0, "", null, undefined, NaN];
+
+  falsyValues.forEach(function(value) {
+    let schema = {
+      $unique: value,
+      $type: int,
+    };
+
+    expectSchemaPasses(schema, 5);
+    expectSchemaPasses(schema, 5);
+  });
+});
+
 test("test non-unique constraint does not create uniqueValues arrays when $unique = false or when $unique is not present", () => {
   const schema1 = {
     a: {
