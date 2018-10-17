@@ -6,17 +6,14 @@ A simple utility for declaratively validating the structure of any Javascript ob
 
 ***See it in action:***
 ```javascript
-import {verify, string, number, boolean} from 'validate-declarative';
+import {verify, string, number, optionalNumber, boolean} from 'validate-declarative';
 
 // Define the structure and constraints of your objects
 const bankAccountSchema = {
   accountHolder: string,
   active: boolean,
   balance: {
-    checkings: {
-        $type: number,
-        $optional: true
-    },
+    checkings: optionalNumber,
     savings: number
   }
 };
