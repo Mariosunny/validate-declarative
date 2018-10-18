@@ -34,7 +34,36 @@ test(`verify or validate adds $meta property to schema`, () => {
   expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
 });
 
-xtest("ensure symbolic properties in data are ignored", () => {});
+test("ensure any property type in data is not ignored", () => {
+  let keys = [
+    5.5,
+    5,
+    Symbol(),
+    Infinity,
+    -Infinity,
+    "",
+    {},
+    "hello",
+    undefined,
+    null,
+    NaN,
+    true,
+    false,
+    new Date(),
+    function() {},
+    /\w/,
+  ];
+
+  keys.forEach(key => {
+    let schema = {
+      [key]: int,
+    };
+    let data = {
+      [key]: 5,
+    };
+    expect(verify(schema, data)).toBe(true);
+  });
+});
 
 test("test single value", () => {
   expect(verify(int, 5)).toBe(true);
@@ -240,34 +269,6 @@ test("test required key functionality", () => {
     },
   };
   let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {};
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test optional key functionality", () => {
-  let schema = {
-    a: {
-      $optional: true,
-    },
-  };
-  let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {};
-  expect(verify(schema, data)).toBe(true);
-
-  schema = {
-    a: {
-      $optional: false,
-    },
-  };
-  data = {
     a: 5,
   };
   expect(verify(schema, data)).toBe(true);
