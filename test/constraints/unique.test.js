@@ -1,34 +1,14 @@
-import { resetSchema, validate, verify } from "../../src/validate";
+import { resetSchema, verify } from "../../src/validate";
 import { int, string, nullValue, boolean, truthy } from "../../src/types";
 import { $META, $ROOT } from "../../src/keys";
 import { DUPLICATE_PROPERTY_ERROR } from "../../src/errors";
 import _ from "lodash";
-import { createError, validateErrors } from "../testUtils";
+import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
 
-const { expectSchemaPasses, expectSchemaFails } = (() => {
-  const expectSchema = function(schema, data, errors = []) {
-    if (!Array.isArray(errors)) {
-      errors = [errors];
-    }
-    validateErrors(
-      schema,
-      data,
-      errors.map(error => {
-        let key = error.key || "";
-        return createError(key, DUPLICATE_PROPERTY_ERROR, error.value);
-      })
-    );
-  };
-
-  return {
-    expectSchemaPasses(schema, data) {
-      expectSchema(schema, data);
-    },
-    expectSchemaFails(schema, data, errors) {
-      expectSchema(schema, data, errors);
-    },
-  };
-})();
+const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
+  let key = error.key || "";
+  return createError(key, DUPLICATE_PROPERTY_ERROR, error.value);
+});
 
 function expectNumberOfUniqueValues(schema, expectedNumberOfUniqueValues) {
   expect(
