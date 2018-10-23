@@ -156,6 +156,8 @@ function getTypeName(schema) {
     name = schema[$TEST];
   } else if (schema[$TYPE] && isKeyValueObject(schema[$TYPE])) {
     name = getTypeName(schema[$TYPE]);
+  } else if (hasOwnProperty(schema, $ELEMENT)) {
+    name = list.$name;
   }
 
   return name;
