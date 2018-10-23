@@ -45,8 +45,8 @@ export function generateSchemaExpects(errorMapping) {
     expectSchemaFails(schema, data, errors) {
       expectSchema(schema, data, errorMapping, errors);
     },
-    expectSchemaThrows(schema, data) {
-      expect(() => verify(schema, data)).toThrow();
+    expectSchemaThrows(schema, data, allowExtraneous) {
+      expect(() => verify(schema, data, allowExtraneous)).toThrow();
     },
   };
 }

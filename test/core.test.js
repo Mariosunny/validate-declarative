@@ -41,7 +41,13 @@ test("non-key/value object throws error", () => {
   });
 });
 
-test("", () => {});
+test("non-boolean allowExtraneous throws error", () => {
+  const nonBooleanValues = [5.5, 5, 0, Infinity, -Infinity, "", "hello", null, NaN, {}];
+
+  nonBooleanValues.forEach(function(value) {
+    expectSchemaThrows({}, {}, value);
+  });
+});
 
 test(`verify or validate adds $meta property to schema`, () => {
   const schema1 = {
