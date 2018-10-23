@@ -77,6 +77,27 @@ test("test $test without $type", () => {
   expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "HELLO" });
 });
 
+test("test $type without $test", () => {
+  let schema = {
+    a: {
+      $type: {
+        $test: function(object) {
+          return /[a-z]/.test(object);
+        },
+      },
+    },
+  };
+  let data = {
+    a: "hello",
+  };
+  expectSchemaPasses(schema, data);
+
+  data = {
+    a: "HELLO",
+  };
+  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "HELLO" });
+});
+
 test("test type inheritance", () => {
   let schema = {
     a: {
