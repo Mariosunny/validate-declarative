@@ -7,25 +7,6 @@ const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function
   return createError(error.key, INVALID_VALUE_ERROR, error.value, error.expectedType);
 });
 
-test("test user-defined $test", () => {
-  let customType = {
-    $test: object => object.includes("c"),
-    $name: "customType",
-  };
-  let schema = {
-    a: customType,
-  };
-  let data1 = {
-    a: ["a", "b", "c"],
-  };
-  expectSchemaPasses(schema, data1);
-
-  let data2 = {
-    a: ["a", "b", "d"],
-  };
-  expectSchemaFails(schema, data2, { key: "a", value: data2.a, expectedType: "customType" });
-});
-
 test("test inline type", () => {
   let schema = {
     a: int,
@@ -38,7 +19,7 @@ test("test inline type", () => {
   data = {
     a: "hello",
   };
-  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "hello", expectedType: int });
+  expectSchemaFails(schema, data, { key: "a", value: "hello", expectedType: int });
 });
 
 test("test nested type", () => {
@@ -55,7 +36,25 @@ test("test nested type", () => {
   data = {
     a: "hello",
   };
-  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "hello", expectedType: int });
+  expectSchemaFails(schema, data, { key: "a", value: "hello", expectedType: int });
+});
+
+test("test no $test or $type", () => {
+  let schema1 = {
+    a: {},
+  };
+  let data = {
+    a: {},
+  };
+  expectSchemaPasses(schema1, data);
+
+  data = {
+    a: 5,
+  };
+  expectSchemaFails(schema1, data, { value: { a: 5 } });
+
+  let schema2 = {};
+  expectSchemaFails(schema2, 5, { value: 5 });
 });
 
 test("test $test without $type", () => {
@@ -74,7 +73,7 @@ test("test $test without $type", () => {
   data = {
     a: "HELLO",
   };
-  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "HELLO" });
+  expectSchemaFails(schema, data, { key: "a", value: "HELLO" });
 });
 
 test("test $type without $test", () => {
@@ -95,7 +94,7 @@ test("test $type without $test", () => {
   data = {
     a: "HELLO",
   };
-  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: "HELLO" });
+  expectSchemaFails(schema, data, { key: "a", value: "HELLO" });
 });
 
 test("test type inheritance", () => {
@@ -121,4 +120,23 @@ test("test type inheritance", () => {
     a: 6,
   };
   expect(verify(schema, data)).toBe(false);
+});
+
+test("test user-defined $test", () => {
+  let customType = {
+    $test: object => object.includes("c"),
+    $name: "customType",
+  };
+  let schema = {
+    a: customType,
+  };
+  let data1 = {
+    a: ["a", "b", "c"],
+  };
+  expectSchemaPasses(schema, data1);
+
+  let data2 = {
+    a: ["a", "b", "d"],
+  };
+  expectSchemaFails(schema, data2, { key: "a", value: data2.a, expectedType: "customType" });
 });

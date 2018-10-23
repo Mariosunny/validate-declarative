@@ -48,7 +48,7 @@ test("test optional constraint is ignored at top level of schema", () => {
   expectSchemaPasses(optionalSchema2, {});
 });
 
-test("test optional constraint is ignored inside $element object", () => {
+test("test optional constraint is ignored directly inside $element object", () => {
   const requiredSchema1 = {
     $element: {
       $optional: true,

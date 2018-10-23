@@ -3,8 +3,9 @@ import { int, list, string } from "../src/types";
 import { $META } from "../src/keys";
 import { createError, generateSchemaExpects } from "./testUtils";
 import { INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
+import { isKeyValueObject } from "../src/util";
 
-const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
+const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows } = generateSchemaExpects(function(error) {
   return createError(error.key, error.error, error.value, error.expectedType);
 });
 
@@ -14,6 +15,30 @@ test("test verify returns boolean", () => {
 
 test("test validate returns array", () => {
   expect(validate({}, {})).toEqual([]);
+});
+
+test("non-key/value object throws error", () => {
+  const nonKeyValueObjects = [
+    5.5,
+    5,
+    0,
+    Infinity,
+    -Infinity,
+    "",
+    "hello",
+    undefined,
+    null,
+    NaN,
+    true,
+    false,
+    Symbol(),
+    function() {},
+    [],
+  ];
+
+  nonKeyValueObjects.forEach(function(obj) {
+    expectSchemaThrows(obj, null);
+  });
 });
 
 test(`verify or validate adds $meta property to schema`, () => {
