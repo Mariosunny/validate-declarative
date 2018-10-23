@@ -18,14 +18,14 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
         .expectedType(getTypeName(schema))
         .add();
       findExtraneousProperties(context, schema, data, errors, allowExtraneous);
-    }
-
-    checkUniqueness(context, schema, data, errors, uniqueValues);
-
-    if (hasOwnProperty(schema, $ELEMENT)) {
-      validateArray(context, schema, data, errors, allowExtraneous, uniqueValues);
     } else {
-      validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
+      checkUniqueness(context, schema, data, errors, uniqueValues);
+
+      if (hasOwnProperty(schema, $ELEMENT)) {
+        validateArray(context, schema, data, errors, allowExtraneous, uniqueValues);
+      } else {
+        validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
+      }
     }
   }
 }
@@ -150,7 +150,7 @@ function passesTypeTest(schema, data) {
 function getTypeName(schema) {
   let name = null;
 
-  if (schema[$NAME]) {
+  if (schema.hasOwnProperty($NAME)) {
     name = schema[$NAME];
   } else if (schema[$TEST] && !schema[$TYPE] && schema[$TEST] instanceof RegExp) {
     name = schema[$TEST];
