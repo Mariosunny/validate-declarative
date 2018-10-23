@@ -1,17 +1,17 @@
 import { validate } from "../src";
 import _ from "lodash";
-import { DUPLICATE_PROPERTY_ERROR } from "../src/errors";
+import { verify } from "../src/validate";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {
     error: errorType,
-    key: path,
+    key: path || "",
   };
   if (value) {
     error.value = value;
   }
   if (expectedType) {
-    error.expectedType = expectedType;
+    error.expectedType = expectedType.hasOwnProperty("$name") ? expectedType.$name : expectedType;
   }
   return error;
 }
@@ -44,6 +44,9 @@ export function generateSchemaExpects(errorMapping) {
     },
     expectSchemaFails(schema, data, errors) {
       expectSchema(schema, data, errorMapping, errors);
+    },
+    expectSchemaThrows(schema, data) {
+      expect(() => verify(schema, data)).toThrow();
     },
   };
 }

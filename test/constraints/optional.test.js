@@ -3,7 +3,7 @@ import { int } from "../../src/types";
 import { createError, generateSchemaExpects } from "../testUtils";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(property) {
-  return createError(property || "", MISSING_PROPERTY_ERROR);
+  return createError(property, MISSING_PROPERTY_ERROR);
 });
 
 test("test optional constraint is ignored at top level of schema", () => {

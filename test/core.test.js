@@ -1,6 +1,12 @@
 import { validate, verify } from "../src/validate";
-import { int, string } from "../src/types";
+import { int, list, string } from "../src/types";
 import { $META } from "../src/keys";
+import { createError, generateSchemaExpects } from "./testUtils";
+import { INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
+
+const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
+  return createError(error.key, error.error, error.value, error.expectedType);
+});
 
 test("test verify returns boolean", () => {
   expect(verify({}, {})).toEqual(true);
@@ -61,56 +67,38 @@ test("ensure any property type in data is not ignored", () => {
     let data = {
       [key]: 5,
     };
-    expect(verify(schema, data)).toBe(true);
+    expectSchemaPasses(schema, data);
   });
 });
 
 test("test single value", () => {
-  expect(verify(int, 5)).toBe(true);
-  expect(verify(int, "hello")).toBe(false);
+  expectSchemaPasses(int, 5);
+  expectSchemaFails(int, "hello", { error: INVALID_VALUE_ERROR, value: "hello", expectedType: int });
 });
 
 test("test single array", () => {
   let schema = {
     $element: int,
   };
-  expect(verify(schema, 5)).toBe(false);
-  expect(verify(schema, [])).toBe(true);
-  expect(verify(schema, [1, 2, 3])).toBe(true);
-  expect(verify(schema, ["hello"])).toBe(false);
-});
-
-test("test custom type", () => {
-  let customType = {
-    $test: object => object.includes("c"),
-  };
-  let schema = {
-    a: customType,
-  };
-  let data = {
-    a: ["a", "b", "c"],
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: ["a", "b", "d"],
-  };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, 5, { error: INVALID_VALUE_ERROR, value: 5, expectedType: list });
+  expectSchemaPasses(schema, []);
+  expectSchemaPasses(schema, [1, 2, 3]);
+  expectSchemaFails(schema, ["hello"], { error: INVALID_VALUE_ERROR, key: "[0]", value: "hello", expectedType: int });
 });
 
 test("test literal value", () => {
-  let schema = {
+  const schema = {
     a: 5,
   };
   let data = {
     a: 5,
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: 6,
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { error: INVALID_VALUE_ERROR, value: { a: 6 } });
 });
 
 test("test literal object", () => {
@@ -126,7 +114,7 @@ test("test literal object", () => {
       c: 10,
     },
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: {
@@ -134,7 +122,15 @@ test("test literal object", () => {
       c: 10,
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    error: INVALID_VALUE_ERROR,
+    value: {
+      a: {
+        b: 6,
+        c: 10,
+      },
+    },
+  });
 
   data = {
     a: {
@@ -143,19 +139,74 @@ test("test literal object", () => {
       d: 5,
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    error: INVALID_VALUE_ERROR,
+    value: {
+      a: {
+        b: 5,
+        c: 10,
+        d: 5,
+      },
+    },
+  });
 
   data = {
     a: {
       b: 5,
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    error: INVALID_VALUE_ERROR,
+    value: {
+      a: {
+        b: 5,
+      },
+    },
+  });
 
   data = {
     a: {},
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    error: INVALID_VALUE_ERROR,
+    value: {
+      a: {},
+    },
+  });
+});
+
+test("test literal value with non-literal values", () => {
+  const schema = {
+    a: 5,
+    b: int,
+  };
+
+  let data = {
+    a: 5,
+    b: 5,
+  };
+  expectSchemaPasses(schema, data);
+
+  data = {
+    a: 6,
+    b: 5,
+  };
+  expectSchemaFails(schema, data, { key: "a", error: INVALID_VALUE_ERROR, value: 6 });
+
+  data = {
+    a: 5,
+    b: "5",
+  };
+  expectSchemaFails(schema, data, { key: "b", error: INVALID_VALUE_ERROR, value: "5", expectedType: int });
+
+  data = {
+    a: 6,
+    b: "5",
+  };
+  expectSchemaFails(schema, data, [
+    { key: "a", error: INVALID_VALUE_ERROR, value: 6 },
+    { key: "b", error: INVALID_VALUE_ERROR, value: "5", expectedType: int },
+  ]);
 });
 
 test("test deeply nested object", () => {
@@ -197,7 +248,7 @@ test("test deeply nested object", () => {
       },
     },
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: {
@@ -216,7 +267,7 @@ test("test deeply nested object", () => {
       },
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "a.b.c.d.e.f", error: MISSING_PROPERTY_ERROR });
 
   data = {
     a: {
@@ -258,97 +309,6 @@ test("test deeply nested object", () => {
         j: "there",
       },
     },
-  };
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test required key functionality", () => {
-  let schema = {
-    a: {
-      $type: int,
-    },
-  };
-  let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {};
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test inline type", () => {
-  let schema = {
-    a: int,
-  };
-  let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: "hello",
-  };
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test nested type", () => {
-  let schema = {
-    a: {
-      $type: int,
-    },
-  };
-  let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: "hello",
-  };
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test test without type", () => {
-  let schema = {
-    a: {
-      $test: function(object) {
-        return /[a-z]/.test(object);
-      },
-    },
-  };
-  let data = {
-    a: "hello",
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: "HELLO",
-  };
-  expect(verify(schema, data)).toBe(false);
-});
-
-test("test type inheritance", () => {
-  let schema = {
-    a: {
-      $type: int,
-      $test: function(object) {
-        return object === 5;
-      },
-    },
-  };
-  let data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: "hello",
-  };
-  expect(verify(schema, data)).toBe(false);
-
-  data = {
-    a: 6,
   };
   expect(verify(schema, data)).toBe(false);
 });

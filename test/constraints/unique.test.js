@@ -6,8 +6,7 @@ import _ from "lodash";
 import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
-  let key = error.key || "";
-  return createError(key, DUPLICATE_PROPERTY_ERROR, error.value);
+  return createError(error.key, DUPLICATE_PROPERTY_ERROR, error.value);
 });
 
 function expectNumberOfUniqueValues(schema, expectedNumberOfUniqueValues) {
