@@ -7,7 +7,6 @@ A simple utility for declaratively validating any Javascript object.
 ```javascript
 import {verify, string, number, optionalNumber, boolean} from 'validate-declarative';
 
-// Define the structure and constraints of your objects
 const bankAccountSchema = {
   accountHolder: string,
   active: boolean,
@@ -17,7 +16,6 @@ const bankAccountSchema = {
   }
 };
 
-// Create an object
 let bankAccount1 = {
   accountHolder: "Susan B. Foo",
   active: true,
@@ -39,10 +37,10 @@ let bankAccount2 = {
 };
 
 let result2 = verify(bankAccountSchema, bankAccount2);
-/* returns false, for the following reasons:
-     1. 'active' property is missing
-     2. accountHolder is not a string
-     3. balance.savings is not a number
+/* returns false, since:
+     - 'active' property is missing
+     - accountHolder is not a string
+     - balance.savings is not a number
  */
 ```
 

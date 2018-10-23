@@ -41,6 +41,8 @@ test("non-key/value object throws error", () => {
   });
 });
 
+test("", () => {});
+
 test(`verify or validate adds $meta property to schema`, () => {
   const schema1 = {
     a: int,
