@@ -38,7 +38,7 @@ function commaSeparated(number) {
 }
 
 function validatingSingleValue() {
-  benchmark("Validating a single value", string, "hello world");
+  benchmark("[ Validating a single value ]", string, "hello world");
 }
 
 function run() {

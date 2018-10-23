@@ -53,6 +53,7 @@ let result2 = verify(bankAccountSchema, bankAccount2);
 - [Constraints](#constraints)
 - [Built-in Types](#built-in-types)
 - [Errors](#errors)
+- [Stats](#stats)
 - [About](#about)
 
 ## Installation
@@ -738,6 +739,18 @@ Generated when there is an extra property in the data, and when `allowExtraneous
 }
 ```
 
+## Stats
+
+#### Benchmarks
+All tests run on Acer Predator G3-571 V1.10 with Ubuntu 17.10 x86_64 Intel® Core™ i7-7700HQ CPU @ 2.80GHz × 8.
+
+```
+[ Validating a single value ] 
+100,000 validations in 20 ms (0.201 μs per validation)
+```
+
+#### Tests
+- *Number of tests:* 129
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
