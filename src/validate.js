@@ -9,7 +9,6 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
       .invalidValue(context)
       .value(data)
       .add();
-    findExtraneousProperties(context, schema, data, errors, allowExtraneous);
   } else {
     if (!passesTypeTest(schema, data)) {
       errors
@@ -17,7 +16,6 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
         .value(data)
         .expectedType(getTypeName(schema))
         .add();
-      findExtraneousProperties(context, schema, data, errors, allowExtraneous);
     } else {
       checkUniqueness(context, schema, data, errors, uniqueValues);
 
@@ -27,6 +25,10 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
         validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
       }
     }
+  }
+
+  if (!(hasOwnProperty(schema, $TEST) || hasOwnProperty(schema, $TYPE))) {
+    findExtraneousProperties(context, schema, data, errors, allowExtraneous);
   }
 }
 
