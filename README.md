@@ -25,7 +25,7 @@ let data1 = {
 };
 
 let result1 = verify(schema, data1); 
-// returns true: bankAccount1 satisfies the schema
+// returns true: data1 satisfies the schema
 
 
 let data2 = {
