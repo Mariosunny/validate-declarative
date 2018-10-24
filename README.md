@@ -7,40 +7,40 @@ A simple utility for declaratively validating any Javascript object.
 ```javascript
 import {verify, string, number, optionalNumber, boolean} from 'validate-declarative';
 
-const bankAccountSchema = {
-  accountHolder: string,
-  active: boolean,
-  balance: {
-    checkings: optionalNumber,
-    savings: number
+const schema = {
+  a: string,
+  b: boolean,
+  c: {
+    d: optionalNumber,
+    e: number
   }
 };
 
-let bankAccount1 = {
-  accountHolder: "Susan B. Foo",
-  active: true,
-  balance: {
-    savings: 39328.03
+let data1 = {
+  a: "Susan B. Foo",
+  b: true,
+  c: {
+    e: 39328.03
   }
 };
 
-let result1 = verify(bankAccountSchema, bankAccount1); 
+let result1 = verify(schema, data1); 
 // returns true: bankAccount1 satisfies the schema
 
 
-let bankAccount2 = {
-  accountHolder: 1,
-  balance: {
-    savings: "ten dollars",
-    checkings: 39328.03
+let data2 = {
+  a: 1,
+  c: {
+    d: "ten dollars",
+    e: 39328.03
   }
 };
 
-let result2 = verify(bankAccountSchema, bankAccount2);
+let result2 = verify(schema, data2);
 /* returns false, since:
-     - 'active' property is missing
-     - accountHolder is not a string
-     - balance.savings is not a number
+     - property 'b' is missing
+     - property 'a' is not a string
+     - property 'a.d' is not a number
  */
 ```
 
