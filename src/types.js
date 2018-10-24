@@ -1,8 +1,12 @@
 export const string = typeWithTypeOf("string");
+export const optionalString = makeOptional(string);
+export const uniqueString = makeUnique(string);
 
 export const number = newType("number", function(object) {
   return typeof object === "number" && !isNaN(object);
 });
+export const optionalNumber = makeOptional(number);
+export const uniqueNumber = makeUnique(number);
 
 export const nonPositiveNumber = newType(
   "nonPositiveNumber",
@@ -11,6 +15,8 @@ export const nonPositiveNumber = newType(
   },
   number
 );
+export const optionalNonPositiveNumber = makeOptional(nonPositiveNumber);
+export const uniqueNonPositiveNumber = makeUnique(nonPositiveNumber);
 
 export const negativeNumber = newType(
   "negativeNumber",
@@ -19,6 +25,8 @@ export const negativeNumber = newType(
   },
   number
 );
+export const optionalNegativeNumber = makeOptional(negativeNumber);
+export const uniqueNegativeNumber = makeUnique(negativeNumber);
 
 export const nonNegativeNumber = newType(
   "nonNegativeNumber",
@@ -27,6 +35,8 @@ export const nonNegativeNumber = newType(
   },
   number
 );
+export const optionalNonNegativeNumber = makeOptional(nonNegativeNumber);
+export const uniqueNonNegativeNumber = makeUnique(nonNegativeNumber);
 
 export const positiveNumber = newType(
   "positiveNumber",
@@ -35,6 +45,8 @@ export const positiveNumber = newType(
   },
   number
 );
+export const optionalPositiveNumber = makeOptional(positiveNumber);
+export const uniquePositiveNumber = makeUnique(positiveNumber);
 
 export const int = newType(
   "int",
@@ -43,6 +55,8 @@ export const int = newType(
   },
   number
 );
+export const optionalInt = makeOptional(int);
+export const uniqueInt = makeUnique(int);
 
 export const nonPositiveInt = newType(
   "nonPositiveInt",
@@ -51,6 +65,8 @@ export const nonPositiveInt = newType(
   },
   int
 );
+export const optionalNonPositiveInt = makeOptional(nonPositiveInt);
+export const uniqueNonPositiveInt = makeUnique(nonPositiveInt);
 
 export const negativeInt = newType(
   "negativeInt",
@@ -59,6 +75,8 @@ export const negativeInt = newType(
   },
   int
 );
+export const optionalNegativeInt = makeOptional(negativeInt);
+export const uniqueNegativeInt = makeUnique(negativeInt);
 
 export const nonNegativeInt = newType(
   "nonNegativeInt",
@@ -67,6 +85,8 @@ export const nonNegativeInt = newType(
   },
   int
 );
+export const optionalNonNegativeInt = makeOptional(nonNegativeInt);
+export const uniqueNonNegativeInt = makeUnique(nonNegativeInt);
 
 export const positiveInt = newType(
   "positiveInt",
@@ -75,40 +95,90 @@ export const positiveInt = newType(
   },
   int
 );
+export const optionalPositiveInt = makeOptional(positiveInt);
+export const uniquePositiveInt = makeUnique(positiveInt);
 
 export const boolean = typeWithTypeOf("boolean");
+export const optionalBoolean = makeOptional(boolean);
+export const uniqueBoolean = makeUnique(boolean);
 
 export const truthy = newType("truthy", function(object) {
   return !!object;
 });
+export const optionalTruthy = makeOptional(truthy);
+export const uniqueTruthy = makeUnique(truthy);
 
 export const falsy = newType("falsy", function(object) {
   return !object;
 });
+export const optionalFalsy = makeOptional(falsy);
+export const uniqueFalsy = makeUnique(falsy);
 
 export const array = newType("array", function(object) {
   return Array.isArray(object);
 });
+export const optionalArray = makeOptional(array);
+export const uniqueArray = makeUnique(array);
 
 export const list = newType("list", function(object) {
   return array.$test(object);
 });
+export const optionalList = makeOptional(list);
+export const uniqueList = makeUnique(list);
 
 export const object = typeWithTypeOf("object");
+export const optionalObject = makeOptional(object);
+export const uniqueObject = makeUnique(object);
+
 export const func = typeWithTypeOf("function", "func");
+export const optionalFunc = makeOptional(func);
+export const uniqueFunc = makeUnique(func);
+
 export const date = typeWithInstanceOf(Date, "date");
+export const optionalDate = makeOptional(date);
+export const uniqueDate = makeUnique(date);
+
 export const symbol = typeWithTypeOf("symbol");
+export const optionalSymbol = makeOptional(symbol);
+export const uniqueSymbol = makeUnique(symbol);
+
 export const regexp = typeWithInstanceOf(RegExp, "regexp");
+export const optionalRegex = makeOptional(regexp);
+export const uniqueRegex = makeUnique(regexp);
+
 export const nullValue = typeWithLiteralValueOf(null, "nullValue");
+export const optionalNullValue = makeOptional(nullValue);
+export const uniqueNullValue = makeUnique(nullValue);
+
 export const undefinedValue = typeWithLiteralValueOf(undefined, "undefinedValue");
+export const optionalUndefinedValue = makeOptional(undefinedValue);
+export const uniqueUndefinedValue = makeUnique(undefinedValue);
 
 export const nanValue = newType("nanValue", function(object) {
   return Number.isNaN(object);
 });
+export const optionalNanValue = makeOptional(nanValue);
+export const uniqueNanValue = makeUnique(nanValue);
 
 export const any = newType("any", function(object) {
   return true;
 });
+export const optionalAny = makeOptional(any);
+export const uniqueAny = makeUnique(any);
+
+function makeOptional(type) {
+  return {
+    $type: type,
+    $optional: true,
+  };
+}
+
+function makeUnique(type) {
+  return {
+    $type: type,
+    $unique: true,
+  };
+}
 
 function newType($name, $test, $type) {
   let type = { $test };
