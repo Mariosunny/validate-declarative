@@ -315,12 +315,22 @@ rules when comparing objects.
 |Key|Type|Default|Description|
 |---|----|-------|-----------|
 |`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
-
+|`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
 
 #### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
+
+#### `configureValidation(options)`
+Sets the global validation rules for **all** validations. `options` is an object with the following keys.
+
+|Key|Type|Default|Description|
+|---|----|-------|-----------|
+|`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
+|`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
+
+To restore the default global configuration, call `configureValidation()` with no arguments.
 
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
