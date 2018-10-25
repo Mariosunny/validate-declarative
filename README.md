@@ -1,8 +1,8 @@
 ## validate-declarative
 A simple utility for declaratively validating any Javascript object.
 - Fast, robust, and highly extensible
-- Works with arbitrarily large and deeply nested objects
 - Easy-to-read, self-describing syntax
+- Works with arbitrarily large and deeply nested objects
 - ES5+ and browser compatible
 
 ***See it in action:***
