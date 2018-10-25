@@ -13,12 +13,12 @@ import { addMeta, resetSchema as _resetSchema } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
-    addError(report, INVALID_VALUE_ERROR, context, data);
+    addError(report, options, INVALID_VALUE_ERROR, context, data);
   } else {
     if (!passesTypeTest(schema, data)) {
-      addError(report, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
+      addError(report, options, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
     } else {
-      checkUniqueness(context, schema, data, report, uniqueValues);
+      checkUniqueness(context, schema, data, report, options, uniqueValues);
 
       if (hasOwnProperty(schema, $ELEMENT)) {
         validateArray(context, schema, data, report, options, uniqueValues);
@@ -37,7 +37,7 @@ function findExtraneousProperties(context, schema, data, report, options) {
   if (!options[ALLOW_EXTRANEOUS] && isKeyValueObject(data)) {
     forOwn(data, function(key) {
       if (!hasOwnProperty(schema, key)) {
-        addError(report, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
+        addError(report, options, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
       }
     });
   }
@@ -51,7 +51,7 @@ function validateArray(context, schema, data, report, options, uniqueValues) {
       validateData(context + "[" + i + "]", elementSchema, element, report, options, uniqueValues);
     });
   } else {
-    addError(report, INVALID_VALUE_ERROR, context, data, list.$name);
+    addError(report, options, INVALID_VALUE_ERROR, context, data, list.$name);
   }
 }
 
@@ -63,14 +63,14 @@ function validateObject(context, schema, data, report, options, uniqueValues) {
     let newData = dataHasProperty ? data[key] : null;
 
     if (!isOptional(newSchema) && !dataHasProperty) {
-      addError(report, MISSING_PROPERTY_ERROR, newContext);
+      addError(report, options, MISSING_PROPERTY_ERROR, newContext);
     } else if (dataHasProperty) {
       validateData(newContext, newSchema, newData, report, options, uniqueValues);
     }
   });
 }
 
-function checkUniqueness(context, schema, data, report, uniqueValues) {
+function checkUniqueness(context, schema, data, report, options, uniqueValues) {
   let uniqueContext = getUniqueContext(context, uniqueValues);
 
   if (uniqueContext) {
@@ -78,7 +78,7 @@ function checkUniqueness(context, schema, data, report, uniqueValues) {
 
     for (let i = 0; i < localUniqueValues.length; i++) {
       if (isEqual(localUniqueValues[i], data)) {
-        addError(report, DUPLICATE_VALUE_ERROR, context, data);
+        addError(report, options, DUPLICATE_VALUE_ERROR, context, data);
         return;
       }
     }
