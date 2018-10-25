@@ -1,4 +1,4 @@
-## validate-declarative
+# validate-declarative
 A simple utility for declaratively validating any Javascript object.
 - Fast, robust, and highly extensible
 - Easy-to-read, self-describing syntax
