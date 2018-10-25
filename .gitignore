@@ -2,5 +2,6 @@
 /.idea/
 /lib/
 *.lock
+*.log
 /dist/
 /main.js
