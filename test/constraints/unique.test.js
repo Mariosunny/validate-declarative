@@ -1,12 +1,12 @@
 import { resetSchema, verify } from "../../src/validate";
 import { int, string, nullValue, boolean, truthy } from "../../src/types";
 import { $META, $ROOT } from "../../src/keys";
-import { DUPLICATE_PROPERTY_ERROR } from "../../src/errors";
+import { DUPLICATE_VALUE_ERROR } from "../../src/errors";
 import _ from "lodash";
 import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
-  return createError(error.key, DUPLICATE_PROPERTY_ERROR, error.value);
+  return createError(error.key, DUPLICATE_VALUE_ERROR, error.value);
 });
 
 function expectNumberOfUniqueValues(schema, expectedNumberOfUniqueValues) {
@@ -26,7 +26,7 @@ function expectUniqueValues(schema, key, expectedValues) {
   expect(values).toEqual(expectedValues);
 }
 
-test(`test non-unique constraint does not generate ${DUPLICATE_PROPERTY_ERROR}`, () => {
+test(`test non-unique constraint does not generate ${DUPLICATE_VALUE_ERROR}`, () => {
   const schema = {
     a: int,
   };
@@ -687,7 +687,7 @@ test("ensure resetSchema() resets uniqueValues", () => {
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
 });
 
-test(`test multiple ${DUPLICATE_PROPERTY_ERROR}s`, () => {
+test(`test multiple ${DUPLICATE_VALUE_ERROR}s`, () => {
   const schema = {};
   let data = {};
   let errors = [];
@@ -708,7 +708,7 @@ test(`test multiple ${DUPLICATE_PROPERTY_ERROR}s`, () => {
   expectSchemaFails(schema, data, errors);
 });
 
-test(`test multiple ${DUPLICATE_PROPERTY_ERROR}s on complex object`, () => {
+test(`test multiple ${DUPLICATE_VALUE_ERROR}s on complex object`, () => {
   const schema1 = {
     a: {
       $element: {

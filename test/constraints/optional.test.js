@@ -1,4 +1,4 @@
-import { DUPLICATE_PROPERTY_ERROR, MISSING_PROPERTY_ERROR } from "../../src/errors";
+import { DUPLICATE_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../../src/errors";
 import { int } from "../../src/types";
 import { createError, generateSchemaExpects } from "../testUtils";
 

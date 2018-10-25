@@ -2,8 +2,7 @@ import { validate, verify } from "../src/validate";
 import { int, list, string } from "../src/types";
 import { $META } from "../src/keys";
 import { createError, generateSchemaExpects } from "./testUtils";
-import { INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
-import { isKeyValueObject } from "../src/util";
+import { EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
 
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows } = generateSchemaExpects(function(error) {
   return createError(error.key, error.error, error.value, error.expectedType);
@@ -320,7 +319,7 @@ test("test deeply nested object", () => {
       },
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "a.b.j", error: MISSING_PROPERTY_ERROR });
 
   data = {
     a: {
@@ -343,7 +342,12 @@ test("test deeply nested object", () => {
       },
     },
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    key: "a.b.c.d.e.f",
+    error: INVALID_VALUE_ERROR,
+    expectedType: int,
+    value: { g: 5 },
+  });
 });
 
 test("test complex object", () => {
@@ -392,9 +396,8 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, [])).toBe(true);
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, []);
+  expectSchemaPasses(schema, data);
 
   data = [
     {
@@ -409,8 +412,12 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, {
+    key: "[0].a.b[0].c.d[2]",
+    error: INVALID_VALUE_ERROR,
+    value: "hello",
+    expectedType: int,
+  });
 
   data = [
     {
@@ -428,8 +435,13 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, [
+    {
+      key: "[0].a.b[1].c",
+      error: MISSING_PROPERTY_ERROR,
+    },
+    { key: "[0].a.b[1].d", error: EXTRANEOUS_PROPERTY_ERROR },
+  ]);
 
   data = [
     {
@@ -445,7 +457,6 @@ test("test complex object", () => {
       },
     },
   ];
-
   expect(verify(schema, data)).toBe(false);
 
   data = [

@@ -1,21 +1,19 @@
 import { forOwn, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
-import { Errors } from "./errors";
 import { $TYPE, $TEST, $NAME, $OPTIONAL, $CONSTRAINTS, $ELEMENT, $META, $UNIQUE, $RESERVED_KEYS, $ROOT } from "./keys";
 import { string, list } from "./types";
+import {
+  DUPLICATE_VALUE_ERROR,
+  EXTRANEOUS_PROPERTY_ERROR,
+  INVALID_VALUE_ERROR,
+  MISSING_PROPERTY_ERROR,
+} from "./errors";
 
 function validateData(context, schema, data, errors, allowExtraneous, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
-    errors
-      .invalidValue(context)
-      .value(data)
-      .add();
+    addError(errors, INVALID_VALUE_ERROR, context, data);
   } else {
     if (!passesTypeTest(schema, data)) {
-      errors
-        .invalidValue(context)
-        .value(data)
-        .expectedType(getTypeName(schema))
-        .add();
+      addError(errors, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
     } else {
       checkUniqueness(context, schema, data, errors, uniqueValues);
 
@@ -27,7 +25,7 @@ function validateData(context, schema, data, errors, allowExtraneous, uniqueValu
     }
   }
 
-  if (!(hasOwnProperty(schema, $TEST) || hasOwnProperty(schema, $TYPE))) {
+  if (!isType(schema)) {
     findExtraneousProperties(context, schema, data, errors, allowExtraneous);
   }
 }
@@ -36,7 +34,7 @@ function findExtraneousProperties(context, schema, data, errors, allowExtraneous
   if (!allowExtraneous && isKeyValueObject(data)) {
     forOwn(data, function(key) {
       if (!hasOwnProperty(schema, key)) {
-        errors.extraneousProperty(addKeyToContext(context, key)).add();
+        addError(errors, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
       }
     });
   }
@@ -50,11 +48,7 @@ function validateArray(context, schema, data, errors, allowExtraneous, uniqueVal
       validateData(context + "[" + i + "]", elementSchema, element, errors, allowExtraneous, uniqueValues);
     });
   } else {
-    errors
-      .invalidValue(context)
-      .value(data)
-      .expectedType(list.$name)
-      .add();
+    addError(errors, INVALID_VALUE_ERROR, context, data, list.$name);
   }
 }
 
@@ -66,7 +60,7 @@ function validateObject(context, schema, data, errors, allowExtraneous, uniqueVa
     let newData = dataHasProperty ? data[key] : null;
 
     if (!isOptional(newSchema) && !dataHasProperty) {
-      errors.missingProperty(newContext).add();
+      addError(errors, MISSING_PROPERTY_ERROR, newContext);
     } else if (dataHasProperty) {
       validateData(newContext, newSchema, newData, errors, allowExtraneous, uniqueValues);
     }
@@ -81,10 +75,7 @@ function checkUniqueness(context, schema, data, errors, uniqueValues) {
 
     for (let i = 0; i < localUniqueValues.length; i++) {
       if (isEqual(localUniqueValues[i], data)) {
-        errors
-          .duplicateValue(context)
-          .value(data)
-          .add();
+        addError(errors, DUPLICATE_VALUE_ERROR, context, data);
         return;
       }
     }
@@ -165,12 +156,33 @@ function getTypeName(schema) {
   return name;
 }
 
+function isType(schema) {
+  return hasOwnProperty(schema, $TEST) || hasOwnProperty(schema, $TYPE);
+}
+
 function addKeyToContext(context, key) {
   return context + (context.length === 0 ? "" : ".") + key;
 }
 
 function addElementToContext(context, index) {
   return context + "[" + index + "]";
+}
+
+function addError(errors, errorType, key, value, expectedType) {
+  let error = {
+    error: errorType,
+    key: key,
+    data: errors.data,
+  };
+
+  if (value) {
+    error.value = value;
+  }
+  if (expectedType) {
+    error.expectedType = expectedType;
+  }
+
+  errors.errors.push(error);
 }
 
 function addMeta(schema) {
@@ -228,7 +240,7 @@ export function validate(schema, data, allowExtraneous = false) {
 
   addMeta(schema);
 
-  let errors = new Errors(data);
+  let errors = { errors: [], data: data };
   let meta = schema[$META];
   schema[$META] = undefined;
   validateData("", schema, data, errors, allowExtraneous, meta.uniqueValues);
