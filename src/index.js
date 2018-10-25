@@ -38,6 +38,8 @@ import {
 
 export const validate = _validate;
 export const verify = _verify;
+export const resetSchema = _resetSchema;
+export const typeWithInstanceOf = _typeWithInstanceOf;
 
 export const string = _string;
 export const number = _number;
@@ -64,8 +66,6 @@ export const nullValue = _nullValue;
 export const undefinedValue = _undefinedValue;
 export const nanValue = _nanValue;
 export const any = _any;
-export const typeWithInstanceOf = _typeWithInstanceOf;
-export const resetSchema = _resetSchema;
 
 export const INVALID_VALUE_ERROR = _INVALID_VALUE_ERROR;
 export const MISSING_PROPERTY_ERROR = _MISSING_PROPERTY_ERROR;

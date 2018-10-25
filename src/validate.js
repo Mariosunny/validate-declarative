@@ -1,13 +1,15 @@
-import { forOwn, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
-import { $TYPE, $TEST, $NAME, $OPTIONAL, $CONSTRAINTS, $ELEMENT, $META, $UNIQUE, $RESERVED_KEYS, $ROOT } from "./keys";
-import { string, list } from "./types";
+import { forOwn, forOwnNonReservedProperty, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
+import { $ELEMENT, $META, $NAME, $OPTIONAL, $ROOT, $TEST, $TYPE, addKeyToContext } from "./keys";
+import { list, string } from "./types";
 import {
+  addError,
   DUPLICATE_VALUE_ERROR,
   EXTRANEOUS_PROPERTY_ERROR,
   INVALID_VALUE_ERROR,
   MISSING_PROPERTY_ERROR,
 } from "./errors";
 import { ALLOW_EXTRANEOUS, buildOptions } from "./options";
+import { addMeta, resetSchema as _resetSchema } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
@@ -109,14 +111,6 @@ function isOptional(schema) {
   return false;
 }
 
-function forOwnNonConstraintProperty(schema, func) {
-  return forOwn(schema, func, key => !$CONSTRAINTS.includes(key));
-}
-
-function forOwnNonReservedProperty(schema, func) {
-  return forOwn(schema, func, key => !$RESERVED_KEYS.includes(key));
-}
-
 function passesTypeTest(schema, data) {
   let result = true;
 
@@ -161,67 +155,6 @@ function isType(schema) {
   return hasOwnProperty(schema, $TEST) || hasOwnProperty(schema, $TYPE);
 }
 
-function addKeyToContext(context, key) {
-  return context + (context.length === 0 ? "" : ".") + key;
-}
-
-function addElementToContext(context, index) {
-  return context + "[" + index + "]";
-}
-
-function addError(report, errorType, key, value, expectedType) {
-  let error = {
-    error: errorType,
-    key: key,
-  };
-
-  if (value) {
-    error.value = value;
-  }
-  if (expectedType) {
-    error.expectedType = expectedType;
-  }
-
-  report.errors.push(error);
-}
-
-function addMeta(schema) {
-  if (!schema.hasOwnProperty($META)) {
-    schema[$META] = {
-      uniqueValues: {},
-    };
-    initializeUniqueValues("", schema, schema[$META].uniqueValues);
-  }
-}
-
-function initializeUniqueValues(context, schema, uniqueValues) {
-  if (isConstantValue(schema)) {
-    return;
-  }
-  let unique = getUnique(schema);
-  if (unique) {
-    uniqueValues[context.length === 0 ? $ROOT : context] = [];
-  }
-  if (unique === null) {
-    forOwnNonConstraintProperty(schema, function(key, value) {
-      if (key === $ELEMENT) {
-        initializeUniqueValues(addElementToContext(context, "x"), value, uniqueValues);
-      } else {
-        initializeUniqueValues(addKeyToContext(context, key), value, uniqueValues);
-      }
-    });
-  }
-}
-
-function getUnique(schema) {
-  if (hasOwnProperty(schema, $UNIQUE)) {
-    return !!schema[$UNIQUE];
-  } else if (hasOwnProperty(schema, $TYPE)) {
-    return getUnique(schema[$TYPE]);
-  }
-  return null;
-}
-
 function checkInputForErrors(schema, data, options) {
   if (!isKeyValueObject(schema)) {
     throw new Error(`schema must be a plain object\n${schema}`);
@@ -250,10 +183,5 @@ export function validate(schema, data, options) {
 }
 
 export function resetSchema(schema) {
-  forOwn(schema[$META].uniqueValues, function(context) {
-    schema[$META].uniqueValues[context] = [];
-  });
-  Object.getOwnPropertySymbols(schema[$META].uniqueValues).forEach(function(context) {
-    schema[$META].uniqueValues[context] = [];
-  });
+  _resetSchema(schema);
 }

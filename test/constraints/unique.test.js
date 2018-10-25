@@ -1,9 +1,10 @@
-import { resetSchema, verify } from "../../src/validate";
+import { verify } from "../../src/validate";
 import { int, string, nullValue, boolean, truthy } from "../../src/types";
 import { $META, $ROOT } from "../../src/keys";
 import { DUPLICATE_VALUE_ERROR } from "../../src/errors";
 import _ from "lodash";
 import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
+import { resetSchema } from "../../src/meta";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(error) {
   return createError(error.key, DUPLICATE_VALUE_ERROR, error.value);

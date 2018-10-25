@@ -37,3 +37,11 @@ export function isKeyValueObject(obj) {
     obj !== null && typeof obj === "object" && !list.$test(obj) && !(obj instanceof Map) && !(obj instanceof WeakMap)
   );
 }
+
+export function forOwnNonConstraintProperty(schema, func) {
+  return forOwn(schema, func, key => !$CONSTRAINTS.includes(key));
+}
+
+export function forOwnNonReservedProperty(schema, func) {
+  return forOwn(schema, func, key => !$RESERVED_KEYS.includes(key));
+}
