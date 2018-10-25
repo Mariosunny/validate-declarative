@@ -7,8 +7,9 @@ import {
   INVALID_VALUE_ERROR,
   MISSING_PROPERTY_ERROR,
 } from "./errors";
+import { ALLOW_EXTRANEOUS, buildOptions } from "./options";
 
-function validateData(context, schema, data, report, allowExtraneous, uniqueValues) {
+function validateData(context, schema, data, report, options, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
     addError(report, INVALID_VALUE_ERROR, context, data);
   } else {
@@ -18,20 +19,20 @@ function validateData(context, schema, data, report, allowExtraneous, uniqueValu
       checkUniqueness(context, schema, data, report, uniqueValues);
 
       if (hasOwnProperty(schema, $ELEMENT)) {
-        validateArray(context, schema, data, report, allowExtraneous, uniqueValues);
+        validateArray(context, schema, data, report, options, uniqueValues);
       } else {
-        validateObject(context, schema, data, report, allowExtraneous, uniqueValues);
+        validateObject(context, schema, data, report, options, uniqueValues);
       }
     }
   }
 
   if (!isType(schema)) {
-    findExtraneousProperties(context, schema, data, report, allowExtraneous);
+    findExtraneousProperties(context, schema, data, report, options);
   }
 }
 
-function findExtraneousProperties(context, schema, data, report, allowExtraneous) {
-  if (!allowExtraneous && isKeyValueObject(data)) {
+function findExtraneousProperties(context, schema, data, report, options) {
+  if (!options[ALLOW_EXTRANEOUS] && isKeyValueObject(data)) {
     forOwn(data, function(key) {
       if (!hasOwnProperty(schema, key)) {
         addError(report, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
@@ -40,19 +41,19 @@ function findExtraneousProperties(context, schema, data, report, allowExtraneous
   }
 }
 
-function validateArray(context, schema, data, report, allowExtraneous, uniqueValues) {
+function validateArray(context, schema, data, report, options, uniqueValues) {
   if (list.$test(data)) {
     let elementSchema = schema[$ELEMENT];
 
     data.forEach(function(element, i) {
-      validateData(context + "[" + i + "]", elementSchema, element, report, allowExtraneous, uniqueValues);
+      validateData(context + "[" + i + "]", elementSchema, element, report, options, uniqueValues);
     });
   } else {
     addError(report, INVALID_VALUE_ERROR, context, data, list.$name);
   }
 }
 
-function validateObject(context, schema, data, report, allowExtraneous, uniqueValues) {
+function validateObject(context, schema, data, report, options, uniqueValues) {
   forOwnNonReservedProperty(schema, function(key, value) {
     let newContext = context + (context.length === 0 ? "" : ".") + key;
     let newSchema = value;
@@ -62,7 +63,7 @@ function validateObject(context, schema, data, report, allowExtraneous, uniqueVa
     if (!isOptional(newSchema) && !dataHasProperty) {
       addError(report, MISSING_PROPERTY_ERROR, newContext);
     } else if (dataHasProperty) {
-      validateData(newContext, newSchema, newData, report, allowExtraneous, uniqueValues);
+      validateData(newContext, newSchema, newData, report, options, uniqueValues);
     }
   });
 }
@@ -221,25 +222,29 @@ function getUnique(schema) {
   return null;
 }
 
-function checkInputForErrors(schema, data, allowExtraneous) {
+function checkInputForErrors(schema, data, options) {
   if (!isKeyValueObject(schema)) {
     throw new Error(`schema must be a plain object\n${schema}`);
   }
-  if (typeof allowExtraneous !== "boolean") {
-    throw new Error(`allowExtraneous must be a boolean\n${allowExtraneous}`);
+  if (!isKeyValueObject(options)) {
+    throw new Error(`options must be a plain object\n${options}`);
+  }
+  if (typeof options[ALLOW_EXTRANEOUS] !== "boolean") {
+    throw new Error(`${ALLOW_EXTRANEOUS} must be a boolean\n${options[ALLOW_EXTRANEOUS]}`);
   }
 }
 
-export function verify(schema, data, allowExtraneous = false) {
-  return validate(schema, data, allowExtraneous).errors.length === 0;
+export function verify(schema, data, options) {
+  return validate(schema, data, options).errors.length === 0;
 }
 
-export function validate(schema, data, allowExtraneous = false) {
-  checkInputForErrors(schema, data, allowExtraneous);
+export function validate(schema, data, options) {
+  options = buildOptions(options);
+  checkInputForErrors(schema, data, options);
   addMeta(schema);
 
   let report = { errors: [], schema: schema, data: data };
-  validateData("", schema, data, report, allowExtraneous, schema[$META].uniqueValues);
+  validateData("", schema, data, report, options, schema[$META].uniqueValues);
 
   return report;
 }
