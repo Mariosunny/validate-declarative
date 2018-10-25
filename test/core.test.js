@@ -12,8 +12,15 @@ test("test verify returns boolean", () => {
   expect(verify({}, {})).toEqual(true);
 });
 
-test("test validate returns array", () => {
-  expect(validate({}, {})).toEqual([]);
+test("test validate returns report object", () => {
+  const schema = {};
+  let report = validate(schema, {});
+
+  expect(report).toEqual({
+    data: {},
+    schema: schema,
+    errors: [],
+  });
 });
 
 test("non-key/value object throws error", () => {

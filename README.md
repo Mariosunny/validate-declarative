@@ -311,8 +311,9 @@ Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#asse
 rules when comparing objects.
 
 #### `validate(schema, data, allowExtraneous=false) → Array`
-Same as `verify()`, but returns an array of error objects (see [Errors](#errors)) describing each constraint failure in detail. 
-If the data satisfies the schema, the array will be empty, otherwise the array will be non-empty.
+Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
+and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
+If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
 
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.

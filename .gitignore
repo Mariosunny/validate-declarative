@@ -5,3 +5,4 @@
 *.log
 /dist/
 /main.js
+.DS_Store

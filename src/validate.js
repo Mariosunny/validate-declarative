@@ -8,51 +8,51 @@ import {
   MISSING_PROPERTY_ERROR,
 } from "./errors";
 
-function validateData(context, schema, data, errors, allowExtraneous, uniqueValues) {
+function validateData(context, schema, data, report, allowExtraneous, uniqueValues) {
   if (isConstantValue(schema) && !isEqual(schema, data)) {
-    addError(errors, INVALID_VALUE_ERROR, context, data);
+    addError(report, INVALID_VALUE_ERROR, context, data);
   } else {
     if (!passesTypeTest(schema, data)) {
-      addError(errors, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
+      addError(report, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
     } else {
-      checkUniqueness(context, schema, data, errors, uniqueValues);
+      checkUniqueness(context, schema, data, report, uniqueValues);
 
       if (hasOwnProperty(schema, $ELEMENT)) {
-        validateArray(context, schema, data, errors, allowExtraneous, uniqueValues);
+        validateArray(context, schema, data, report, allowExtraneous, uniqueValues);
       } else {
-        validateObject(context, schema, data, errors, allowExtraneous, uniqueValues);
+        validateObject(context, schema, data, report, allowExtraneous, uniqueValues);
       }
     }
   }
 
   if (!isType(schema)) {
-    findExtraneousProperties(context, schema, data, errors, allowExtraneous);
+    findExtraneousProperties(context, schema, data, report, allowExtraneous);
   }
 }
 
-function findExtraneousProperties(context, schema, data, errors, allowExtraneous) {
+function findExtraneousProperties(context, schema, data, report, allowExtraneous) {
   if (!allowExtraneous && isKeyValueObject(data)) {
     forOwn(data, function(key) {
       if (!hasOwnProperty(schema, key)) {
-        addError(errors, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
+        addError(report, EXTRANEOUS_PROPERTY_ERROR, addKeyToContext(context, key));
       }
     });
   }
 }
 
-function validateArray(context, schema, data, errors, allowExtraneous, uniqueValues) {
+function validateArray(context, schema, data, report, allowExtraneous, uniqueValues) {
   if (list.$test(data)) {
     let elementSchema = schema[$ELEMENT];
 
     data.forEach(function(element, i) {
-      validateData(context + "[" + i + "]", elementSchema, element, errors, allowExtraneous, uniqueValues);
+      validateData(context + "[" + i + "]", elementSchema, element, report, allowExtraneous, uniqueValues);
     });
   } else {
-    addError(errors, INVALID_VALUE_ERROR, context, data, list.$name);
+    addError(report, INVALID_VALUE_ERROR, context, data, list.$name);
   }
 }
 
-function validateObject(context, schema, data, errors, allowExtraneous, uniqueValues) {
+function validateObject(context, schema, data, report, allowExtraneous, uniqueValues) {
   forOwnNonReservedProperty(schema, function(key, value) {
     let newContext = context + (context.length === 0 ? "" : ".") + key;
     let newSchema = value;
@@ -60,14 +60,14 @@ function validateObject(context, schema, data, errors, allowExtraneous, uniqueVa
     let newData = dataHasProperty ? data[key] : null;
 
     if (!isOptional(newSchema) && !dataHasProperty) {
-      addError(errors, MISSING_PROPERTY_ERROR, newContext);
+      addError(report, MISSING_PROPERTY_ERROR, newContext);
     } else if (dataHasProperty) {
-      validateData(newContext, newSchema, newData, errors, allowExtraneous, uniqueValues);
+      validateData(newContext, newSchema, newData, report, allowExtraneous, uniqueValues);
     }
   });
 }
 
-function checkUniqueness(context, schema, data, errors, uniqueValues) {
+function checkUniqueness(context, schema, data, report, uniqueValues) {
   let uniqueContext = getUniqueContext(context, uniqueValues);
 
   if (uniqueContext) {
@@ -75,7 +75,7 @@ function checkUniqueness(context, schema, data, errors, uniqueValues) {
 
     for (let i = 0; i < localUniqueValues.length; i++) {
       if (isEqual(localUniqueValues[i], data)) {
-        addError(errors, DUPLICATE_VALUE_ERROR, context, data);
+        addError(report, DUPLICATE_VALUE_ERROR, context, data);
         return;
       }
     }
@@ -168,11 +168,10 @@ function addElementToContext(context, index) {
   return context + "[" + index + "]";
 }
 
-function addError(errors, errorType, key, value, expectedType) {
+function addError(report, errorType, key, value, expectedType) {
   let error = {
     error: errorType,
     key: key,
-    data: errors.data,
   };
 
   if (value) {
@@ -182,7 +181,7 @@ function addError(errors, errorType, key, value, expectedType) {
     error.expectedType = expectedType;
   }
 
-  errors.errors.push(error);
+  report.errors.push(error);
 }
 
 function addMeta(schema) {
@@ -232,21 +231,20 @@ function checkInputForErrors(schema, data, allowExtraneous) {
 }
 
 export function verify(schema, data, allowExtraneous = false) {
-  return validate(schema, data, allowExtraneous).length === 0;
+  return validate(schema, data, allowExtraneous).errors.length === 0;
 }
 
 export function validate(schema, data, allowExtraneous = false) {
   checkInputForErrors(schema, data, allowExtraneous);
-
   addMeta(schema);
 
-  let errors = { errors: [], data: data };
+  let report = { errors: [], schema: schema, data: data };
   let meta = schema[$META];
   schema[$META] = undefined;
-  validateData("", schema, data, errors, allowExtraneous, meta.uniqueValues);
+  validateData("", schema, data, report, allowExtraneous, meta.uniqueValues);
   schema[$META] = meta;
 
-  return errors.errors;
+  return report;
 }
 
 export function resetSchema(schema) {

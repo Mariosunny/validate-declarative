@@ -1,6 +1,4 @@
-import { validate } from "../src";
-import _ from "lodash";
-import { verify } from "../src/validate";
+import { verify, validate } from "../src/validate";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {
@@ -17,16 +15,12 @@ export function createError(path, errorType, value, expectedType) {
 }
 
 export function validateErrors(schema, data, expectedErrors) {
-  let receivedErrors = validate(schema, data);
-
-  expectedErrors = expectedErrors.map(function(error) {
-    return _.merge(error, { data });
-  });
+  let receivedErrors = validate(schema, data).errors;
 
   expect(receivedErrors.length).toBe(expectedErrors.length);
 
-  receivedErrors.forEach(receivedError => {
-    expect(expectedErrors).toContainEqual(receivedError);
+  expectedErrors.forEach(expectedError => {
+    expect(receivedErrors).toContainEqual(expectedError);
   });
 }
 
