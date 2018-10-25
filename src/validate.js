@@ -8,7 +8,7 @@ import {
   INVALID_VALUE_ERROR,
   MISSING_PROPERTY_ERROR,
 } from "./errors";
-import { ALLOW_EXTRANEOUS, buildOptions } from "./options";
+import { ALLOW_EXTRANEOUS, buildOptions, setGlobalOptions, validateOptions } from "./options";
 import { addMeta, resetSchema as _resetSchema } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
@@ -162,9 +162,7 @@ function checkInputForErrors(schema, data, options) {
   if (!isKeyValueObject(options)) {
     throw new Error(`options must be a plain object\n${options}`);
   }
-  if (typeof options[ALLOW_EXTRANEOUS] !== "boolean") {
-    throw new Error(`${ALLOW_EXTRANEOUS} must be a boolean\n${options[ALLOW_EXTRANEOUS]}`);
-  }
+  validateOptions(options);
 }
 
 export function verify(schema, data, options) {
@@ -184,4 +182,8 @@ export function validate(schema, data, options) {
 
 export function resetSchema(schema) {
   _resetSchema(schema);
+}
+
+export function configureValidation(options) {
+  setGlobalOptions(options);
 }

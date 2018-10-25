@@ -34,12 +34,14 @@ import {
   nanValue as _nanValue,
   any as _any,
   typeWithInstanceOf as _typeWithInstanceOf,
+  configureValidation as _configureValidation,
 } from "./types";
 
 export const validate = _validate;
 export const verify = _verify;
 export const resetSchema = _resetSchema;
 export const typeWithInstanceOf = _typeWithInstanceOf;
+export const configureValidation = _configureValidation;
 
 export const string = _string;
 export const number = _number;
