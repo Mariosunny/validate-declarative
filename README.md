@@ -300,21 +300,24 @@ let result = verify(companySchema, industryTech); // true
 
 ## API
 
-#### `verify(schema, data, allowExtraneous=false) → boolean`
+#### `verify(schema, data, options={}) → boolean`
 Validates `data` (any Javascript object) against the `schema` 
 (a non-circular, plain object), 
 returning *true* if and only if every property in the schema 
 exists in the data, and every property's value in the data 
 satisfies the constraints of the property 
 (see [Constraints](#constraints)), *false* otherwise. 
-
-If `allowExtraneous` is set to *false* (default), and there is at least one property that exists in the data but not in the schema, returns *false*. 
-If `allowExtraneous` is set to *true*, extraneous properties in the data will be ignored.
-
 Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message)
 rules when comparing objects.
 
-#### `validate(schema, data, allowExtraneous=false) → Array`
+`options` is an optional object with the following keys:
+
+|Key|Type|Default|Description|
+|---|----|-------|-----------|
+|`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
+
+
+#### `validate(schema, data, options={}) → Array`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
