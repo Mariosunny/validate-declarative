@@ -106,12 +106,16 @@ let result2 = verify(tweetSchema, myTweet2); // false
 let result3 = verify(tweetSchema, myTweet3); // false
 ```
 
-`validate()` is similiar to `verify()`, but returns an array of [errors](#errors) describing any constraint violations:
+`validate()` is similar to `verify()`, but returns a *report object* containing an array of [errors](#errors) describing any constraint violations:
 ```javascript
 import {validate} from 'validate-declarative';
 
 console.log(validate(tweetSchema, tweet2));
-// prints: [{ error: "InvalidValueError", key: "message", value: 5, data: {message: 5} }]
+// {
+//    errors: [ { error: "InvalidValueError", key: "message", value: 5 } ] 
+//    schema: { message: { '$test': [Function: $test] }
+//    data: { message: 5 }  
+// }
 ```
 
 This is a simple example, but schemas can be as large and complex as you want.
@@ -596,7 +600,6 @@ Generated when a value fails a type test.
 {
   error: "InvalidValueError",    // name of the error
   key: "menu.menuItems[3].desc", // the property where the error occurred
-  data: {...}                    // the data that was validated
   value: 5,                      // the actual value found in the data at the property
   expectedType: "string"         // the expected type, defined by $name in the schema
 }
@@ -608,7 +611,6 @@ Generated when a duplicate value is detected, and when `$unique` = *true*.
 {
   error: "DuplicateValueError",
   key: "restaurant.headChef",
-  data: {...},
   value: "Tom G. Bar"
 }
 ```
@@ -618,8 +620,7 @@ Generated when a property is missing from the data, and when `$optional` = *fals
 ```javascript
 {
   error: "MissingPropertyError",
-  key: "headChef",
-  data: {...}
+  key: "headChef"
 }
 ```
 
@@ -628,8 +629,7 @@ Generated when there is an extra property in the data, and when `allowExtraneous
 ```javascript
 {
   error: "ExtraneousPropertyError",
-  key: "favoriteColor",
-  data: {...}
+  key: "favoriteColor"
 }
 ```
 
