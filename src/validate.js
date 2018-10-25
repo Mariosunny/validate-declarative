@@ -239,10 +239,7 @@ export function validate(schema, data, allowExtraneous = false) {
   addMeta(schema);
 
   let report = { errors: [], schema: schema, data: data };
-  let meta = schema[$META];
-  schema[$META] = undefined;
-  validateData("", schema, data, report, allowExtraneous, meta.uniqueValues);
-  schema[$META] = meta;
+  validateData("", schema, data, report, allowExtraneous, schema[$META].uniqueValues);
 
   return report;
 }
