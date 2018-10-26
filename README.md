@@ -399,15 +399,14 @@ Example usage:
 import {verify, resetSchema, int} from 'validate-declarative';
 
 const schema = {
-    a: int
+    $type: int,
+    $unique: true
 };
 
-let data = {
-    a: 5
-};
-
-verify(schema, data);
+let result1 = verify(schema, 5); // true
+let result2 = verify(schema, 5); // false
 resetSchema(schema);
+let result3 = verify(schema, 5); // true
 ```
 
 ## Constraints
