@@ -317,6 +317,26 @@ rules when comparing objects.
 |`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
 |`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
 
+Example usage:
+```javascript
+import {verify, int} from 'validate-declarative';
+
+const schema = {
+    a: int
+};
+
+let data = {
+    a: 5
+};
+
+let options = {
+    allowExtraneous: true,
+    throwOnError: false
+};
+
+let result = verify(schema, data, options);
+```
+
 #### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
@@ -332,6 +352,18 @@ Sets the global validation rules for **all** validations. `options` is an object
 
 To restore the default global configuration, call `configureValidation()` with no arguments.
 
+Example usage:
+```javascript
+import {configureValidation} from 'validate-declarative';
+
+let options = {
+    allowExtraneous: false,
+    throwOnError: true
+};
+
+configureValidation(options);
+```
+
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
 Returns a *type* (an object with a `$test` [constraint](#constraints)) that returns
@@ -339,7 +371,7 @@ Returns a *type* (an object with a `$test` [constraint](#constraints)) that retu
 If `name` is present, it becomes the `$name` of the resulting type- 
 otherwise the `$name` of the resulting type is set to `clazz.name`.
 
-Usage:
+Example usage:
 ```javascript
 import {verify, typeWithInstanceOf} from 'validate-declarative';
 
@@ -361,6 +393,22 @@ let result2 = verify(appleType, data2); // false
 Resets the internal unique values within the schema, which are used to enforce uniqueness
 of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
+
+Example usage:
+```javascript
+import {verify, resetSchema, int} from 'validate-declarative';
+
+const schema = {
+    a: int
+};
+
+let data = {
+    a: 5
+};
+
+verify(schema, data);
+resetSchema(schema);
+```
 
 ## Constraints
 Constraints define the rules for validating data. 
