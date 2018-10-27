@@ -119,7 +119,7 @@ test("test single value", () => {
 });
 
 test("test single array", () => {
-  let schema = {
+  const schema = {
     $element: int,
   };
   expectSchemaFails(schema, 5, { error: INVALID_VALUE_ERROR, value: 5, expectedType: list });
@@ -309,7 +309,7 @@ test("test deeply nested object", () => {
       },
     },
   };
-  expectSchemaFails(schema, data, { key: "a.b.c.d.e.f", error: MISSING_PROPERTY_ERROR });
+  expectSchemaFails(schema, data, { key: "a.b.c.d.e", error: INVALID_VALUE_ERROR, value: 5 });
 
   data = {
     a: {
@@ -467,7 +467,7 @@ test("test complex object", () => {
       },
     },
   ];
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "[0].a.b[1]", error: INVALID_VALUE_ERROR, value: [] });
 
   data = [
     {
@@ -476,8 +476,7 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "[0].a.b[0]", error: INVALID_VALUE_ERROR, value: 1 });
 
   data = [
     {
@@ -486,8 +485,7 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = [
     {
@@ -501,8 +499,7 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = [
     {
@@ -516,8 +513,7 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "[1].a.b[0]", error: INVALID_VALUE_ERROR, value: 1 });
 
   data = [
     {
@@ -537,6 +533,5 @@ test("test complex object", () => {
       },
     },
   ];
-
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 });
