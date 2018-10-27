@@ -298,6 +298,51 @@ let industryTech = {
 let result = verify(companySchema, industryTech); // true
 ```
 
+#### Validating an object with unique properties
+```javascript
+import {verify, string, positiveInt} from 'validate-declarative';
+
+const productSchema = {
+  productId: {
+    $type: positiveInt,
+    $unique: true
+  },
+  productName: string
+};
+
+let product1 = {
+  productId: 1,
+  productName: "Reclaimed Wood Desk"
+};
+
+let product2 = {
+  productId: 1,
+  productName: "Teak Writing Desk"
+};
+
+let result1 = verify(productSchema, product1); // true
+let result2 = verify(productSchema, product2); // false
+```
+
+#### Validating an array with unique elements
+```javascript
+import {verify, string} from 'validate-declarative';
+
+const playersSchema = {
+  $element: {
+    $type: string,
+    $unique: true  
+  }
+};
+
+let roster1 = ["Thomas", "James", "John"];
+let roster2 = ["Linda", "Mary", "Mary"];
+
+let result1 = verify(playersSchema, roster1); // true
+let result2 = verify(playersSchema, roster2); // false
+```
+
+
 ## API
 
 #### `verify(schema, data, options={}) → boolean`
