@@ -389,14 +389,14 @@ let result2 = verify(appleType, data2); // false
 
 ```
 
-#### `resetSchema(schema)`
+#### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
 of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
 
 Example usage:
 ```javascript
-import {verify, resetSchema, int} from 'validate-declarative';
+import {verify, _resetSchema, int} from 'validate-declarative';
 
 const schema = {
     $type: int,
@@ -405,7 +405,7 @@ const schema = {
 
 let result1 = verify(schema, 5); // true
 let result2 = verify(schema, 5); // false
-resetSchema(schema);
+_resetSchema(schema);
 let result3 = verify(schema, 5); // true
 ```
 
@@ -577,7 +577,7 @@ only the most shallow `$unique` declaration is considered.
 a hidden property within the schema. 
 **Be warned**- a large number of validations may result in high memory usage,
 as every validation adds another element to each internal array of unique values within the schema.
-Though it is not recommended, you can call `resetSchema()` to clear these internal arrays (see [API](#api)).
+Though it is not recommended, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
 This, however, will not guarantee uniqueness for subsequent validations.)
 ```javascript
 import {verify, string} from 'validate-declarative';

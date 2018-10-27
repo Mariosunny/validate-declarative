@@ -1,4 +1,4 @@
-import { verify as _verify, validate as _validate, resetSchema as _resetSchema } from "./validate";
+import { verify as _verify, validate as _validate, resetSchema as __resetSchema } from "./validate";
 
 import {
   INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
@@ -39,7 +39,7 @@ import {
 
 export const validate = _validate;
 export const verify = _verify;
-export const resetSchema = _resetSchema;
+export const _resetSchema = __resetSchema;
 export const typeWithInstanceOf = _typeWithInstanceOf;
 export const configureValidation = _configureValidation;
 
