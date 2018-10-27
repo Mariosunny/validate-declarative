@@ -12,8 +12,10 @@ import { ALLOW_EXTRANEOUS, buildOptions, setGlobalOptions, validateOptions } fro
 import { addMeta, resetSchema as _resetSchema } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
-  if (isConstantValue(schema) && !isEqual(schema, data)) {
-    addError(report, options, INVALID_VALUE_ERROR, context, data);
+  if (isConstantValue(schema)) {
+    if (!isEqual(schema, data)) {
+      addError(report, options, INVALID_VALUE_ERROR, context, data);
+    }
   } else {
     if (!passesTypeTest(schema, data)) {
       addError(report, options, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
@@ -113,16 +115,19 @@ function isOptional(schema) {
 
 function passesTypeTest(schema, data) {
   let result = true;
+  const hasElement = schema.hasOwnProperty($ELEMENT);
+  const hasTest = schema.hasOwnProperty($TEST);
+  const hasType = schema.hasOwnProperty($TYPE);
 
-  if (schema.hasOwnProperty($ELEMENT) && !schema.hasOwnProperty($TYPE)) {
+  if (hasElement && !hasType) {
     result = list.$test(data);
   }
 
-  if (schema.hasOwnProperty($TYPE) && isKeyValueObject(schema[$TYPE])) {
+  if (hasType && isKeyValueObject(schema[$TYPE])) {
     result = passesTypeTest(schema[$TYPE], data) && result;
   }
 
-  if (result && schema.hasOwnProperty($TEST)) {
+  if (result && hasTest) {
     let test = schema[$TEST];
 
     if (test instanceof RegExp) {
@@ -130,6 +135,10 @@ function passesTypeTest(schema, data) {
     } else if (typeof test === "function") {
       result = result && test(data);
     }
+  }
+
+  if (result && !hasTest && !hasType && !hasElement && !isKeyValueObject(data)) {
+    result = false;
   }
 
   return result;
@@ -156,13 +165,17 @@ function isType(schema) {
 }
 
 function checkInputForErrors(schema, data, options) {
-  if (!isKeyValueObject(schema)) {
-    throw new Error(`schema must be a plain object\n${schema}`);
-  }
   if (!isKeyValueObject(options)) {
     throw new Error(`options must be a plain object\n${options}`);
   }
+  checkSchemaForErrors(schema);
   validateOptions(options);
+}
+
+function checkSchemaForErrors(schema) {
+  if (!isKeyValueObject(schema)) {
+    throw new Error(`schema must be a plain object\n${schema}`);
+  }
 }
 
 export function verify(schema, data, options) {
@@ -181,6 +194,7 @@ export function validate(schema, data, options) {
 }
 
 export function resetSchema(schema) {
+  checkSchemaForErrors(schema);
   _resetSchema(schema);
 }
 
