@@ -298,6 +298,31 @@ let industryTech = {
 let result = verify(companySchema, industryTech); // true
 ```
 
+#### Validating an object with optional properties
+```javascript
+import {verify, string} from 'validate-declarative';
+
+const APIrequestSchema = {
+  url: string,  
+  params: {
+    $type: string,
+    $optional: true  
+  }  
+};
+
+let request1 = {
+  url: "video/watch/",
+  params: "id=29340285723"
+};
+
+let request2 = {
+  url: "video/list"
+};
+
+let result1 = verify(APIrequestSchema, request1); // true
+let result2 = verify(APIrequestSchema, request2); // true
+```
+
 #### Validating an object with unique properties
 ```javascript
 import {verify, string, positiveInt} from 'validate-declarative';
