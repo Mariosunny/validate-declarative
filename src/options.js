@@ -8,7 +8,15 @@ const DEFAULT_GLOBAL_OPTIONS = {
   [THROW_ON_ERROR]: false,
 };
 
-let globalOptions = { ...DEFAULT_GLOBAL_OPTIONS };
+let globalOptions = {};
+setGlobalOptionsToDefault();
+
+function setGlobalOptionsToDefault() {
+  globalOptions = {
+    [ALLOW_EXTRANEOUS]: DEFAULT_GLOBAL_OPTIONS[ALLOW_EXTRANEOUS],
+    [THROW_ON_ERROR]: DEFAULT_GLOBAL_OPTIONS[THROW_ON_ERROR],
+  };
+}
 
 export function buildOptions(options = {}) {
   OPTIONS.forEach(function(OPTION) {
@@ -31,7 +39,7 @@ export function validateOptions(options) {
 
 export function setGlobalOptions(options) {
   if (options === undefined) {
-    globalOptions = { ...DEFAULT_GLOBAL_OPTIONS };
+    setGlobalOptionsToDefault();
     return;
   }
 
@@ -39,7 +47,7 @@ export function setGlobalOptions(options) {
 
   OPTIONS.forEach(function(OPTION) {
     if (options.hasOwnProperty(OPTION)) {
-      globalOptions = options[OPTION];
+      globalOptions[OPTION] = options[OPTION];
     }
   });
 }
