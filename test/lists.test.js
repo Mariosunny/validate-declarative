@@ -1,4 +1,13 @@
-import { int, string, verify } from "../src";
+import { int, string } from "../src";
+import { createError, generateSchemaExpects } from "./testUtils";
+import { DUPLICATE_VALUE_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
+import { list } from "../src/types";
+
+const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();
+
+const expectSchemaFailsInvalidType = generateSchemaExpects(function(error) {
+  return createError(error.key, INVALID_VALUE_ERROR, error.value, error.expectedType);
+}).expectSchemaFails;
 
 test("test basic array functionality", () => {
   let schema = {
@@ -11,27 +20,27 @@ test("test basic array functionality", () => {
   let data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: 5,
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a", value: 5, expectedType: list });
 
   data = {
     a: [1, 2, "3"],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a[2]", value: "3", expectedType: int });
 
   data = {
     a: [1, 2, "egg"],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a[2]", value: "egg", expectedType: int });
 });
 
 test("test array element uniqueness", () => {
@@ -46,7 +55,7 @@ test("test array element uniqueness", () => {
   let data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   schema = {
     a: {
@@ -59,7 +68,7 @@ test("test array element uniqueness", () => {
   data = {
     a: [1, 2, 2],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "a[2]", value: 2, error: DUPLICATE_VALUE_ERROR });
 });
 
 test("test optional array", () => {
@@ -74,10 +83,10 @@ test("test optional array", () => {
   let data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {};
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   schema = {
     a: {
@@ -88,7 +97,7 @@ test("test optional array", () => {
     },
   };
   data = {};
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFails(schema, data, { key: "a", error: MISSING_PROPERTY_ERROR });
 });
 
 test("test custom array element test function", () => {
@@ -102,12 +111,12 @@ test("test custom array element test function", () => {
   let data = {
     a: ["a", "b", "c"],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: ["a", "b", "0"],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a[2]", value: "0" });
 });
 
 test("confirm optional element is noop", () => {
@@ -122,12 +131,12 @@ test("confirm optional element is noop", () => {
   let data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   schema = {
     a: {
@@ -140,34 +149,12 @@ test("confirm optional element is noop", () => {
   data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [],
   };
-  expect(verify(schema, data)).toBe(true);
-});
-
-test("test regex test substitution", () => {
-  let schema = {
-    a: {
-      $test: /[a-z]/,
-    },
-  };
-  let data = {
-    a: "abc",
-  };
-  expect(verify(schema, data)).toBe(true);
-
-  data = {
-    a: "123",
-  };
-  expect(verify(schema, data)).toBe(false);
-
-  data = {
-    a: 5,
-  };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaPasses(schema, data);
 });
 
 test("test $element inclusion does not override $type", () => {
@@ -182,12 +169,12 @@ test("test $element inclusion does not override $type", () => {
   let data = {
     a: ["a", "b", "c"],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a", value: ["a", "b", "c"], expectedType: int });
 
   data = {
     a: 5,
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a", value: 5, expectedType: list });
 });
 
 test("test $test with array", () => {
@@ -202,12 +189,12 @@ test("test $test with array", () => {
   let data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [1],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, { key: "a", value: [1] });
 });
 
 test("test multi-dimensional array", () => {
@@ -221,12 +208,16 @@ test("test multi-dimensional array", () => {
   let data = {
     a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [1, 2, 3],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, [
+    { key: "a[0]", value: 1, expectedType: list },
+    { key: "a[1]", value: 2, expectedType: list },
+    { key: "a[2]", value: 3, expectedType: list },
+  ]);
 
   schema = {
     a: {
@@ -240,10 +231,20 @@ test("test multi-dimensional array", () => {
   data = {
     a: [[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]],
   };
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 
   data = {
     a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
   };
-  expect(verify(schema, data)).toBe(false);
+  expectSchemaFailsInvalidType(schema, data, [
+    { key: "a[0][0]", value: 1, expectedType: list },
+    { key: "a[0][1]", value: 2, expectedType: list },
+    { key: "a[0][2]", value: 3, expectedType: list },
+    { key: "a[1][0]", value: 4, expectedType: list },
+    { key: "a[1][1]", value: 5, expectedType: list },
+    { key: "a[1][2]", value: 6, expectedType: list },
+    { key: "a[2][0]", value: 7, expectedType: list },
+    { key: "a[2][1]", value: 8, expectedType: list },
+    { key: "a[2][2]", value: 9, expectedType: list },
+  ]);
 });

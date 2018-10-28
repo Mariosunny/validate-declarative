@@ -140,3 +140,5 @@ test("test user-defined $test", () => {
   };
   expectSchemaFails(schema, data2, { key: "a", value: data2.a, expectedType: "customType" });
 });
+
+test("test regex $test", () => {});

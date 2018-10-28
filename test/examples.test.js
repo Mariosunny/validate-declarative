@@ -1,16 +1,6 @@
-import {
-  INVALID_VALUE_ERROR,
-  MISSING_PROPERTY_ERROR,
-  nonNegativeInt,
-  string,
-  verify,
-  int,
-  number,
-  boolean,
-  typeWithInstanceOf,
-  DUPLICATE_PROPERTY_ERROR,
-} from "../src";
+import { nonNegativeInt, string, verify, int, number, boolean, typeWithInstanceOf } from "../src";
 import { createError, validateErrors } from "./testUtils";
+import { DUPLICATE_VALUE_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
 
 test("test leading example", () => {
   const bankAccountSchema = {
@@ -385,7 +375,7 @@ test("test $unique example", () => {
   expect(verify(playerSchema, player1)).toBe(true);
   expect(verify(playerSchema, player2)).toBe(false);
 
-  let errors = [createError("username", DUPLICATE_PROPERTY_ERROR, "Mariosunny")];
+  let errors = [createError("username", DUPLICATE_VALUE_ERROR, "Mariosunny")];
   validateErrors(playerSchema, player2, errors);
 });
 
