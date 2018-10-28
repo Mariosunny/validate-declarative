@@ -1,8 +1,15 @@
-import { setGlobalValidationOptions, validate, verify } from "../src/validate";
-import { int, list, string } from "../src/types";
+import {
+  validate,
+  verify,
+  int,
+  list,
+  string,
+  EXTRANEOUS_PROPERTY_ERROR,
+  INVALID_VALUE_ERROR,
+  MISSING_PROPERTY_ERROR,
+} from "../src";
 import { $META } from "../src/keys";
-import { createError, generateSchemaExpects } from "./testUtils";
-import { EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
+import { generateSchemaExpects } from "./testUtils";
 
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows } = generateSchemaExpects();
 

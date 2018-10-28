@@ -1,5 +1,4 @@
-import { DUPLICATE_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../../src/errors";
-import { int } from "../../src/types";
+import { DUPLICATE_VALUE_ERROR, MISSING_PROPERTY_ERROR, int } from "../../src";
 import { createError, generateSchemaExpects } from "../testUtils";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects(function(property) {

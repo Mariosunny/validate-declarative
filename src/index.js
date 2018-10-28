@@ -1,79 +1,88 @@
-import {
-  verify as _verify,
-  validate as _validate,
-  resetSchema as __resetSchema,
-  setGlobalValidationOptions as _setGlobalValidationOptions,
-} from "./validate";
+import * as core from "./validate";
+export const verify = core.verify;
+export const validate = core.validate;
+export const _resetSchema = core.resetSchema;
+export const setGlobalValidationOptions = core.setGlobalValidationOptions;
 
-import {
-  INVALID_VALUE_ERROR as _INVALID_VALUE_ERROR,
-  MISSING_PROPERTY_ERROR as _MISSING_PROPERTY_ERROR,
-  DUPLICATE_VALUE_ERROR as _DUPLICATE_VALUE_ERROR,
-  EXTRANEOUS_PROPERTY_ERROR as _EXTRANEOUS_PROPERTY_ERROR,
-} from "./errors";
+import * as types from "./types";
+export const string = types.string;
+export const number = types.number;
+export const nonPositiveNumber = types.nonPositiveNumber;
+export const negativeNumber = types.negativeNumber;
+export const nonNegativeNumber = types.nonNegativeNumber;
+export const positiveNumber = types.positiveNumber;
+export const int = types.int;
+export const nonPositiveInt = types.nonPositiveInt;
+export const negativeInt = types.negativeInt;
+export const nonNegativeInt = types.nonNegativeInt;
+export const positiveInt = types.positiveInt;
+export const boolean = types.boolean;
+export const truthy = types.truthy;
+export const falsy = types.falsy;
+export const array = types.array;
+export const list = types.list;
+export const object = types.object;
+export const func = types.func;
+export const date = types.date;
+export const symbol = types.symbol;
+export const regexp = types.regexp;
+export const nullValue = types.nullValue;
+export const undefinedValue = types.undefinedValue;
+export const nanValue = types.nanValue;
+export const any = types.any;
+export const optionalString = types.optionalString;
+export const optionalNumber = types.optionalNumber;
+export const optionalNonPositiveNumber = types.optionalNonPositiveNumber;
+export const optionalNegativeNumber = types.optionalNegativeNumber;
+export const optionalNonNegativeNumber = types.optionalNonNegativeNumber;
+export const optionalPositiveNumber = types.optionalPositiveNumber;
+export const optionalInt = types.optionalInt;
+export const optionalNonPositiveInt = types.optionalNonPositiveInt;
+export const optionalNegativeInt = types.optionalNegativeInt;
+export const optionalNonNegativeInt = types.optionalNonNegativeInt;
+export const optionalPositiveInt = types.optionalPositiveInt;
+export const optionalBoolean = types.optionalBoolean;
+export const optionalTruthy = types.optionalTruthy;
+export const optionalFalsy = types.optionalFalsy;
+export const optionalArray = types.optionalArray;
+export const optionalList = types.optionalList;
+export const optionalObject = types.optionalObject;
+export const optionalFunc = types.optionalFunc;
+export const optionalDate = types.optionalDate;
+export const optionalSymbol = types.optionalSymbol;
+export const optionalRegexp = types.optionalRegexp;
+export const optionalNullValue = types.optionalNullValue;
+export const optionalUndefinedValue = types.optionalUndefinedValue;
+export const optionalNanValue = types.optionalNanValue;
+export const optionalAny = types.optionalAny;
+export const uniqueString = types.uniqueString;
+export const uniqueNumber = types.uniqueNumber;
+export const uniqueNonPositiveNumber = types.uniqueNonPositiveNumber;
+export const uniqueNegativeNumber = types.uniqueNegativeNumber;
+export const uniqueNonNegativeNumber = types.uniqueNonNegativeNumber;
+export const uniquePositiveNumber = types.uniquePositiveNumber;
+export const uniqueInt = types.uniqueInt;
+export const uniqueNonPositiveInt = types.uniqueNonPositiveInt;
+export const uniqueNegativeInt = types.uniqueNegativeInt;
+export const uniqueNonNegativeInt = types.uniqueNonNegativeInt;
+export const uniquePositiveInt = types.uniquePositiveInt;
+export const uniqueBoolean = types.uniqueBoolean;
+export const uniqueTruthy = types.uniqueTruthy;
+export const uniqueFalsy = types.uniqueFalsy;
+export const uniqueArray = types.uniqueArray;
+export const uniqueList = types.uniqueList;
+export const uniqueObject = types.uniqueObject;
+export const uniqueFunc = types.uniqueFunc;
+export const uniqueDate = types.uniqueDate;
+export const uniqueSymbol = types.uniqueSymbol;
+export const uniqueRegexp = types.uniqueRegexp;
+export const uniqueNullValue = types.uniqueNullValue;
+export const uniqueUndefinedValue = types.uniqueUndefinedValue;
+export const uniqueAny = types.uniqueAny;
+export const typeWithInstanceOf = types.typeWithInstanceOf;
 
-import {
-  string as _string,
-  number as _number,
-  nonPositiveNumber as _nonPositiveNumber,
-  negativeNumber as _negativeNumber,
-  nonNegativeNumber as _nonNegativeNumber,
-  positiveNumber as _positiveNumber,
-  int as _int,
-  nonPositiveInt as _nonPositiveInt,
-  negativeInt as _negativeInt,
-  nonNegativeInt as _nonNegativeInt,
-  positiveInt as _positiveInt,
-  boolean as _boolean,
-  truthy as _truthy,
-  falsy as _falsy,
-  array as _array,
-  list as _list,
-  object as _object,
-  func as _func,
-  date as _date,
-  symbol as _symbol,
-  regexp as _regexp,
-  nullValue as _nullValue,
-  undefinedValue as _undefinedValue,
-  nanValue as _nanValue,
-  any as _any,
-  typeWithInstanceOf as _typeWithInstanceOf,
-} from "./types";
-
-export const validate = _validate;
-export const verify = _verify;
-export const _resetSchema = __resetSchema;
-export const typeWithInstanceOf = _typeWithInstanceOf;
-export const setGlobalValidationOptions = _setGlobalValidationOptions;
-
-export const string = _string;
-export const number = _number;
-export const nonPositiveNumber = _nonPositiveNumber;
-export const negativeNumber = _negativeNumber;
-export const nonNegativeNumber = _nonNegativeNumber;
-export const positiveNumber = _positiveNumber;
-export const int = _int;
-export const nonPositiveInt = _nonPositiveInt;
-export const negativeInt = _negativeInt;
-export const nonNegativeInt = _nonNegativeInt;
-export const positiveInt = _positiveInt;
-export const boolean = _boolean;
-export const truthy = _truthy;
-export const falsy = _falsy;
-export const array = _array;
-export const list = _list;
-export const object = _object;
-export const func = _func;
-export const date = _date;
-export const symbol = _symbol;
-export const regexp = _regexp;
-export const nullValue = _nullValue;
-export const undefinedValue = _undefinedValue;
-export const nanValue = _nanValue;
-export const any = _any;
-
-export const INVALID_VALUE_ERROR = _INVALID_VALUE_ERROR;
-export const MISSING_PROPERTY_ERROR = _MISSING_PROPERTY_ERROR;
-export const DUPLICATE_VALUE_ERROR = _DUPLICATE_VALUE_ERROR;
-export const EXTRANEOUS_PROPERTY_ERROR = _EXTRANEOUS_PROPERTY_ERROR;
+import * as errors from "./errors";
+export const INVALID_VALUE_ERROR = errors.INVALID_VALUE_ERROR;
+export const MISSING_PROPERTY_ERROR = errors.MISSING_PROPERTY_ERROR;
+export const DUPLICATE_VALUE_ERROR = errors.DUPLICATE_VALUE_ERROR;
+export const EXTRANEOUS_PROPERTY_ERROR = errors.EXTRANEOUS_PROPERTY_ERROR;

@@ -1,4 +1,4 @@
-import { isConstantValue, isKeyValueObject } from "../../src/util";
+import { isKeyValueObject } from "../../src/util";
 
 describe("isKeyValueObject", () => {
   it("should return true for object literals, class instances, Object.create, new Object()", () => {

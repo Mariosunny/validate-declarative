@@ -1,4 +1,4 @@
-import { verify, validate } from "../src/validate";
+import { verify, validate } from "../src";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {

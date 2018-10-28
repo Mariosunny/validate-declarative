@@ -7,47 +7,45 @@
 A simple utility for declaratively validating any Javascript object.
 - Easy-to-read, self-describing syntax
 - Fast, robust, and highly extensible
-- Works with arbitrarily large and deeply nested objects
+- Works with arbitrarily large and deeply nested objects/arrays
 - ES5+ and browser compatible
 
 ***See it in action:***
 ```javascript
-import {verify, string, optionalNumber, boolean} from 'validate-declarative';
+import {verify, string, optionalNumber, date, boolean} from 'validate-declarative';
 
 const schema = {
-  a: string,
-  b: boolean,
-  c: {
-    d: optionalNumber,
-    e: {
-      $test: (object) => object < 40000
-    }
-  }
+  a: boolean,
+  b: {
+    c: optionalNumber,
+    d: { $test: (object) => object < 40000 }
+  },
+  e: { $element: string }
 };
 
 let data1 = {
-  a: "Susan B. Foo",
-  b: true,
-  c: {
-    e: 39328.03
-  }
+  a: true,
+  b: {
+    d: 39328.03
+  },
+  e: [ "apple", "orange" ]
 };
 let result1 = verify(schema, data1); 
 // returns true: data1 satisfies the schema
 
 let data2 = {
-  a: 1,
-  c: {
-    d: "ten dollars",
-    e: 60000
-  }
+  b: {
+    c: "ten dollars",
+    d: 60000
+  },
+  e: [ "23", -609, "lemon" ]
 };
 let result2 = verify(schema, data2);
 // returns false, since:
-//    'b' is missing, 
-//    'a' is not a string, 
-//    'c.d' is not a number,
-//    'c.e' is not less than 40000
+//    'a' is missing,
+//    'b.c' is not a number,
+//    'b.d' is not less than 40000
+//    'e[1]' is not a string
 ```
 
 
@@ -694,6 +692,10 @@ detected across two data or detected within the same data (ex. duplicate values 
 For nested `$unique` declarations,
 only the most shallow `$unique` declaration is considered.
 
+(Note: Every `NaN` value is different from every other value, including other `NaN` values 
+(as per [Section 11.9.6](https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.6) of the ECMAScript spec).
+It would therefore be meaningless to declare a `NaN` property unique- as it will always be unique.)
+
 (Note: Each `$unique` declaration is mapped to an internal array of values stored within
 a hidden property within the schema. 
 **Be warned**- a large number of validations may result in high memory usage,
@@ -845,11 +847,7 @@ For creating your own types, see [Creating a custom type](#creating-a-custom-typ
 |`truthy`|A truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`falsy`|A falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`array`|An array.|`[1, 2, "3"]`, `new Array()`|
-|`set`|A set.|`new Set(1, 2, 3)`|
-|`weakSet`|A weak set.|`new WeakSet(1, 2, 3)`|
 |`list`|An array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
-|`map`|A map.|`new Map()`|
-|`weakMap`|A weak map.|`new WeakMap()`|
 |`object`|Any object that is not a function.|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`func`|A function.|`function(){}`, `() => {}`, `Date`|
 |`date`|A date object.|`new Date()`|
@@ -880,11 +878,7 @@ Optional types are the same as core types, but with `$optional` = *true*.
 |`optionalTruthy`|An optional truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`optionalFalsy`|An optional falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`optionalArray`|An optional array.|`[1, 2, "3"]`, `new Array()`|
-|`optionalSet`|An optional set.|`new Set(1, 2, 3)`|
-|`optionalWeakSet`|An optional weak set.|`new WeakSet(1, 2, 3)`|
 |`optionalList`|An optional array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
-|`optionalMap`|An optional map.|`new Map()`|
-|`optionalWeakMap`|An optional weak map.|`new WeakMap()`|
 |`optionalObject`|Any object that is not a function (optional).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`optionalFunc`|An optional function.|`function(){}`, `() => {}`, `Date`|
 |`optionalDate`|An optional date object.|`new Date()`|
@@ -915,11 +909,7 @@ Unique types are the same as core types, but with `$unique` = *true*.
 |`uniqueTruthy`|A unique truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`uniqueFalsy`|A unique falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`uniqueArray`|A unique array.|`[1, 2, "3"]`, `new Array()`|
-|`uniqueSet`|A unique set.|`new Set(1, 2, 3)`|
-|`uniqueWeakSet`|A unique weak set.|`new WeakSet(1, 2, 3)`|
 |`uniqueList`|A unique array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
-|`uniqueMap`|A unique map.|`new Map()`|
-|`uniqueWeakMap`|A unique weak map.|`new WeakMap()`|
 |`uniqueObject`|Any object that is not a function (unique).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`uniqueFunc`|A unique function.|`function(){}`, `() => {}`, `Date`|
 |`uniqueDate`|A unique date object.|`new Date()`|
@@ -927,7 +917,6 @@ Unique types are the same as core types, but with `$unique` = *true*.
 |`uniqueRegexp`|A unique regular expression object.|`/.*/g`, `new Regexp(".*")`|
 |`uniqueNullValue`|A unique **null** value.|`null`|
 |`uniqueUndefinedValue`|A unique **undefined** value.|`undefined`|
-|`uniqueNanValue`|A unique **NaN** value.|`NaN`|
 |`uniqueAny`|Any value (unique).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
 

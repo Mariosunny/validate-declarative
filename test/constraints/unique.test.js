@@ -1,7 +1,5 @@
-import { verify, resetSchema } from "../../src/validate";
-import { int, string, nullValue, boolean, truthy } from "../../src/types";
+import { int, string, nullValue, boolean, truthy, verify, _resetSchema, DUPLICATE_VALUE_ERROR } from "../../src";
 import { $META, $ROOT } from "../../src/keys";
-import { DUPLICATE_VALUE_ERROR } from "../../src/errors";
 import _ from "lodash";
 import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
 
@@ -634,7 +632,7 @@ test("ensure only shallowest $unique in the $type chain is considered", () => {
   expectNumberOfUniqueValues(nonUniqueSchema2, 0);
 });
 
-test("ensure resetSchema() resets uniqueValues", () => {
+test("ensure _resetSchema() resets uniqueValues", () => {
   const schema1 = {
     $unique: true,
     $type: int,
@@ -643,7 +641,7 @@ test("ensure resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema1, 5);
   expectSchemaFails(schema1, 5, { value: 5 });
   expectNumberOfUniqueValues(schema1, 1);
-  resetSchema(schema1);
+  _resetSchema(schema1);
   expectNumberOfUniqueValues(schema1, 1);
   expectSchemaPasses(schema1, 5);
   expectSchemaFails(schema1, 5, { value: 5 });
@@ -658,7 +656,7 @@ test("ensure resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema2, { a: 5 });
   expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
   expectNumberOfUniqueValues(schema2, 1);
-  resetSchema(schema2);
+  _resetSchema(schema2);
   expectNumberOfUniqueValues(schema2, 1);
   expectSchemaPasses(schema2, { a: 5 });
   expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
@@ -681,7 +679,7 @@ test("ensure resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
   expectNumberOfUniqueValues(schema3, 3);
-  resetSchema(schema3);
+  _resetSchema(schema3);
   expectNumberOfUniqueValues(schema3, 3);
   expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });

@@ -1,7 +1,5 @@
 import { createError, generateSchemaExpects } from "../testUtils";
-import { INVALID_VALUE_ERROR } from "../../src/errors";
-import { validate, verify } from "../../src/validate";
-import { int } from "../../src/types";
+import { INVALID_VALUE_ERROR, verify, int } from "../../src";
 
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows, expectSchemaNotThrows } = generateSchemaExpects(
   function(error) {

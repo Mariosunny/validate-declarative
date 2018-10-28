@@ -121,7 +121,7 @@ export const optionalArray = makeOptional(array);
 export const uniqueArray = makeUnique(array);
 
 export const list = newType("list", function(object) {
-  return array.$test(object);
+  return array.$test(object) || object instanceof Set || object instanceof WeakSet;
 });
 export const optionalList = makeOptional(list);
 export const uniqueList = makeUnique(list);
@@ -143,8 +143,8 @@ export const optionalSymbol = makeOptional(symbol);
 export const uniqueSymbol = makeUnique(symbol);
 
 export const regexp = typeWithInstanceOf(RegExp, "regexp");
-export const optionalRegex = makeOptional(regexp);
-export const uniqueRegex = makeUnique(regexp);
+export const optionalRegexp = makeOptional(regexp);
+export const uniqueRegexp = makeUnique(regexp);
 
 export const nullValue = typeWithLiteralValueOf(null, "nullValue");
 export const optionalNullValue = makeOptional(nullValue);
@@ -158,7 +158,6 @@ export const nanValue = newType("nanValue", function(object) {
   return Number.isNaN(object);
 });
 export const optionalNanValue = makeOptional(nanValue);
-export const uniqueNanValue = makeUnique(nanValue);
 
 export const any = newType("any", function(object) {
   return true;

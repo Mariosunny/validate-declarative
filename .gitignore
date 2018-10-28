@@ -3,6 +3,6 @@
 /lib/
 *.log
 /dist/
-/main.js
 .DS_Store
 /coverage/
+main.js

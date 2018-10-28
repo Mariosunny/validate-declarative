@@ -1,7 +1,5 @@
-import { int, string } from "../src";
-import { createError, generateSchemaExpects } from "./testUtils";
-import { DUPLICATE_VALUE_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
-import { list } from "../src/types";
+import { createError, generateSchemaExpects } from "../testUtils";
+import { DUPLICATE_VALUE_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR, list, int, string } from "../../src";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();
 

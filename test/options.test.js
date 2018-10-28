@@ -6,10 +6,8 @@ import {
   globalOptions,
 } from "../src/options";
 import { generateSchemaExpects } from "./testUtils";
-import { setGlobalValidationOptions } from "../src/validate";
-import { EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR } from "../src/errors";
+import { int, EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR, setGlobalValidationOptions } from "../src";
 import _ from "lodash";
-import { int } from "../src/types";
 
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows, expectSchemaNotThrows } = generateSchemaExpects();
 

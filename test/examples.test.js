@@ -1,6 +1,16 @@
-import { nonNegativeInt, string, verify, int, number, boolean, typeWithInstanceOf } from "../src";
 import { createError, validateErrors } from "./testUtils";
-import { DUPLICATE_VALUE_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
+import {
+  DUPLICATE_VALUE_ERROR,
+  INVALID_VALUE_ERROR,
+  MISSING_PROPERTY_ERROR,
+  nonNegativeInt,
+  string,
+  verify,
+  int,
+  number,
+  boolean,
+  typeWithInstanceOf,
+} from "../src";
 
 test("test leading example", () => {
   const bankAccountSchema = {
