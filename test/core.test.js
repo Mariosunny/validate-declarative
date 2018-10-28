@@ -1,4 +1,4 @@
-import { configureValidation, validate, verify } from "../src/validate";
+import { setGlobalValidationOptions, validate, verify } from "../src/validate";
 import { int, list, string } from "../src/types";
 import { $META } from "../src/keys";
 import { createError, generateSchemaExpects } from "./testUtils";

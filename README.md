@@ -59,7 +59,6 @@ let result2 = verify(schema, data2);
 - [Constraints](#constraints)
 - [Errors](#errors)
 - [Built-in Types](#built-in-types)
-- [Stats](#stats)
 - [About](#about)
 
 ## Installation
@@ -67,6 +66,9 @@ let result2 = verify(schema, data2);
 npm install validate-declarative --save
 ```
 
+```
+yarn add validate-declarative
+```
 
 ## Getting Started
 A *schema* is a plain-old Javascript object that has some special properties. 
@@ -407,7 +409,7 @@ satisfies the constraints of the property
 Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message)
 rules when comparing objects.
 
-`options` is an optional object with the following keys:
+`options` is an optional argument that is an object with the following keys:
 
 |Key|Type|Default|Description|
 |---|----|-------|-----------|
@@ -442,27 +444,27 @@ Same as `verify()`, but returns a *report object* containing a reference to the 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
 
-#### `configureValidation(options)`
-Sets the global validation rules for **all** validations. `options` is an object with the following keys.
+#### `setGlobalValidationOptions(options)`
+Sets the global validation rules for all validations. `options` is an optional argument that is an object with the following keys:
 
 |Key|Type|Default|Description|
 |---|----|-------|-----------|
 |`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
 |`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
 
-To restore the default global configuration, call `configureValidation()` with no arguments.
+To restore the default global configuration, call `setGlobalValidationOptions()` with no arguments.
 
 <details><summary>Example Usage</summary>
   
 ```javascript
-import {configureValidation} from 'validate-declarative';
+import {setGlobalValidationOptions} from 'validate-declarative';
 
 let options = {
     allowExtraneous: false,
     throwOnError: true
 };
 
-configureValidation(options);
+setGlobalValidationOptions(options);
 ```
 
 </details>
@@ -784,34 +786,34 @@ does ***not*** refer to
 Generated when a value fails a type test.
 ```javascript
 {
-  error: "InvalidValueError",    // name of the error
+  error: "InvalidValueError",    // the type of error that occurred
   key: "menu.menuItems[3].desc", // the property where the error occurred
   value: 5,                      // the actual value found in the data at the property
-  expectedType: "string"         // the expected type, defined by $name in the schema
+  expectedType: "string"         // the expected type, defined by $name
 }
 ```
 
 #### DuplicateValueError
-Generated when a duplicate value is detected, and when `$unique` = *true*.
+Generated when `$unique` = *true* and a duplicate value is detected within/across the data.
 ```javascript
 {
   error: "DuplicateValueError",
-  key: "restaurant.headChef",
-  value: "Tom G. Bar"
+  key: "candidates[2].SSN",
+  value: "123-45-6789"
 }
 ```
 
 #### MissingPropertyError
-Generated when a property is missing from the data, and when `$optional` = *false*.
+Generated when `$optional` = *false* and a property is missing from the data.
 ```javascript
 {
   error: "MissingPropertyError",
-  key: "headChef"
+  key: "company.shippingAddress"
 }
 ```
 
 #### ExtraneousPropertyError
-Generated when there is an extra property in the data, and when `allowExtraneous` = *false*.
+Generated when `allowExtraneous` = *false* and there is an extra property in the data.
 ```javascript
 {
   error: "ExtraneousPropertyError",
@@ -928,20 +930,6 @@ Unique types are the same as core types, but with `$unique` = *true*.
 |`uniqueNanValue`|A unique **NaN** value.|`NaN`|
 |`uniqueAny`|Any value (unique).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
-
-## Stats
-
-#### Benchmarks
-All tests run on Acer Predator G3-571 V1.10 with Ubuntu 17.10 x86_64 Intel® Core™ i7-7700HQ CPU @ 2.80GHz × 8.
-
-```
-[ Validating a single value ] 
-100,000 validations in 20 ms (0.201 μs per validation)
-```
-
-#### Tests
-- **Number of tests**: 151
-- **Code coverage**: 100.00%
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 

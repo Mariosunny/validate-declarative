@@ -2,7 +2,7 @@ import {
   verify as _verify,
   validate as _validate,
   resetSchema as __resetSchema,
-  configureValidation as _configureValidation,
+  setGlobalValidationOptions as _setGlobalValidationOptions,
 } from "./validate";
 
 import {
@@ -45,7 +45,7 @@ export const validate = _validate;
 export const verify = _verify;
 export const _resetSchema = __resetSchema;
 export const typeWithInstanceOf = _typeWithInstanceOf;
-export const configureValidation = _configureValidation;
+export const setGlobalValidationOptions = _setGlobalValidationOptions;
 
 export const string = _string;
 export const number = _number;

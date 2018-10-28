@@ -6,7 +6,7 @@ import {
   globalOptions,
 } from "../src/options";
 import { generateSchemaExpects } from "./testUtils";
-import { configureValidation } from "../src/validate";
+import { setGlobalValidationOptions } from "../src/validate";
 import { EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR } from "../src/errors";
 import _ from "lodash";
 import { int } from "../src/types";
@@ -14,7 +14,7 @@ import { int } from "../src/types";
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows, expectSchemaNotThrows } = generateSchemaExpects();
 
 function resetGlobalOptions() {
-  configureValidation();
+  setGlobalValidationOptions();
 }
 
 beforeEach(() => {
@@ -68,7 +68,7 @@ function testOptionValues(optionName, validValues, invalidValues) {
 
       expectSchemaNotThrows({}, {}, options);
 
-      expect(() => configureValidation(options)).not.toThrow();
+      expect(() => setGlobalValidationOptions(options)).not.toThrow();
       expectSchemaNotThrows({}, {}, options);
       expectSchemaNotThrows({}, {});
     });
@@ -79,7 +79,7 @@ function testOptionValues(optionName, validValues, invalidValues) {
       options[optionName] = value;
 
       expectSchemaThrows({}, {}, options);
-      expect(() => configureValidation(options)).toThrow();
+      expect(() => setGlobalValidationOptions(options)).toThrow();
     });
   });
 }
@@ -93,21 +93,21 @@ test("extraneous properties in options are ignored", () => {
   options.b = true;
 
   expectSchemaNotThrows({}, {}, options);
-  expect(() => configureValidation(options)).not.toThrow();
+  expect(() => setGlobalValidationOptions(options)).not.toThrow();
 });
 
-test("global options only reset to default when configureValidation() is called with no arguments", () => {
+test("global options only reset to default when setGlobalValidationOptions() is called with no arguments", () => {
   let options = _.cloneDeep(DEFAULT_GLOBAL_OPTIONS);
 
   OPTIONS_LIST.forEach(function(optionName) {
     OPTIONS[optionName].forEach(function(value) {
       options[optionName] = value;
-      configureValidation(options);
+      setGlobalValidationOptions(options);
       expect(globalOptions).toEqual(options);
     });
   });
 
-  configureValidation();
+  setGlobalValidationOptions();
   expect(globalOptions).toEqual(DEFAULT_GLOBAL_OPTIONS);
 });
 
@@ -138,7 +138,7 @@ describe(`test ${ALLOW_EXTRANEOUS} option`, () => {
   expectSchemaFails(schema, data2, error);
   expectSchemaPasses(schema, data1, falseOptions);
   expectSchemaFails(schema, data2, error, falseOptions);
-  configureValidation(falseOptions);
+  setGlobalValidationOptions(falseOptions);
   expectSchemaPasses(schema, data1);
   expectSchemaFails(schema, data2, error);
   expectSchemaPasses(schema, data1, falseOptions);
@@ -152,7 +152,7 @@ describe(`test ${ALLOW_EXTRANEOUS} option`, () => {
   expectSchemaFails(schema, data2, error);
   expectSchemaPasses(schema, data1, trueOptions);
   expectSchemaPasses(schema, data2, trueOptions);
-  configureValidation(trueOptions);
+  setGlobalValidationOptions(trueOptions);
   expectSchemaPasses(schema, data1);
   expectSchemaPasses(schema, data2);
   expectSchemaPasses(schema, data1, trueOptions);
@@ -191,7 +191,7 @@ describe(`test ${THROW_ON_ERROR} option`, () => {
   expectSchemaNotThrows(schema, data1, falseOptions);
   expectSchemaFails(schema, data2, error, falseOptions);
   expectSchemaNotThrows(schema, data2, falseOptions);
-  configureValidation(falseOptions);
+  setGlobalValidationOptions(falseOptions);
   expectSchemaPasses(schema, data1);
   expectSchemaNotThrows(schema, data1);
   expectSchemaFails(schema, data2, error);
@@ -212,7 +212,7 @@ describe(`test ${THROW_ON_ERROR} option`, () => {
   expectSchemaPasses(schema, data1, trueOptions);
   expectSchemaNotThrows(schema, data1, trueOptions);
   expectSchemaThrows(schema, data2, trueOptions);
-  configureValidation(trueOptions);
+  setGlobalValidationOptions(trueOptions);
   expectSchemaPasses(schema, data1);
   expectSchemaNotThrows(schema, data1);
   expectSchemaThrows(schema, data2);

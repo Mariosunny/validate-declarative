@@ -1,5 +1,5 @@
 import { forOwn, forOwnNonReservedProperty, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
-import { $ELEMENT, $META, $NAME, $OPTIONAL, $ROOT, $TEST, $TYPE, addKeyToContext } from "./keys";
+import { $ELEMENT, $META, $NAME, $OPTIONAL, $ROOT, $TEST, $TYPE, addElementToContext, addKeyToContext } from "./keys";
 import { list, string } from "./types";
 import {
   addError,
@@ -50,7 +50,7 @@ function validateArray(context, schema, data, report, options, uniqueValues) {
     let elementSchema = schema[$ELEMENT];
 
     data.forEach(function(element, i) {
-      validateData(context + "[" + i + "]", elementSchema, element, report, options, uniqueValues);
+      validateData(addElementToContext(context, i), elementSchema, element, report, options, uniqueValues);
     });
   } else {
     addError(report, options, INVALID_VALUE_ERROR, context, data, list.$name);
@@ -59,7 +59,7 @@ function validateArray(context, schema, data, report, options, uniqueValues) {
 
 function validateObject(context, schema, data, report, options, uniqueValues) {
   forOwnNonReservedProperty(schema, function(key, value) {
-    let newContext = context + (context.length === 0 ? "" : ".") + key;
+    let newContext = addKeyToContext(context, key);
     let newSchema = value;
     let dataHasProperty = hasOwnProperty(data, key);
     let newData = dataHasProperty ? data[key] : null;
@@ -113,7 +113,7 @@ function isOptional(schema) {
   return false;
 }
 
-function passesTypeTest(schema, data) {
+function passesTypeTest(schema, data, depth = 0) {
   let result = true;
   const hasElement = schema.hasOwnProperty($ELEMENT);
   const hasTest = schema.hasOwnProperty($TEST);
@@ -124,7 +124,7 @@ function passesTypeTest(schema, data) {
   }
 
   if (hasType && isKeyValueObject(schema[$TYPE])) {
-    result = passesTypeTest(schema[$TYPE], data) && result;
+    result = passesTypeTest(schema[$TYPE], data, depth + 1) && result;
   }
 
   if (result && hasTest) {
@@ -137,7 +137,7 @@ function passesTypeTest(schema, data) {
     }
   }
 
-  if (result && !hasTest && !hasType && !hasElement && !isKeyValueObject(data)) {
+  if (result && !hasType && !hasTest && depth === 0 && !hasElement && !isKeyValueObject(data)) {
     result = false;
   }
 
@@ -187,7 +187,7 @@ export function validate(schema, data, options) {
   checkInputForErrors(schema, data, options);
   addMeta(schema);
 
-  let report = { errors: [], schema: schema, data: data };
+  let report = { errors: [], data: data, schema: schema };
   validateData("", schema, data, report, options, schema[$META].uniqueValues);
 
   return report;
@@ -198,6 +198,6 @@ export function resetSchema(schema) {
   _resetSchema(schema);
 }
 
-export function configureValidation(options) {
+export function setGlobalValidationOptions(options) {
   setGlobalOptions(options);
 }
