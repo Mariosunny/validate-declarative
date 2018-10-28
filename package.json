@@ -1,13 +1,13 @@
 {
   "name": "validate-declarative",
   "version": "0.0.0",
-  "description": "A simple, highly-extensible utility for validating the structure of any JS object.",
+  "description": "A simple utility for declaratively validating any Javascript object.",
   "main": "",
   "scripts": {
-    "prepublish": "npm run test && npm run build",
+    "prepublish": "yarn test && yarn build",
     "build": "webpack src/index.js -p --target=node --output-library-target commonjs2",
     "benchmark": "babel-watch stats/benchmarks.js",
-    "size": "npm run build && du -s -B1 --apparent-size dist/index.js | awk '{print $1}'",
+    "size": "yarn build && du -s -B1 --apparent-size dist/main.js | awk '{print $1}'",
     "test": "jest",
     "test:verbose": "jest --verbose",
     "start": "babel-watch main.js"
@@ -20,7 +20,20 @@
   "license": "ISC",
   "dependencies": {
   },
-  "keywords": [],
+  "keywords": [
+    "validation",
+    "validator",
+    "validate",
+    "valid",
+    "declarative",
+    "object",
+    "assert",
+    "assertion",
+    "schema",
+    "parse",
+    "sanitize",
+    "sanitise"
+  ],
   "files": [
     "dist/index.js"
   ],

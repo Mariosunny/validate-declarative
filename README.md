@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/Mariosunny/validate-declarative.png?branch=master)](https://travis-ci.org/Mariosunny/validate-declarative)
 [![codecov](https://codecov.io/gh/Mariosunny/validate-declarative/branch/master/graph/badge.svg)](https://codecov.io/gh/Mariosunny/validate-declarative)
 [![Dependencies Status](https://david-dm.org/Mariosunny/validate-declarative/status.svg)](https://david-dm.org/Mariosunny/validate-declarative)
+[![Known Vulnerabilities](https://snyk.io/test/github/Mariosunny/validate-declarative/badge.svg)](https://snyk.io/test/github/Mariosunny/validate-declarative)
 
 # validate-declarative
 A simple utility for declaratively validating any Javascript object.
@@ -11,14 +12,16 @@ A simple utility for declaratively validating any Javascript object.
 
 ***See it in action:***
 ```javascript
-import {verify, string, number, optionalNumber, boolean} from 'validate-declarative';
+import {verify, string, optionalNumber, boolean} from 'validate-declarative';
 
 const schema = {
   a: string,
   b: boolean,
   c: {
     d: optionalNumber,
-    e: number
+    e: {
+      $test: (object) => object < 40000
+    }
   }
 };
 
@@ -36,11 +39,15 @@ let data2 = {
   a: 1,
   c: {
     d: "ten dollars",
-    e: 39328.03
+    e: 60000
   }
 };
 let result2 = verify(schema, data2);
-// returns false, since 'b' is missing, 'a' is not a string, 'a.d' is not a number
+// returns false, since:
+//    'b' is missing, 
+//    'a' is not a string, 
+//    'c.d' is not a number,
+//    'c.e' is not less than 40000
 ```
 
 
@@ -66,6 +73,8 @@ A *schema* is a plain-old Javascript object that has some special properties.
 A schema describes the structure of some data.
 
 ```javascript
+import {verify, validate} from 'validate-declarative';
+
 // a schema that describes a tweet
 const tweetSchema = {
   message: {
@@ -96,8 +105,6 @@ it takes a schema as its first argument, and the data as its second argument.
 It returns *true* if the data satisfies all the constraints in the schema.
 
 ```javascript
-import {verify} from 'validate-declarative';
-
 let result1 = verify(tweetSchema, myTweet1); // true
 let result2 = verify(tweetSchema, myTweet2); // false
 let result3 = verify(tweetSchema, myTweet3); // false
@@ -105,8 +112,6 @@ let result3 = verify(tweetSchema, myTweet3); // false
 
 `validate()` is similar to `verify()`, but returns a *report object* containing an array of [errors](#errors) describing any constraint violations:
 ```javascript
-import {validate} from 'validate-declarative';
-
 console.log(validate(tweetSchema, tweet2));
 // {
 //    errors: [ { error: "InvalidValueError", key: "message", value: 5 } ] 
