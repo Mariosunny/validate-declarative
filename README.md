@@ -884,7 +884,8 @@ All tests run on Acer Predator G3-571 V1.10 with Ubuntu 17.10 x86_64 Intel® Cor
 ```
 
 #### Tests
-- *Number of tests:* 129
+- **Number of tests**: 151
+- **Code coverage**: 100.00%
 
 ## About
 This project is maintained by [Tyler Hurson](https://github.com/Mariosunny). 
