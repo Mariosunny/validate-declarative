@@ -9,7 +9,6 @@
     "benchmark": "babel-watch stats/benchmarks.js",
     "size": "npm run build && du -s -B1 --apparent-size dist/index.js | awk '{print $1}'",
     "test": "jest",
-    "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
     "start": "babel-watch main.js"
   },
@@ -45,6 +44,7 @@
     ]
   },
   "jest": {
-    "bail": true
+    "bail": true,
+    "collectCoverage": true
   }
 }

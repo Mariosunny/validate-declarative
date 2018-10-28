@@ -1,9 +1,11 @@
 [![Build Status](https://travis-ci.org/Mariosunny/validate-declarative.png?branch=master)](https://travis-ci.org/Mariosunny/validate-declarative)
+[![codecov](https://codecov.io/gh/Mariosunny/validate-declarative/branch/master/graph/badge.svg)](https://codecov.io/gh/Mariosunny/validate-declarative)
+[![Dependencies Status](https://david-dm.org/Mariosunny/validate-declarative/status.svg)](https://david-dm.org/Mariosunny/validate-declarative)
 
 # validate-declarative
 A simple utility for declaratively validating any Javascript object.
-- Fast, robust, and highly extensible
 - Easy-to-read, self-describing syntax
+- Fast, robust, and highly extensible
 - Works with arbitrarily large and deeply nested objects
 - ES5+ and browser compatible
 
@@ -27,10 +29,8 @@ let data1 = {
     e: 39328.03
   }
 };
-
 let result1 = verify(schema, data1); 
 // returns true: data1 satisfies the schema
-
 
 let data2 = {
   a: 1,
@@ -39,19 +39,14 @@ let data2 = {
     e: 39328.03
   }
 };
-
 let result2 = verify(schema, data2);
-/* returns false, since:
-     - property 'b' is missing
-     - property 'a' is not a string
-     - property 'a.d' is not a number
- */
+// returns false, since 'b' is missing, 'a' is not a string, 'a.d' is not a number
 ```
 
 
 ## Table of Contents
 - [Installation](#installation)
-- [Overview](#overview)
+- [Getting Started](#getting-started)
 - [Examples](#examples)
 - [API](#api)
 - [Constraints](#constraints)
@@ -66,7 +61,7 @@ npm install validate-declarative --save
 ```
 
 
-## Overview
+## Getting Started
 A *schema* is a plain-old Javascript object that has some special properties. 
 A schema describes the structure of some data.
 
