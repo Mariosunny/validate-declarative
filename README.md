@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Mariosunny/validate-declarative.png?branch=master)](https://travis-ci.org/Mariosunny/validate-declarative)
+
 # validate-declarative
 A simple utility for declaratively validating any Javascript object.
 - Fast, robust, and highly extensible
