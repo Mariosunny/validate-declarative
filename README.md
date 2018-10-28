@@ -120,6 +120,31 @@ console.log(validate(tweetSchema, tweet2));
 // }
 ```
 
+<details><summary>View the full code</summary>
+
+```javascript
+import {verify, validate} from 'validate-declarative';
+
+const tweetSchema = {
+  message: {
+    $test: function(object) {
+      return typeof object === 'string' && object.length <= 24;
+    }
+  }
+};
+
+let myTweet1 = { message: "Hello world!" };
+let myTweet2 = {message: 5};
+let myTweet3 = {message: "Lorem ipsum dolor sit amet, consectetur adipiscing." };
+
+let result1 = verify(tweetSchema, myTweet1); // true
+let result2 = verify(tweetSchema, myTweet2); // false
+let result3 = verify(tweetSchema, myTweet3); // false
+
+console.log(validate(tweetSchema, tweet2));
+```
+</details>
+<br/>
 This is a simple example, but schemas can be as large and complex as you want.
 You can create a schema for any Javascript object. 
 
@@ -389,7 +414,8 @@ rules when comparing objects.
 |`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
 |`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
 
-Example usage:
+<details><summary>Example Usage</summary>
+  
 ```javascript
 import {verify, int} from 'validate-declarative';
 
@@ -409,6 +435,8 @@ let options = {
 let result = verify(schema, data, options);
 ```
 
+</details>
+
 #### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
@@ -424,7 +452,8 @@ Sets the global validation rules for **all** validations. `options` is an object
 
 To restore the default global configuration, call `configureValidation()` with no arguments.
 
-Example usage:
+<details><summary>Example Usage</summary>
+  
 ```javascript
 import {configureValidation} from 'validate-declarative';
 
@@ -436,6 +465,8 @@ let options = {
 configureValidation(options);
 ```
 
+</details>
+
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
 Returns a *type* (an object with a `$test` [constraint](#constraints)) that returns
@@ -443,7 +474,8 @@ Returns a *type* (an object with a `$test` [constraint](#constraints)) that retu
 If `name` is present, it becomes the `$name` of the resulting type- 
 otherwise the `$name` of the resulting type is set to `clazz.name`.
 
-Example usage:
+<details><summary>Example Usage</summary>
+  
 ```javascript
 import {verify, typeWithInstanceOf} from 'validate-declarative';
 
@@ -461,12 +493,15 @@ let result2 = verify(appleType, data2); // false
 
 ```
 
+</details>
+
 #### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
 of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
 
-Example usage:
+<details><summary>Example Usage</summary>
+  
 ```javascript
 import {verify, _resetSchema, int} from 'validate-declarative';
 
@@ -480,6 +515,8 @@ let result2 = verify(schema, 5); // false
 _resetSchema(schema);
 let result3 = verify(schema, 5); // true
 ```
+
+</details>
 
 ## Constraints
 Constraints define the rules for validating data. 
@@ -495,6 +532,9 @@ Defines a simple type test.
 *false* otherwise. By default, the object is always valid.
 Alternatively, `$test` is a regular expression that describes a valid object.
 If the object is invalid, an [InvalidValueError](#invalidvalueerror) is generated.
+
+<details><summary>See Examples</summary>
+
 ```javascript
 // a custom type
 const countryCode = {
@@ -531,6 +571,7 @@ const countrySchema = {
   country: countryCode
 };
 ```
+</details>
 
 #### `$type`
 **Default:** `{ $test: (object) => true }`
@@ -548,6 +589,8 @@ You can add a `$name` property to your custom type, which determines
 the *expectedType*
 in the error, though it is entirely optional.
 
+<details><summary>See Examples</summary>
+  
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
 
@@ -596,6 +639,7 @@ const schema = {
   cars: smallNoDuplicatesArray
 };
 ```
+</details>
 
 #### `$optional`
 **Default**: `false`
@@ -609,6 +653,8 @@ only the most shallow `$optional` declaration is considered.
 `$optional` declarations at the top level of the schema
  or at the top level of an `$element` object are ignored.
 
+<details><summary>See Examples</summary>
+  
 ```javascript
 import {verify, int, string} from 'validate-declarative';
 
@@ -632,6 +678,7 @@ let data2 = {
 let result1 = verify(schema, data1); // true
 let result2 = verify(schema, data2); // true
 ```
+</details>
 
 #### `$unique`
 **Default**: `false`
@@ -651,6 +698,9 @@ a hidden property within the schema.
 as every validation adds another element to each internal array of unique values within the schema.
 Though it is not recommended, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
 This, however, will not guarantee uniqueness for subsequent validations.)
+
+<details><summary>See Examples</summary>
+  
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -678,6 +728,7 @@ let result1 = verify(playerSchema, player1);
 // false - there is already a player with username "Mariosunny"
 let result2 = verify(playerSchema, player2);
 ```
+</details>
 
 #### `$element`
 **Default:** `undefined`
@@ -687,6 +738,8 @@ When `$element` is present, `$type` defaults to the `list` type (see [Built-in T
 `$element` declarations can be nested within eachother to validate multi-dimensional arrays 
 (see [Validating a Multi-Dimensional Array](#validating-a-multi-dimensional-array)).
 
+<details><summary>See Examples</summary>
+  
 ```javascript
 import {verify, string, number} from 'validate-declarative';
 
@@ -716,6 +769,7 @@ let restaurant1 = {
 
 let result = verify(restaurantSchema, restaurant1); // true
 ```
+</details>
 
 ## Errors
 This section contains a comprehensive list of errors that could be generated by [`validate()`](#api).
