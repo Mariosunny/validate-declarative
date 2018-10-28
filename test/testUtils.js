@@ -14,8 +14,8 @@ export function createError(path, errorType, value, expectedType) {
   return error;
 }
 
-export function validateErrors(schema, data, expectedErrors) {
-  let receivedErrors = validate(schema, data).errors;
+export function validateErrors(schema, data, expectedErrors, options = {}) {
+  let receivedErrors = validate(schema, data, options).errors;
 
   expect(receivedErrors.length).toBe(expectedErrors.length);
 
@@ -24,23 +24,30 @@ export function validateErrors(schema, data, expectedErrors) {
   });
 }
 
-function expectSchema(schema, data, errorMapping, errors = []) {
+function expectSchema(schema, data, errorMapping, errors = [], options = {}) {
   if (!Array.isArray(errors)) {
     errors = [errors];
   }
-  validateErrors(schema, data, errors.map(errorMapping));
+  validateErrors(schema, data, errors.map(errorMapping), options);
 }
 
-export function generateSchemaExpects(errorMapping) {
+export function generateSchemaExpects(
+  errorMapping = function(error) {
+    return createError(error.key, error.error, error.value, error.expectedType);
+  }
+) {
   return {
-    expectSchemaPasses(schema, data) {
-      expectSchema(schema, data, errorMapping);
+    expectSchemaPasses(schema, data, options) {
+      expectSchema(schema, data, errorMapping, undefined, options);
     },
-    expectSchemaFails(schema, data, errors) {
-      expectSchema(schema, data, errorMapping, errors);
+    expectSchemaFails(schema, data, errors, options) {
+      expectSchema(schema, data, errorMapping, errors, options);
     },
-    expectSchemaThrows(schema, data, allowExtraneous) {
-      expect(() => verify(schema, data, allowExtraneous)).toThrow();
+    expectSchemaThrows(schema, data, options) {
+      expect(() => verify(schema, data, options)).toThrow();
+    },
+    expectSchemaNotThrows(schema, data, options) {
+      expect(() => verify(schema, data, options)).not.toThrow();
     },
   };
 }

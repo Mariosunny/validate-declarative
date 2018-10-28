@@ -1,13 +1,10 @@
-import { validate, verify } from "../src/validate";
+import { configureValidation, validate, verify } from "../src/validate";
 import { int, list, string } from "../src/types";
 import { $META } from "../src/keys";
 import { createError, generateSchemaExpects } from "./testUtils";
 import { EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR, MISSING_PROPERTY_ERROR } from "../src/errors";
-import { ALLOW_EXTRANEOUS } from "../src/options";
 
-const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows } = generateSchemaExpects(function(error) {
-  return createError(error.key, error.error, error.value, error.expectedType);
-});
+const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows } = generateSchemaExpects();
 
 test("test verify returns boolean", () => {
   expect(verify({}, {})).toEqual(true);
@@ -45,16 +42,6 @@ test("non-key/value object throws error", () => {
 
   nonKeyValueObjects.forEach(function(obj) {
     expectSchemaThrows(obj, null);
-  });
-});
-
-test("non-boolean allowExtraneous throws error", () => {
-  const nonBooleanValues = [5.5, 5, 0, Infinity, -Infinity, "", "hello", null, NaN, {}];
-  let options = {};
-
-  nonBooleanValues.forEach(function(value) {
-    options[ALLOW_EXTRANEOUS] = value;
-    expectSchemaThrows({}, {}, options);
   });
 });
 

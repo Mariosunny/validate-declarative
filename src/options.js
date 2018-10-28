@@ -1,14 +1,14 @@
 export const ALLOW_EXTRANEOUS = "allowExtraneous";
 export const THROW_ON_ERROR = "throwOnError";
 
-const OPTIONS = [ALLOW_EXTRANEOUS, THROW_ON_ERROR];
+export const OPTIONS = [ALLOW_EXTRANEOUS, THROW_ON_ERROR];
 
-const DEFAULT_GLOBAL_OPTIONS = {
+export const DEFAULT_GLOBAL_OPTIONS = {
   [ALLOW_EXTRANEOUS]: false,
   [THROW_ON_ERROR]: false,
 };
 
-let globalOptions = {};
+export let globalOptions = {};
 setGlobalOptionsToDefault();
 
 function setGlobalOptionsToDefault() {
