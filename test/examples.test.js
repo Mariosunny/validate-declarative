@@ -1,4 +1,4 @@
-import { createError, validateErrors } from "./testUtils";
+import { createError, generateSchemaExpects, validateErrors } from "./testUtils";
 import {
   DUPLICATE_VALUE_ERROR,
   INVALID_VALUE_ERROR,
@@ -10,81 +10,74 @@ import {
   number,
   boolean,
   typeWithInstanceOf,
+  optionalNumber,
+  positiveInt,
+  setGlobalValidationOptions,
+  _resetSchema,
 } from "../src";
+import { ALLOW_EXTRANEOUS, globalOptions, THROW_ON_ERROR } from "../src/options";
+
+const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();
 
 test("test leading example", () => {
-  const bankAccountSchema = {
-    accountHolder: string,
-    active: boolean,
-    balance: {
-      checkings: {
-        $type: number,
-        $optional: true,
-      },
-      savings: number,
+  const schema = {
+    a: boolean,
+    b: {
+      c: optionalNumber,
+      d: { $test: object => object < 40000 },
     },
+    e: { $element: string },
   };
 
-  let bankAccount1 = {
-    accountHolder: "Susan B. Foo",
-    active: true,
-    balance: {
-      savings: 39328.03,
+  let data1 = {
+    a: true,
+    b: {
+      d: 39328.03,
     },
+    e: ["apple", "orange"],
   };
+  expectSchemaPasses(schema, data1);
 
-  expect(verify(bankAccountSchema, bankAccount1)).toBe(true);
-
-  let bankAccount2 = {
-    accountHolder: 1,
-    balance: {
-      savings: "ten dollars",
-      checkings: 39328.03,
+  let data2 = {
+    b: {
+      c: "ten dollars",
+      d: 60000,
     },
+    e: ["23", -609, "lemon"],
   };
-
-  expect(verify(bankAccountSchema, bankAccount2)).toBe(false);
-
-  let errors = [
-    createError("active", MISSING_PROPERTY_ERROR),
-    createError("balance.savings", INVALID_VALUE_ERROR, "ten dollars", number.$name),
-    createError("accountHolder", INVALID_VALUE_ERROR, 1, string.$name),
-  ];
-  validateErrors(bankAccountSchema, bankAccount2, errors);
+  expectSchemaFails(schema, data2, [
+    { error: MISSING_PROPERTY_ERROR, key: "a" },
+    { error: INVALID_VALUE_ERROR, key: "b.c", expectedType: number, value: "ten dollars" },
+    { error: INVALID_VALUE_ERROR, key: "b.d", value: 60000 },
+    { error: INVALID_VALUE_ERROR, key: "e[1]", expectedType: string, value: -609 },
+  ]);
 });
 
-test("test overview example", () => {
+test("test getting started example", () => {
   const tweetSchema = {
-    $test: function(object) {
-      return typeof object === "string" && object.length <= 24;
+    message: {
+      $test: function(object) {
+        return typeof object === "string" && object.length <= 24;
+      },
     },
   };
 
-  let myTweet1 = "Hello world!";
-  let myTweet2 = 5;
-  let myTweet3 = "Lorem ipsum dolor sit amet, consectetur adipiscing.";
+  let myTweet1 = { message: "Hello world!" };
+  let myTweet2 = { message: 5 };
+  let myTweet3 = { message: "Lorem ipsum dolor sit amet, consectetur adipiscing." };
 
-  expect(verify(tweetSchema, myTweet1)).toBe(true);
-  expect(verify(tweetSchema, myTweet2)).toBe(false);
-  expect(verify(tweetSchema, myTweet3)).toBe(false);
-
-  let errors = [createError("", INVALID_VALUE_ERROR, myTweet2)];
-  validateErrors(tweetSchema, myTweet2, errors);
-
-  errors = [createError("", INVALID_VALUE_ERROR, myTweet3)];
-  validateErrors(tweetSchema, myTweet3, errors);
+  expectSchemaPasses(tweetSchema, myTweet1);
+  expectSchemaFails(tweetSchema, myTweet2, { error: INVALID_VALUE_ERROR, key: "message", value: myTweet2.message });
+  expectSchemaFails(tweetSchema, myTweet3, { error: INVALID_VALUE_ERROR, key: "message", value: myTweet3.message });
 });
 
-test("test 'Validating a single value' example", () => {
-  expect(verify(int, 5)).toBe(true);
-  expect(verify(int, "hello world")).toBe(false);
-  expect(verify(string, "hello world")).toBe(true);
-
-  let errors = [createError("", INVALID_VALUE_ERROR, "hello world", int.$name)];
-  validateErrors(int, "hello world", errors);
+test("test 'Single values' example", () => {
+  expectSchemaPasses(int, 5);
+  expectSchemaFails(int, "hello world", { error: INVALID_VALUE_ERROR, value: "hello world", expectedType: int });
+  expectSchemaPasses(string, "hello world");
 });
 
-test("test 'Validating an object' example", () => {
+test("test 'Plain objects' example", () => {
   const courseSchema = {
     courseName: {
       $test: /^[A-Za-z0-9 ]+$/,
@@ -99,10 +92,10 @@ test("test 'Validating an object' example", () => {
     professor: "Dr. Placeholder",
   };
 
-  expect(verify(courseSchema, objectOrientedCourse)).toBe(true);
+  expectSchemaPasses(courseSchema, objectOrientedCourse);
 });
 
-test("test 'Validating an object with constant properties' example", () => {
+test("test 'Objects with constant properties' example", () => {
   const sedanSchema = {
     wheels: 4,
     model: string,
@@ -117,15 +110,11 @@ test("test 'Validating an object with constant properties' example", () => {
     wheels: 5,
     model: "Chevrolet Impala",
   };
-
-  expect(verify(sedanSchema, car1)).toBe(true);
-  expect(verify(sedanSchema, car2)).toBe(false);
-
-  let errors = [createError("wheels", INVALID_VALUE_ERROR, 5)];
-  validateErrors(sedanSchema, car2, errors);
+  expectSchemaPasses(sedanSchema, car1);
+  expectSchemaFails(sedanSchema, car2, { error: INVALID_VALUE_ERROR, key: "wheels", value: 5 });
 });
 
-test("test 'Creating a custom type' example", () => {
+test("test 'Custom types' example", () => {
   const primeNumber = {
     $type: int,
     $test: function(object) {
@@ -143,14 +132,25 @@ test("test 'Creating a custom type' example", () => {
     a: primeNumber,
   };
 
-  expect(verify(schema, { a: 7 })).toBe(true);
-  expect(verify(schema, { a: 20 })).toBe(false);
-
-  let errors = [createError("a", INVALID_VALUE_ERROR, 20, primeNumber.$name)];
-  validateErrors(schema, { a: 20 }, errors);
+  expectSchemaPasses(schema, { a: 7 });
+  expectSchemaFails(
+    schema,
+    { a: 20 },
+    { error: INVALID_VALUE_ERROR, key: "a", value: 20, expectedType: primeNumber.$name }
+  );
 });
 
-test("test 'Validating an array' example", () => {
+test("test 'Arrays' example", () => {
+  const schema = {
+    $element: boolean,
+  };
+
+  let data = [true, true, false, true, false];
+
+  expectSchemaPasses(schema, data);
+});
+
+test("test 'Multi-dimensional arrays' example", () => {
   const schema = {
     voxels: {
       $element: {
@@ -165,10 +165,10 @@ test("test 'Validating an array' example", () => {
     voxels: [[[123, 48, 20], [93, 184, 230]], [[101, 200, 228], [76, 134, 120]], [[4, 67, 77], [129, 166, 249]]],
   };
 
-  expect(verify(schema, data)).toBe(true);
+  expectSchemaPasses(schema, data);
 });
 
-test("test 'Validating a complex object' example", () => {
+test("test 'Complex objects' example", () => {
   const companySchema = {
     companyName: string,
     ceo: string,
@@ -212,7 +212,106 @@ test("test 'Validating a complex object' example", () => {
     ],
   };
 
-  expect(verify(companySchema, industryTech)).toBe(true);
+  expectSchemaPasses(companySchema, industryTech);
+});
+
+test("test 'Objects with optional properties' example", () => {
+  const APIrequestSchema = {
+    url: string,
+    params: {
+      $type: string,
+      $optional: true,
+    },
+  };
+
+  let request1 = {
+    url: "video/watch/",
+    params: "id=29340285723",
+  };
+
+  let request2 = {
+    url: "video/list",
+  };
+
+  expectSchemaPasses(APIrequestSchema, request1);
+  expectSchemaPasses(APIrequestSchema, request2);
+});
+
+test("test 'Objects with unique values' example", () => {
+  const productSchema = {
+    productId: {
+      $type: positiveInt,
+      $unique: true,
+    },
+    productName: string,
+  };
+
+  let product1 = {
+    productId: 1,
+    productName: "Reclaimed Wood Desk",
+  };
+
+  let product2 = {
+    productId: 1,
+    productName: "Teak Writing Desk",
+  };
+
+  expectSchemaPasses(productSchema, product1);
+  expectSchemaFails(productSchema, product2, {
+    error: DUPLICATE_VALUE_ERROR,
+    key: "productId",
+    value: 1,
+  });
+});
+
+test("test 'Arrays with unique elements' example", () => {
+  const playersSchema = {
+    $element: {
+      $type: string,
+      $unique: true,
+    },
+  };
+
+  let roster1 = ["Thomas", "James", "John"];
+  let roster2 = ["Linda", "Mary", "Mary"];
+
+  expectSchemaPasses(playersSchema, roster1);
+  expectSchemaFails(playersSchema, roster2, {
+    error: DUPLICATE_VALUE_ERROR,
+    key: "[2]",
+    value: "Mary",
+  });
+});
+
+test("test verify usage", () => {
+  const schema = {
+    a: int,
+  };
+
+  let data = {
+    a: 5,
+  };
+
+  let options = {
+    allowExtraneous: true,
+    throwOnError: false,
+  };
+
+  expectSchemaPasses(schema, data, options);
+});
+
+test("test setGlobalValidationOptions usage", () => {
+  let options = {
+    allowExtraneous: false,
+    throwOnError: true,
+  };
+
+  setGlobalValidationOptions(options);
+  expect(globalOptions).toEqual({
+    [ALLOW_EXTRANEOUS]: false,
+    [THROW_ON_ERROR]: true,
+  });
+  setGlobalValidationOptions();
 });
 
 test("test typeWithInstanceOf usage", () => {
@@ -225,11 +324,20 @@ test("test typeWithInstanceOf usage", () => {
   let data1 = new Apple();
   let data2 = new Date();
 
-  expect(verify(appleType, data1)).toBe(true);
-  expect(verify(appleType, data2)).toBe(false);
+  expectSchemaPasses(appleType, data1);
+  expectSchemaFails(appleType, data2, { error: INVALID_VALUE_ERROR, value: data2, expectedType: "Apple" });
+});
 
-  let errors = [createError("", INVALID_VALUE_ERROR, data2, "Apple")];
-  validateErrors(appleType, data2, errors);
+test("test _resetSchema usage", () => {
+  const schema = {
+    $type: int,
+    $unique: true,
+  };
+
+  expectSchemaPasses(schema, 5);
+  expectSchemaFails(schema, 5, { error: DUPLICATE_VALUE_ERROR, value: 5 });
+  _resetSchema(schema);
+  expectSchemaPasses(schema, 5);
 });
 
 test("test $test example #1", () => {
@@ -251,11 +359,8 @@ test("test $test example #1", () => {
     country: "Brazil",
   };
 
-  expect(verify(countrySchema, country1)).toBe(true);
-  expect(verify(countrySchema, country2)).toBe(false);
-
-  let errors = [createError("country", INVALID_VALUE_ERROR, "Brazil")];
-  validateErrors(countrySchema, country2, errors);
+  expectSchemaPasses(countrySchema, country1);
+  expectSchemaFails(countrySchema, country2, { error: INVALID_VALUE_ERROR, key: "country", value: "Brazil" });
 });
 
 test("test $test example #2", () => {
@@ -275,11 +380,13 @@ test("test $test example #2", () => {
     country: "Brazil",
   };
 
-  expect(verify(countrySchema, country1)).toBe(true);
-  expect(verify(countrySchema, country2)).toBe(false);
-
-  let errors = [createError("country", INVALID_VALUE_ERROR, "Brazil", countryCode.$test)];
-  validateErrors(countrySchema, country2, errors);
+  expectSchemaPasses(countrySchema, country1);
+  expectSchemaFails(countrySchema, country2, {
+    error: INVALID_VALUE_ERROR,
+    expectedType: countryCode.$test,
+    key: "country",
+    value: "Brazil",
+  });
 });
 
 test("test $type example #1", () => {
@@ -302,20 +409,25 @@ test("test $type example #1", () => {
     streetNumber: palindrome,
   };
 
-  expect(verify(schema, { streetNumber: 12321 })).toBe(true);
-  expect(verify(schema, { streetNumber: 123 })).toBe(false);
+  expectSchemaPasses(schema, { streetNumber: 12321 });
+  expectSchemaFails(
+    schema,
+    { streetNumber: 123 },
+    { error: INVALID_VALUE_ERROR, value: 123, expectedType: palindrome.$name, key: "streetNumber" }
+  );
 });
 
 test("test $type example #2", () => {
-  const array_ = {
+  const array = {
     $test: function(object) {
       return Array.isArray(object);
     },
   };
 
   const smallArray = {
-    $type: array_,
+    $type: array,
     $test: function(object) {
+      // called second
       return object.length < 5;
     },
   };
@@ -331,14 +443,18 @@ test("test $type example #2", () => {
     cars: smallNoDuplicatesArray,
   };
 
-  expect(verify(schema, { cars: [] })).toBe(true);
-  expect(verify(schema, { cars: [1] })).toBe(true);
-  expect(verify(schema, { cars: [1, 2, 3, 4] })).toBe(true);
-  expect(verify(schema, { cars: [1, 1, 3] })).toBe(false);
-  expect(verify(schema, { cars: [1, 2, 3, 4, 5] })).toBe(false);
-  expect(verify(schema, { cars: 1 })).toBe(false);
-  expect(verify(schema, { cars: "1" })).toBe(false);
-  expect(verify(schema, { cars: {} })).toBe(false);
+  expectSchemaPasses(schema, { cars: [] });
+  expectSchemaPasses(schema, { cars: [1] });
+  expectSchemaPasses(schema, { cars: [1, 2, 3, 4] });
+  expectSchemaFails(schema, { cars: [1, 1, 3] }, { error: INVALID_VALUE_ERROR, value: [1, 1, 3], key: "cars" });
+  expectSchemaFails(
+    schema,
+    { cars: [1, 2, 3, 4, 5] },
+    { error: INVALID_VALUE_ERROR, value: [1, 2, 3, 4, 5], key: "cars" }
+  );
+  expectSchemaFails(schema, { cars: 1 }, { error: INVALID_VALUE_ERROR, value: 1, key: "cars" });
+  expectSchemaFails(schema, { cars: "1" }, { error: INVALID_VALUE_ERROR, value: "1", key: "cars" });
+  expectSchemaFails(schema, { cars: {} }, { error: INVALID_VALUE_ERROR, value: {}, key: "cars" });
 });
 
 test("test $optional example", () => {
@@ -359,8 +475,8 @@ test("test $optional example", () => {
     foo: 5,
   };
 
-  expect(verify(schema, data1)).toBe(true);
-  expect(verify(schema, data2)).toBe(true);
+  expectSchemaPasses(schema, data1);
+  expectSchemaPasses(schema, data2);
 });
 
 test("test $unique example", () => {
@@ -382,11 +498,8 @@ test("test $unique example", () => {
     password: "password1",
   };
 
-  expect(verify(playerSchema, player1)).toBe(true);
-  expect(verify(playerSchema, player2)).toBe(false);
-
-  let errors = [createError("username", DUPLICATE_VALUE_ERROR, "Mariosunny")];
-  validateErrors(playerSchema, player2, errors);
+  expectSchemaPasses(playerSchema, player1);
+  expectSchemaFails(playerSchema, player2, { error: DUPLICATE_VALUE_ERROR, key: "username", value: "Mariosunny" });
 });
 
 test("test $element example", () => {
@@ -414,5 +527,5 @@ test("test $element example", () => {
     ],
   };
 
-  expect(verify(restaurantSchema, restaurant1)).toBe(true);
+  expectSchemaPasses(restaurantSchema, restaurant1);
 });

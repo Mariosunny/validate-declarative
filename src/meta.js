@@ -77,11 +77,9 @@ function getUnique(schema) {
 
 export function resetSchema(schema) {
   if (schema.hasOwnProperty($META)) {
-    forOwn(schema[$META].uniqueValues, function(context) {
-      schema[$META].uniqueValues[context] = [];
-    });
-    Object.getOwnPropertySymbols(schema[$META].uniqueValues).forEach(function(context) {
-      schema[$META].uniqueValues[context] = [];
+    forOwnUniqueValues(schema, function(key, value) {
+      schema[$META].uniqueValues[key] = [];
+      schema[$META].uniqueValuesLength[key] = 0;
     });
   }
 }

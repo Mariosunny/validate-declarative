@@ -168,23 +168,23 @@ let result3 = verify(string, "hello world");  // true
 ```
 </details>
 
-<details><summary><b>Objects</b></summary>
+<details><summary><b>Plain objects</b></summary>
   
 ```javascript
 import {verify, string, nonNegativeInt} from 'validate-declarative';
 
 const courseSchema = {
-    courseName: {
-        $test: /^[A-Za-z0-9 ]+$/
-    },
-    roomCapacity: nonNegativeInt,
-    professor: string
+  courseName: {
+    $test: /^[A-Za-z0-9 ]+$/
+  },
+  roomCapacity: nonNegativeInt,
+  professor: string
 };
 
 let objectOrientedCourse = {
-    courseName: "Object Oriented Programming",
-    roomCapacity: 30,
-    professor: "Dr. Placeholder"
+  courseName: "Object Oriented Programming",
+  roomCapacity: 30,
+  professor: "Dr. Placeholder"
 };
 
 let result1 = verify(courseSchema, objectOrientedCourse); // true
@@ -197,18 +197,18 @@ let result1 = verify(courseSchema, objectOrientedCourse); // true
 import {verify, string} from 'validate-declarative';
 
 const sedanSchema = {
-    wheels: 4,
-    model: string
+  wheels: 4,
+  model: string
 };
 
 let car1 = {
-    wheels: 4,
-    model: "Chrysler 300"
+  wheels: 4,
+  model: "Chrysler 300"
 };
 
 let car2 = {
-    wheels: 5,
-    model: "Chevrolet Impala"
+  wheels: 5,
+  model: "Chevrolet Impala"
 };
 
 let result1 = verify(sedanSchema, car1); // true
@@ -223,20 +223,20 @@ import {verify, int} from 'validate-declarative';
 
 // a custom type
 const primeNumber = {
-    $type: int,
-    $test: function(object) {
-        for(let i = 2; i < object; i++) {
-            if(object % i === 0) {
-                return false;
-            }
-        }
-        return object !== 1 && object !== 0;
-    },
-    $name: 'primeNumber' // optional; defines the expectedType in error objects
+  $type: int,
+  $test: function(object) {
+    for(let i = 2; i < object; i++) {
+      if(object % i === 0) {
+        return false;
+      }
+    }
+    return object !== 1 && object !== 0;
+  },
+  $name: 'primeNumber' // optional; defines the expectedType in error objects
 };
 
 const schema = {
-    a: primeNumber
+  a: primeNumber
 };
 
 let result1 = verify(schema, {a: 7}); // true
@@ -366,7 +366,7 @@ let result2 = verify(APIrequestSchema, request2); // true
 ```
 </details>
 
-<details><summary><b>Objects with unique properties</b></summary>
+<details><summary><b>Objects with unique values</b></summary>
 
 ```javascript
 import {verify, string, positiveInt} from 'validate-declarative';
@@ -759,8 +759,7 @@ let result2 = verify(playerSchema, player2);
 
 Defines the schema of each element in an array, set, or weak set. 
 When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
-`$element` declarations can be nested within eachother to validate multi-dimensional arrays 
-(see [Validating a Multi-Dimensional Array](#validating-a-multi-dimensional-array)).
+`$element` declarations can be nested within eachother to validate multi-dimensional arrays.
 
 <details><summary>View Examples</summary>
   
@@ -846,8 +845,7 @@ Generated when `allowExtraneous` = *false* and there is an extra property in the
 
 ## Built-in Types
 This section contains a list of the built-in types that are included in this package.
-See [this example](#validating-an-object) for how to use built-in types.
-For creating your own types, see [Creating a custom type](#creating-a-custom-type).
+See the [examples](#examples) for how to use types or how to define your own type.
 
 #### Core Types
 |Type|Description|Examples|
