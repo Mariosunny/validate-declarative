@@ -224,7 +224,7 @@ let result2 = verify(sedanSchema, car2); // false
 ```javascript
 import {verify, int} from 'validate-declarative';
 
-// a custom type
+// a custom type defining a prime number
 const primeNumber = {
   $type: int,
   $test: function(object) {
@@ -238,13 +238,42 @@ const primeNumber = {
   $name: 'primeNumber' // optional; defines the expectedType in error objects
 };
 
-const schema = {
-  a: primeNumber
+let result1 = verify(primeNumber, 7); // true
+let result2 = verify(primeNumber, 20); // false
+```
+
+```javascript
+import {string, verify} from 'validate-declarative';
+import luhn from 'luhn-alg';
+
+// a custom type defining a valid credit card number
+const creditCardNumber = {
+  $type: string,
+  $test: function(object) {
+    return luhn(object);
+  },
+  $name: "creditCardNumber",
 };
 
-let result1 = verify(schema, {a: 7}); // true
-let result2 = verify(schema, {a: 20}); // false
+// using a custom type in another schema
+const purchaserSchema = {
+  name: string,
+  creditCardNumber: creditCardNumber,
+};
+
+let purchaser1 = {
+  name: "John James",
+  creditCardNumber: "4102676136588700",
+};
+let purchaser2 = {
+  name: "Herbert Hubert",
+  creditCardNumber: "4102676136588709",
+};
+
+let result1 = verify(purchaserSchema, purchaser1); // true
+let result2 = verify(purchaserSchema, purchaser2); // false
 ```
+
 </details>
 </br>
 <details><summary><b>Arrays</b></summary>
@@ -252,13 +281,42 @@ let result2 = verify(schema, {a: 20}); // false
 ```javascript
 import {verify, boolean} from 'validate-declarative';
 
+// defines an array where each element is a boolean
 const schema = {
   $element: boolean
 };
 
-let data = [true, true, false, true, false];
+let data1 = [true, true, false, true, false];
+let data2 = [];
+let data3 = [true, false, 3];
 
-let result = verify(schema, data); // true
+let result1 = verify(schema, data1); // true
+let result2 = verify(schema, data2); // true
+let result3 = verify(schema, data3); // false
+```
+
+```javascript
+import {verify} from 'validate-declarative';
+
+// defines an array with at least 2 elements, and where each element has no leading/trailing whitespace
+const schema = {
+  $test: object => object.length > 1,
+  $element: {
+    $test: function(object) {
+      return typeof object === 'string' && object.trim() === object;
+    }
+  }
+};
+
+let data1 = ["hello", "world"];
+let data2 = ["hello", 2];
+let data3 = ["hello"];
+let data4 = ["  hello ", "world"];
+
+let result1 = verify(schema, data1); // true
+let result2 = verify(schema, data2); // false
+let result3 = verify(schema, data3); // false
+let result4 = verify(schema, data4); // false
 ```
 </details>
 </br>

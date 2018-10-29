@@ -16,6 +16,7 @@ import {
   _resetSchema,
 } from "../src";
 import { ALLOW_EXTRANEOUS, globalOptions, THROW_ON_ERROR } from "../src/options";
+import luhn from "luhn-alg";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();
 
@@ -114,7 +115,7 @@ test("test 'Objects with constant properties' example", () => {
   expectSchemaFails(sedanSchema, car2, { error: INVALID_VALUE_ERROR, key: "wheels", value: 5 });
 });
 
-test("test 'Custom types' example", () => {
+test("test 'Custom types' example #1", () => {
   const primeNumber = {
     $type: int,
     $test: function(object) {
@@ -128,26 +129,80 @@ test("test 'Custom types' example", () => {
     $name: "primeNumber",
   };
 
-  const schema = {
-    a: primeNumber,
-  };
-
-  expectSchemaPasses(schema, { a: 7 });
-  expectSchemaFails(
-    schema,
-    { a: 20 },
-    { error: INVALID_VALUE_ERROR, key: "a", value: 20, expectedType: primeNumber.$name }
-  );
+  expectSchemaPasses(primeNumber, 7);
+  expectSchemaFails(primeNumber, 20, {
+    error: INVALID_VALUE_ERROR,
+    value: 20,
+    expectedType: primeNumber.$name,
+  });
 });
 
-test("test 'Arrays' example", () => {
+test("test 'Custom types' example #2", () => {
+  const creditCardNumber = {
+    $type: string,
+    $test: function(object) {
+      return luhn(object);
+    },
+    $name: "creditCardNumber",
+  };
+
+  const purchaserSchema = {
+    name: string,
+    creditCardNumber: creditCardNumber,
+  };
+
+  let purchaser1 = {
+    name: "John James",
+    creditCardNumber: "4102676136588700",
+  };
+  let purchaser2 = {
+    name: "Herbert Hubert",
+    creditCardNumber: "4102676136588709",
+  };
+
+  expectSchemaPasses(purchaserSchema, purchaser1);
+  expectSchemaFails(purchaserSchema, purchaser2, {
+    error: INVALID_VALUE_ERROR,
+    key: "creditCardNumber",
+    value: purchaser2.creditCardNumber,
+    expectedType: "creditCardNumber",
+  });
+});
+
+test("test 'Custom types' example #3", () => {});
+
+test("test 'Arrays' example #1", () => {
   const schema = {
     $element: boolean,
   };
 
-  let data = [true, true, false, true, false];
+  let data1 = [true, true, false, true, false];
+  let data2 = [];
+  let data3 = [true, false, 3];
 
-  expectSchemaPasses(schema, data);
+  expectSchemaPasses(schema, data1);
+  expectSchemaPasses(schema, data2);
+  expectSchemaFails(schema, data3, { error: INVALID_VALUE_ERROR, expectedType: boolean, key: "[2]", value: 3 });
+});
+
+test("test 'Arrays' example #2", () => {
+  const schema = {
+    $test: object => object.length > 1,
+    $element: {
+      $test: function(object) {
+        return typeof object === "string" && object.trim() === object;
+      },
+    },
+  };
+  let data1 = ["hello", "world"];
+  let data2 = ["hello", 2];
+  let data3 = ["hello"];
+  let data4 = ["  hello ", "world"];
+
+  expectSchemaPasses(schema, data1);
+  expectSchemaFails(schema, data2, { error: INVALID_VALUE_ERROR, key: "[1]", value: data2[1] });
+  expectSchemaFails(schema, data3, { error: INVALID_VALUE_ERROR, value: ["hello"] });
+  expectSchemaFails(schema, data4, { error: INVALID_VALUE_ERROR, key: "[0]", value: data4[0] });
 });
 
 test("test 'Multi-dimensional arrays' example", () => {
