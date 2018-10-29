@@ -29,6 +29,21 @@ test("test validate returns report object", () => {
   });
 });
 
+test("verify/validate does not throw in the absence of options argument", () => {
+  expect(() => verify({}, {})).not.toThrow();
+  expect(() => validate({}, {})).not.toThrow();
+});
+
+test("verify does not throw in the absence of data argument", () => {
+  expect(() => verify({})).not.toThrow();
+  expect(() => validate({})).not.toThrow();
+});
+
+test("verify does throws error in the absence of schema argument", () => {
+  expect(() => verify()).toThrow();
+  expect(() => validate()).toThrow();
+});
+
 test("_resetSchema does not throw when schema has not been validated", () => {
   const schema = {
     a: int,
