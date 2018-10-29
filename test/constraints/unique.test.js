@@ -737,7 +737,9 @@ test("ensure _resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema1, 5);
   expectSchemaFails(schema1, 5, { value: 5 });
   expectNumberOfUniqueValues(schema1, 1);
+  expectUniqueValues(schema1, "", [5]);
   _resetSchema(schema1);
+  expectUniqueValues(schema1, "", []);
   expectNumberOfUniqueValues(schema1, 1);
   expectSchemaPasses(schema1, 5);
   expectSchemaFails(schema1, 5, { value: 5 });
@@ -752,7 +754,9 @@ test("ensure _resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema2, { a: 5 });
   expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
   expectNumberOfUniqueValues(schema2, 1);
+  expectUniqueValues(schema2, "a", [5]);
   _resetSchema(schema2);
+  expectUniqueValues(schema2, "a", []);
   expectNumberOfUniqueValues(schema2, 1);
   expectSchemaPasses(schema2, { a: 5 });
   expectSchemaFails(schema2, { a: 5 }, { key: "a", value: 5 });
@@ -775,7 +779,9 @@ test("ensure _resetSchema() resets uniqueValues", () => {
   expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
   expectNumberOfUniqueValues(schema3, 3);
+  expectUniqueValues(schema3, "a", [1]);
   _resetSchema(schema3);
+  expectUniqueValues(schema3, "a", []);
   expectNumberOfUniqueValues(schema3, 3);
   expectSchemaPasses(schema3, { a: 1, b: "1", c: 1 });
   expectSchemaFails(schema3, { a: 1, b: "2", c: 2 }, { key: "a", value: 1 });
