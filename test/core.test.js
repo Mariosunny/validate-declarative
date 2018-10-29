@@ -7,6 +7,7 @@ import {
   EXTRANEOUS_PROPERTY_ERROR,
   INVALID_VALUE_ERROR,
   MISSING_PROPERTY_ERROR,
+  _resetSchema,
 } from "../src";
 import { $META } from "../src/keys";
 import { generateSchemaExpects } from "./testUtils";
@@ -26,6 +27,15 @@ test("test validate returns report object", () => {
     schema: schema,
     errors: [],
   });
+});
+
+test("_resetSchema does not throw when schema has not been validated", () => {
+  const schema = {
+    a: int,
+  };
+  expect(() => _resetSchema(schema)).not.toThrow();
+  verify(schema, {});
+  expect(() => _resetSchema(schema)).not.toThrow();
 });
 
 test(`verify or validate adds $meta property to schema`, () => {
