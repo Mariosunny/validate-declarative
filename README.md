@@ -144,7 +144,7 @@ let result3 = verify(tweetSchema, myTweet3); // false
 console.log(validate(tweetSchema, tweet2));
 ```
 </details>
-<br/>
+
 This is a simple example, but schemas can be as large and complex as you want.
 You can create a schema for any Javascript object. 
 
@@ -155,8 +155,10 @@ Check out a list of the available [built-in types](#built-in-types).
 
 
 ## Examples
+This section contains several common use cases.
 
-#### Validating a single value
+<details><summary><b>Single values</b></summary>
+
 ```javascript
 import {verify, int, string} from 'validate-declarative';
 
@@ -164,8 +166,10 @@ let result1 = verify(int, 5);                 // true
 let result2 = verify(int, "hello world");     // false
 let result3 = verify(string, "hello world");  // true
 ```
+</details>
 
-#### Validating an object
+<details><summary><b>Objects</b></summary>
+  
 ```javascript
 import {verify, string, nonNegativeInt} from 'validate-declarative';
 
@@ -185,8 +189,10 @@ let objectOrientedCourse = {
 
 let result1 = verify(courseSchema, objectOrientedCourse); // true
 ```
+</details>
 
-#### Validating an object with constant properties
+<details><summary><b>Objects with constant properties</b></summary>
+
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -208,8 +214,10 @@ let car2 = {
 let result1 = verify(sedanSchema, car1); // true
 let result2 = verify(sedanSchema, car2); // false
 ``` 
+</details>
 
-#### Creating a custom type
+<details><summary><b>Custom types</b></summary>
+  
 ```javascript
 import {verify, int} from 'validate-declarative';
 
@@ -233,10 +241,11 @@ const schema = {
 
 let result1 = verify(schema, {a: 7}); // true
 let result2 = verify(schema, {a: 20}); // false
-
 ```
+</details>
 
-#### Validating an array
+<details><summary><b>Arrays</b></summary>
+  
 ```javascript
 import {verify, boolean} from 'validate-declarative';
 
@@ -248,8 +257,10 @@ let data = [true, true, false, true, false];
 
 let result = verify(schema, data); // true
 ```
+</details>
 
-#### Validating a multi-dimensional array
+<details><summary><b>Multi-dimensional arrays</b></summary>
+
 ```javascript
 import {verify, int} from 'validate-declarative';
 
@@ -274,8 +285,10 @@ let data = {
 
 let result = verify(schema, data); // true
 ```
+</details>
 
-#### Validating a complex object
+<details><summary><b>Complex objects</b></summary>
+
 ```javascript
 import {verify, string, int} from 'validate-declarative';
 
@@ -324,8 +337,10 @@ let industryTech = {
 
 let result = verify(companySchema, industryTech); // true
 ```
+</details>
 
-#### Validating an object with optional properties
+<details><summary><b>Objects with optional properties</b></summary>
+
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -349,8 +364,10 @@ let request2 = {
 let result1 = verify(APIrequestSchema, request1); // true
 let result2 = verify(APIrequestSchema, request2); // true
 ```
+</details>
 
-#### Validating an object with unique properties
+<details><summary><b>Objects with unique properties</b></summary>
+
 ```javascript
 import {verify, string, positiveInt} from 'validate-declarative';
 
@@ -375,8 +392,10 @@ let product2 = {
 let result1 = verify(productSchema, product1); // true
 let result2 = verify(productSchema, product2); // false
 ```
+</details>
 
-#### Validating an array with unique elements
+<details><summary><b>Arrays with unique elements</b></summary>
+
 ```javascript
 import {verify, string} from 'validate-declarative';
 
@@ -393,6 +412,7 @@ let roster2 = ["Linda", "Mary", "Mary"];
 let result1 = verify(playersSchema, roster1); // true
 let result2 = verify(playersSchema, roster2); // false
 ```
+</details>
 
 
 ## API
