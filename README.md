@@ -11,7 +11,7 @@ A simple utility for declaratively validating any Javascript object.
 - Works with arbitrarily large and deeply nested objects/arrays
 - ES5+ and browser compatible
 
-<details><summary>→ <b><i>See it in action</i></b> ←</summary>
+<details><summary><b><i>See it in action (Click Here)</i></b></summary>
   
 ```javascript
 import {verify, string, optionalNumber, date, boolean} from 'validate-declarative';
