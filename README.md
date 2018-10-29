@@ -325,8 +325,8 @@ let result4 = verify(schema, data4); // false
 ```javascript
 import {verify, int} from 'validate-declarative';
 
+// defines a 3 dimensional array of integers
 const schema = {
-  // a 3-dimensional array of integers
   voxels: {
     $element: {
       $element: {
