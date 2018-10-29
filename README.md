@@ -155,7 +155,7 @@ Check out a list of the available [built-in types](#built-in-types).
 
 
 ## Examples
-This section contains some examples of common use cases for this utility.
+This section contains some examples of common use cases.
 
 <details><summary><b>Single values</b></summary>
 
@@ -456,14 +456,11 @@ let result = verify(schema, data, options);
 ```
 
 </details>
-<br/>
 
 #### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
-<br/>
-<br/>
 
 #### `setGlobalValidationOptions(options)`
 Sets the global validation rules for all validations. `options` is an optional argument that is an object with the following keys:
@@ -476,7 +473,6 @@ Sets the global validation rules for all validations. `options` is an optional a
 To restore the default global configuration, call `setGlobalValidationOptions()` with no arguments.
 
 <details><summary>Example Usage</summary>
-<br/>
   
 ```javascript
 import {setGlobalValidationOptions} from 'validate-declarative';
@@ -490,7 +486,6 @@ setGlobalValidationOptions(options);
 ```
 
 </details>
-<br/>
 
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
@@ -519,7 +514,6 @@ let result2 = verify(appleType, data2); // false
 ```
 
 </details>
-<br/>
 
 #### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
@@ -559,7 +553,7 @@ Defines a simple type test.
 Alternatively, `$test` is a regular expression that describes a valid object.
 If the object is invalid, an [InvalidValueError](#invalidvalueerror) is generated.
 
-<details><summary>See Examples</summary>
+<details><summary>View Examples</summary>
 
 ```javascript
 // a custom type
@@ -615,7 +609,7 @@ You can add a `$name` property to your custom type, which determines
 the *expectedType*
 in the error, though it is entirely optional.
 
-<details><summary>See Examples</summary>
+<details><summary>View Examples</summary>
   
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
@@ -679,7 +673,7 @@ only the most shallow `$optional` declaration is considered.
 `$optional` declarations at the top level of the schema
  or at the top level of an `$element` object are ignored.
 
-<details><summary>See Examples</summary>
+<details><summary>View Examples</summary>
   
 ```javascript
 import {verify, int, string} from 'validate-declarative';
@@ -729,7 +723,7 @@ as every validation adds another element to each internal array of unique values
 Though it is not recommended, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
 This, however, will not guarantee uniqueness for subsequent validations.)
 
-<details><summary>See Examples</summary>
+<details><summary>View Examples</summary>
   
 ```javascript
 import {verify, string} from 'validate-declarative';
@@ -768,7 +762,7 @@ When `$element` is present, `$type` defaults to the `list` type (see [Built-in T
 `$element` declarations can be nested within eachother to validate multi-dimensional arrays 
 (see [Validating a Multi-Dimensional Array](#validating-a-multi-dimensional-array)).
 
-<details><summary>See Examples</summary>
+<details><summary>View Examples</summary>
   
 ```javascript
 import {verify, string, number} from 'validate-declarative';
