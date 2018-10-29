@@ -50,7 +50,8 @@ let result2 = verify(schema, data2);
 //    'e[1]' is not a string
 ```
 </details>
-
+<br/>
+<br/>
 
 ## Table of Contents
 - [Installation](#installation)
