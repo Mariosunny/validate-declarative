@@ -169,7 +169,7 @@ let result2 = verify(int, "hello world");     // false
 let result3 = verify(string, "hello world");  // true
 ```
 </details>
-
+</br>
 <details><summary><b>Plain objects</b></summary>
   
 ```javascript
@@ -192,7 +192,7 @@ let objectOrientedCourse = {
 let result1 = verify(courseSchema, objectOrientedCourse); // true
 ```
 </details>
-
+</br>
 <details><summary><b>Objects with constant properties</b></summary>
 
 ```javascript
@@ -217,7 +217,7 @@ let result1 = verify(sedanSchema, car1); // true
 let result2 = verify(sedanSchema, car2); // false
 ``` 
 </details>
-
+</br>
 <details><summary><b>Custom types</b></summary>
   
 ```javascript
@@ -245,7 +245,7 @@ let result1 = verify(schema, {a: 7}); // true
 let result2 = verify(schema, {a: 20}); // false
 ```
 </details>
-
+</br>
 <details><summary><b>Arrays</b></summary>
   
 ```javascript
@@ -260,7 +260,7 @@ let data = [true, true, false, true, false];
 let result = verify(schema, data); // true
 ```
 </details>
-
+</br>
 <details><summary><b>Multi-dimensional arrays</b></summary>
 
 ```javascript
@@ -288,7 +288,7 @@ let data = {
 let result = verify(schema, data); // true
 ```
 </details>
-
+</br>
 <details><summary><b>Complex objects</b></summary>
 
 ```javascript
@@ -340,7 +340,7 @@ let industryTech = {
 let result = verify(companySchema, industryTech); // true
 ```
 </details>
-
+</br>
 <details><summary><b>Objects with optional properties</b></summary>
 
 ```javascript
@@ -367,7 +367,7 @@ let result1 = verify(APIrequestSchema, request1); // true
 let result2 = verify(APIrequestSchema, request2); // true
 ```
 </details>
-
+</br>
 <details><summary><b>Objects with unique values</b></summary>
 
 ```javascript
@@ -395,7 +395,7 @@ let result1 = verify(productSchema, product1); // true
 let result2 = verify(productSchema, product2); // false
 ```
 </details>
-
+</br>
 <details><summary><b>Arrays with unique elements</b></summary>
 
 ```javascript
