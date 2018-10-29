@@ -10,7 +10,8 @@ A simple utility for declaratively validating any Javascript object.
 - Works with arbitrarily large and deeply nested objects/arrays
 - ES5+ and browser compatible
 
-***See it in action:***
+<details><summary><b><i>See it in action</i></b></summary>
+  
 ```javascript
 import {verify, string, optionalNumber, date, boolean} from 'validate-declarative';
 
@@ -47,6 +48,7 @@ let result2 = verify(schema, data2);
 //    'b.d' is not less than 40000
 //    'e[1]' is not a string
 ```
+</details>
 
 
 ## Table of Contents
