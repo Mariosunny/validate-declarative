@@ -155,7 +155,7 @@ Check out a list of the available [built-in types](#built-in-types).
 
 
 ## Examples
-This section contains several common use cases.
+This section contains some examples of common use cases for this utility.
 
 <details><summary><b>Single values</b></summary>
 
@@ -456,11 +456,14 @@ let result = verify(schema, data, options);
 ```
 
 </details>
+<br/>
 
 #### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
+<br/>
+<br/>
 
 #### `setGlobalValidationOptions(options)`
 Sets the global validation rules for all validations. `options` is an optional argument that is an object with the following keys:
@@ -473,6 +476,7 @@ Sets the global validation rules for all validations. `options` is an optional a
 To restore the default global configuration, call `setGlobalValidationOptions()` with no arguments.
 
 <details><summary>Example Usage</summary>
+<br/>
   
 ```javascript
 import {setGlobalValidationOptions} from 'validate-declarative';
@@ -486,6 +490,7 @@ setGlobalValidationOptions(options);
 ```
 
 </details>
+<br/>
 
 #### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
@@ -514,6 +519,7 @@ let result2 = verify(appleType, data2); // false
 ```
 
 </details>
+<br/>
 
 #### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
