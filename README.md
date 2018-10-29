@@ -419,7 +419,7 @@ let result2 = verify(playersSchema, roster2); // false
 
 ## API
 
-#### `verify(schema, data, options={}) → boolean`
+### `verify(schema, data, options={}) → boolean`
 Validates `data` (any Javascript object) against the `schema` 
 (a constant, non-circular, [plain object](https://www.npmjs.com/package/is-plain-object)), 
 returning *true* if and only if every property in the schema 
@@ -459,12 +459,12 @@ let result = verify(schema, data, options);
 
 </details>
 
-#### `validate(schema, data, options={}) → Object`
+### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
 
-#### `setGlobalValidationOptions(options)`
+### `setGlobalValidationOptions(options)`
 Sets the global validation rules for all validations. `options` is an optional argument that is an object with the following keys:
 
 |Key|Type|Default|Description|
@@ -489,7 +489,7 @@ setGlobalValidationOptions(options);
 
 </details>
 
-#### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
+### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
 Returns a *type* (an object with a `$test` [constraint](#constraints)) that returns
 *true* if the object is not null and the object is an **instanceof** `clazz`, *false* otherwise.
@@ -517,7 +517,7 @@ let result2 = verify(appleType, data2); // false
 
 </details>
 
-#### `_resetSchema(schema)`
+### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
 of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
@@ -546,7 +546,7 @@ They are embedded in schema objects alongside ordinary properties.
 Constraints begin with `$` to differentiate them from ordinary properties.
 There are five types of constraints: `$test`, `$type`, `$optional`, `$unique`, and `$element`.
 
-#### `$test`
+### `$test`
 **Default:** `(object) => true`
 
 Defines a simple type test. 
@@ -595,7 +595,7 @@ const countrySchema = {
 ```
 </details>
 
-#### `$type`
+### `$type`
 **Default:** `{ $test: (object) => true }`
 
 Allows you to extend an existing type. 
@@ -663,7 +663,7 @@ const schema = {
 ```
 </details>
 
-#### `$optional`
+### `$optional`
 **Default**: `false`
 
 Declares a property optional. 
@@ -702,7 +702,7 @@ let result2 = verify(schema, data2); // true
 ```
 </details>
 
-#### `$unique`
+### `$unique`
 **Default**: `false`
 
 Declares a value of a property or an array element to be unique across all data validated
@@ -756,7 +756,7 @@ let result2 = verify(playerSchema, player2);
 ```
 </details>
 
-#### `$element`
+### `$element`
 **Default:** `undefined`
 
 Defines the schema of each element in an array, set, or weak set. 
