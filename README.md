@@ -3,6 +3,7 @@
 [![Dependencies Status](https://david-dm.org/Mariosunny/validate-declarative/status.svg)](https://david-dm.org/Mariosunny/validate-declarative)
 [![Known Vulnerabilities](https://snyk.io/test/github/Mariosunny/validate-declarative/badge.svg)](https://snyk.io/test/github/Mariosunny/validate-declarative)
 
+
 # validate-declarative
 A simple utility for declaratively validating any Javascript object.
 - Easy-to-read, self-describing syntax
@@ -10,7 +11,7 @@ A simple utility for declaratively validating any Javascript object.
 - Works with arbitrarily large and deeply nested objects/arrays
 - ES5+ and browser compatible
 
-<details><summary><b><i>See it in action</i></b></summary>
+<details><summary>→ <b><i>See it in action</i></b> ←</summary>
   
 ```javascript
 import {verify, string, optionalNumber, date, boolean} from 'validate-declarative';
