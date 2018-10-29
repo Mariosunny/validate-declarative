@@ -122,8 +122,7 @@ console.log(validate(tweetSchema, tweet2));
 //    data: { message: 5 }  
 // }
 ```
-
-<details><summary>View the full code</summary>
+<details><summary><b>[ <i>View the full code</i> ]</b></summary>
 
 ```javascript
 import {verify, validate} from 'validate-declarative';
@@ -437,7 +436,7 @@ rules when comparing objects.
 |`allowExtraneous`|boolean|*false*|If *false*, an [ExtraneousPropertyError](#extraneous-property-error) will be generated when a property exists in the data but not the schema. If *true*, no such error will be generated.|
 |`throwOnError`|boolean|*false*|If *true*, a Javascript Error will be thrown upon a constraint violation. If *false*, no Error will be thrown.|
 
-<details><summary>Example Usage</summary>
+<details><summary><b>[ <i>View usage</i> ]</b></summary>
   
 ```javascript
 import {verify, int} from 'validate-declarative';
@@ -475,7 +474,7 @@ Sets the global validation rules for all validations. `options` is an optional a
 
 To restore the default global configuration, call `setGlobalValidationOptions()` with no arguments.
 
-<details><summary>Example Usage</summary>
+<details><summary><b>[ <i>View usage</i> ]</b></summary>
   
 ```javascript
 import {setGlobalValidationOptions} from 'validate-declarative';
@@ -497,7 +496,7 @@ Returns a *type* (an object with a `$test` [constraint](#constraints)) that retu
 If `name` is present, it becomes the `$name` of the resulting type- 
 otherwise the `$name` of the resulting type is set to `clazz.name`.
 
-<details><summary>Example Usage</summary>
+<details><summary><b>[ <i>View usage</i> ]</b></summary>
   
 ```javascript
 import {verify, typeWithInstanceOf} from 'validate-declarative';
@@ -523,7 +522,7 @@ Resets the internal unique values within the schema, which are used to enforce u
 of values within and across data. **Invoking this function is not recommended for normal use**.
 After this function is invokved, uniqueness is no longer guaranteed.
 
-<details><summary>Example Usage</summary>
+<details><summary><b>[ <i>View usage</i> ]</b></summary>
   
 ```javascript
 import {verify, _resetSchema, int} from 'validate-declarative';
@@ -556,7 +555,7 @@ Defines a simple type test.
 Alternatively, `$test` is a regular expression that describes a valid object.
 If the object is invalid, an [InvalidValueError](#invalidvalueerror) is generated.
 
-<details><summary>View Examples</summary>
+<details><summary><b>[ <i>View examples</i> ]</b></summary>
 
 ```javascript
 // a custom type
@@ -612,7 +611,7 @@ You can add a `$name` property to your custom type, which determines
 the *expectedType*
 in the error, though it is entirely optional.
 
-<details><summary>View Examples</summary>
+<details><summary><b>[ <i>View examples</i> ]</b></summary>
   
 ```javascript
 import {nonNegativeInt} from 'validate-declarative';
@@ -676,7 +675,7 @@ only the most shallow `$optional` declaration is considered.
 `$optional` declarations at the top level of the schema
  or at the top level of an `$element` object are ignored.
 
-<details><summary>View Examples</summary>
+<details><summary><b>[ <i>View examples</i> ]</b></summary>
   
 ```javascript
 import {verify, int, string} from 'validate-declarative';
@@ -726,7 +725,7 @@ as every validation adds another element to each internal array of unique values
 Though it is not recommended, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
 This, however, will not guarantee uniqueness for subsequent validations.)
 
-<details><summary>View Examples</summary>
+<details><summary><b>[ <i>View examples</i> ]</b></summary>
   
 ```javascript
 import {verify, string} from 'validate-declarative';
@@ -764,7 +763,7 @@ Defines the schema of each element in an array, set, or weak set.
 When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
 `$element` declarations can be nested within eachother to validate multi-dimensional arrays.
 
-<details><summary>View Examples</summary>
+<details><summary><b>[ <i>View examples</i> ]</b></summary>
   
 ```javascript
 import {verify, string, number} from 'validate-declarative';
