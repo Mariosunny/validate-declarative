@@ -6,7 +6,14 @@ import {
   globalOptions,
 } from "../src/options";
 import { generateSchemaExpects } from "./testUtils";
-import { int, EXTRANEOUS_PROPERTY_ERROR, INVALID_VALUE_ERROR, setGlobalValidationOptions } from "../src";
+import {
+  int,
+  EXTRANEOUS_PROPERTY_ERROR,
+  INVALID_VALUE_ERROR,
+  setGlobalValidationOptions,
+  MISSING_PROPERTY_ERROR,
+  DUPLICATE_VALUE_ERROR,
+} from "../src";
 import _ from "lodash";
 
 const { expectSchemaPasses, expectSchemaFails, expectSchemaThrows, expectSchemaNotThrows } = generateSchemaExpects();
@@ -109,7 +116,7 @@ test("global options only reset to default when setGlobalValidationOptions() is 
   expect(globalOptions).toEqual(DEFAULT_GLOBAL_OPTIONS);
 });
 
-describe(`test ${ALLOW_EXTRANEOUS} option`, () => {
+test(`test ${ALLOW_EXTRANEOUS} option basic functionality`, () => {
   const schema = {
     a: int,
   };
@@ -159,7 +166,7 @@ describe(`test ${ALLOW_EXTRANEOUS} option`, () => {
   expectSchemaFails(schema, data2, error, falseOptions);
 });
 
-describe(`test ${THROW_ON_ERROR} option`, () => {
+test(`test ${THROW_ON_ERROR} option basic functionality`, () => {
   const schema = {
     a: int,
   };

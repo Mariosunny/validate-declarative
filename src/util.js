@@ -1,4 +1,4 @@
-import { list } from "./types";
+import { list, regexp } from "./types";
 import { $CONSTRAINTS, $RESERVED_KEYS } from "./keys";
 import deepEqual from "deep-strict-equal";
 
@@ -34,7 +34,12 @@ export function isConstantValue(object) {
 
 export function isKeyValueObject(obj) {
   return (
-    obj !== null && typeof obj === "object" && !list.$test(obj) && !(obj instanceof Map) && !(obj instanceof WeakMap)
+    obj !== null &&
+    typeof obj === "object" &&
+    !list.$test(obj) &&
+    !(obj instanceof Map) &&
+    !(obj instanceof WeakMap) &&
+    !regexp.$test(obj)
   );
 }
 

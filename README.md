@@ -399,7 +399,7 @@ let result2 = verify(playersSchema, roster2); // false
 
 #### `verify(schema, data, options={}) → boolean`
 Validates `data` (any Javascript object) against the `schema` 
-(a non-circular, plain object), 
+(a constant, non-circular, [plain object](https://www.npmjs.com/package/is-plain-object)), 
 returning *true* if and only if every property in the schema 
 exists in the data, and every property's value in the data 
 satisfies the constraints of the property 
@@ -683,7 +683,7 @@ let result2 = verify(schema, data2); // true
 #### `$unique`
 **Default**: `false`
 
-Declares the value of a property to be unique across all data validated
+Declares a value of a property or an array element to be unique across all data validated
 against a particular schema.
 By default, all properties in a schema are non-unique.
 If `$unique` is *true*, the property will generate a 

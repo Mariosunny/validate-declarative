@@ -1,4 +1,14 @@
-import { int, string, nullValue, boolean, truthy, verify, _resetSchema, DUPLICATE_VALUE_ERROR } from "../../src";
+import {
+  int,
+  string,
+  nullValue,
+  boolean,
+  truthy,
+  verify,
+  _resetSchema,
+  DUPLICATE_VALUE_ERROR,
+  validate,
+} from "../../src";
 import { $META, $ROOT } from "../../src/keys";
 import _ from "lodash";
 import { createError, generateSchemaExpects, validateErrors } from "../testUtils";
@@ -19,10 +29,96 @@ function expectUniqueValues(schema, key, expectedValues) {
 
   if (schema[$META].uniqueValues[key]) {
     values = schema[$META].uniqueValues[key];
+    expect(schema[$META].uniqueValuesLength[key]).toBe(expectedValues.length);
   }
 
   expect(values).toEqual(expectedValues);
 }
+
+test("test presence of $unique sets hasUnique = true and vice versa", () => {
+  const schema1 = {
+    $unique: true,
+  };
+  const schema2 = {
+    $element: {
+      a: {
+        b: {
+          $element: {
+            $element: {
+              $type: {
+                $type: {
+                  $unique: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  const schema3 = {
+    $unique: false,
+  };
+  const schema4 = {
+    $element: {
+      a: {
+        b: {
+          $element: {
+            $element: {
+              $type: {
+                $type: {
+                  $unique: false,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  const schema5 = {
+    $type: int,
+  };
+  const schema6 = {
+    $element: {
+      a: {
+        b: {
+          $element: {
+            $element: {
+              $type: {
+                $type: {},
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  verify(schema1, {});
+  expect(schema1[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema1[$META].hasUnique).toBe(true);
+
+  verify(schema2, {});
+  expect(schema2[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema2[$META].hasUnique).toBe(true);
+
+  verify(schema3, {});
+  expect(schema3[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema3[$META].hasUnique).toBe(false);
+
+  verify(schema4, {});
+  expect(schema4[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema4[$META].hasUnique).toBe(false);
+
+  verify(schema5, {});
+  expect(schema5[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema5[$META].hasUnique).toBe(false);
+
+  verify(schema6, {});
+  expect(schema6[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema6[$META].hasUnique).toBe(false);
+});
 
 test(`test non-unique constraint does not generate ${DUPLICATE_VALUE_ERROR}`, () => {
   const schema = {
@@ -769,4 +865,72 @@ test(`test multiple ${DUPLICATE_VALUE_ERROR}s on complex object`, () => {
       value: [true, false],
     },
   ]);
+});
+
+test(`test taken-together $unique functionality`, () => {
+  const schema1 = {
+    $unique: true,
+    a: int,
+    b: string,
+  };
+  const schema2 = {
+    $unique: true,
+    a: {
+      $type: int,
+      $unique: true,
+    },
+    b: {
+      $type: string,
+      $unique: true,
+    },
+  };
+  const schema3 = {
+    a: {
+      $type: int,
+      $unique: true,
+    },
+    b: {
+      $type: string,
+      $unique: true,
+    },
+  };
+
+  let data1 = { a: 5, b: "5" };
+  let data2 = { a: 5, b: "6" };
+  let data3 = { a: 6, b: "5" };
+  let data4 = { a: 6, b: "6" };
+
+  [data1, data2, data3, data4].forEach(function(data) {
+    expectSchemaPasses(schema1, data);
+    expectSchemaFails(schema1, data, { value: data });
+    _resetSchema(schema1);
+    expectSchemaPasses(schema2, data);
+    expectSchemaFails(schema2, data, { value: data });
+    _resetSchema(schema2);
+    expectSchemaPasses(schema3, data);
+    expectSchemaFails(schema3, data, [{ key: "a", value: data.a }, { key: "b", value: data.b }]);
+    _resetSchema(schema3);
+  });
+
+  expectSchemaPasses(schema1, data1);
+  expectSchemaPasses(schema1, data2);
+  expectSchemaPasses(schema1, data3);
+  expectSchemaPasses(schema1, data4);
+
+  expectSchemaPasses(schema2, data1);
+  expectSchemaPasses(schema2, data2);
+  expectSchemaPasses(schema2, data3);
+  expectSchemaPasses(schema2, data4);
+
+  expectSchemaPasses(schema3, data1);
+  expectSchemaFails(schema3, data2, { key: "a", value: 5 });
+  _resetSchema(schema3);
+
+  expectSchemaPasses(schema3, data1);
+  expectSchemaFails(schema3, data3, { key: "b", value: "5" });
+  _resetSchema(schema3);
+
+  expectSchemaPasses(schema3, data1);
+  expectSchemaPasses(schema3, data4);
+  _resetSchema(schema3);
 });

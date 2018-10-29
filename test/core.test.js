@@ -28,52 +28,24 @@ test("test validate returns report object", () => {
   });
 });
 
-test("non-key/value object throws error", () => {
-  const nonKeyValueObjects = [
-    5.5,
-    5,
-    0,
-    Infinity,
-    -Infinity,
-    "",
-    "hello",
-    undefined,
-    null,
-    NaN,
-    true,
-    false,
-    Symbol(),
-    function() {},
-    [],
-  ];
-
-  nonKeyValueObjects.forEach(function(obj) {
-    expectSchemaThrows(obj, null);
-  });
-});
-
 test(`verify or validate adds $meta property to schema`, () => {
-  const schema1 = {
-    a: int,
-  };
-  const schema2 = {
+  const schema = {
     a: int,
   };
 
-  expect(schema1.hasOwnProperty($META)).toBe(false);
-  expect(schema2.hasOwnProperty($META)).toBe(false);
-  verify(schema1, {});
-  validate(schema2, {});
-  expect(schema1.hasOwnProperty($META)).toBe(true);
-  expect(schema2.hasOwnProperty($META)).toBe(true);
-  expect(schema1[$META].hasOwnProperty("uniqueValues")).toBe(true);
-  expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
-  verify(schema1, {});
-  validate(schema2, {});
-  expect(schema1.hasOwnProperty($META)).toBe(true);
-  expect(schema2.hasOwnProperty($META)).toBe(true);
-  expect(schema1[$META].hasOwnProperty("uniqueValues")).toBe(true);
-  expect(schema2[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  expect(schema.hasOwnProperty($META)).toBe(false);
+  verify(schema, {});
+  expect(schema.hasOwnProperty($META)).toBe(true);
+  expect(Object.keys(schema[$META]).length).toBe(3);
+  expect(schema[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  expect(schema[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema[$META].hasOwnProperty("uniqueValuesLength")).toBe(true);
+  verify(schema, {});
+  expect(schema.hasOwnProperty($META)).toBe(true);
+  expect(Object.keys(schema[$META]).length).toBe(3);
+  expect(schema[$META].hasOwnProperty("uniqueValues")).toBe(true);
+  expect(schema[$META].hasOwnProperty("hasUnique")).toBe(true);
+  expect(schema[$META].hasOwnProperty("uniqueValuesLength")).toBe(true);
 });
 
 test("ensure any property type in data is not ignored", () => {

@@ -1,4 +1,5 @@
-import { verify, validate } from "../src";
+import { validate, verify } from "../src";
+import _ from "lodash";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {
@@ -50,4 +51,44 @@ export function generateSchemaExpects(
       expect(() => verify(schema, data, options)).not.toThrow();
     },
   };
+}
+
+export const testObject = {
+  func() {},
+};
+export const standardValues = {
+  number: 5.5,
+  int: 5,
+  infinity: Infinity,
+  negativeInfinity: -Infinity,
+  emptyString: "",
+  emptyObject: {},
+  set: new Set(),
+  map: new Map(),
+  weakMap: new WeakMap(),
+  weakSet: new WeakSet(),
+  string: "hello",
+  undefinedValue: undefined,
+  nullValue: null,
+  nanValue: NaN,
+  boolean: true,
+  date: new Date(),
+  symbol: Symbol(),
+  func: function() {},
+  fatArrowFunc: () => {},
+  embeddedFunc: testObject.func,
+  newFunc: new Function("a", "return a"),
+  regexp: /\w+/,
+  array: [],
+  newArray: new Array(),
+};
+
+export function standardValuesExcept(...exceptions) {
+  let values = _.cloneDeep(standardValues);
+
+  exceptions.forEach(function(exception) {
+    delete values[exception];
+  });
+
+  return _.values(values);
 }

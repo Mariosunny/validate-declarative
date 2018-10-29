@@ -1,5 +1,16 @@
 import { forOwn, forOwnNonReservedProperty, hasOwnProperty, isConstantValue, isEqual, isKeyValueObject } from "./util";
-import { $ELEMENT, $META, $NAME, $OPTIONAL, $ROOT, $TEST, $TYPE, addElementToContext, addKeyToContext } from "./keys";
+import {
+  $ELEMENT,
+  $META,
+  $NAME,
+  $OPTIONAL,
+  $ROOT,
+  $TEST,
+  $TYPE,
+  $UNIQUE,
+  addElementToContext,
+  addKeyToContext,
+} from "./keys";
 import { list, string } from "./types";
 import {
   addError,
@@ -9,7 +20,7 @@ import {
   MISSING_PROPERTY_ERROR,
 } from "./errors";
 import { ALLOW_EXTRANEOUS, buildOptions, setGlobalOptions, validateOptions } from "./options";
-import { addMeta, resetSchema as _resetSchema } from "./meta";
+import { addMeta, backoutSchema, resetSchema as _resetSchema, updateMeta } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
   if (isConstantValue(schema)) {
@@ -17,7 +28,7 @@ function validateData(context, schema, data, report, options, uniqueValues) {
       addError(report, options, INVALID_VALUE_ERROR, context, data);
     }
   } else {
-    if (!passesTypeTest(schema, data)) {
+    if (!passesTypeTest(report, context, schema, data)) {
       addError(report, options, INVALID_VALUE_ERROR, context, data, getTypeName(schema));
     } else {
       checkUniqueness(context, schema, data, report, options, uniqueValues);
@@ -64,7 +75,7 @@ function validateObject(context, schema, data, report, options, uniqueValues) {
     let dataHasProperty = hasOwnProperty(data, key);
     let newData = dataHasProperty ? data[key] : null;
 
-    if (!isOptional(newSchema) && !dataHasProperty) {
+    if (!isOptional(report, context, newSchema) && !dataHasProperty) {
       addError(report, options, MISSING_PROPERTY_ERROR, newContext);
     } else if (dataHasProperty) {
       validateData(newContext, newSchema, newData, report, options, uniqueValues);
@@ -103,28 +114,37 @@ function getUniqueContext(context, uniqueValues) {
   return null;
 }
 
-function isOptional(schema) {
+function isOptional(report, context, schema) {
   if (hasOwnProperty(schema, $OPTIONAL)) {
     return schema[$OPTIONAL];
   } else if (hasOwnProperty(schema, $TYPE)) {
-    return isOptional(schema[$TYPE]);
+    return isOptional(report, context, schema[$TYPE]);
   }
 
   return false;
 }
 
-function passesTypeTest(schema, data, depth = 0) {
+function passesTypeTest(report, context, schema, data, depth = 0) {
   let result = true;
   const hasElement = schema.hasOwnProperty($ELEMENT);
   const hasTest = schema.hasOwnProperty($TEST);
   const hasType = schema.hasOwnProperty($TYPE);
 
-  if (hasElement && !hasType) {
-    result = list.$test(data);
+  if (hasElement) {
+    if (!isKeyValueObject(schema[$ELEMENT])) {
+      throwConstraintError(report.schema, context, "$element must be an object");
+    }
+    if (!hasType) {
+      result = list.$test(data);
+    }
   }
 
-  if (hasType && isKeyValueObject(schema[$TYPE])) {
-    result = passesTypeTest(schema[$TYPE], data, depth + 1) && result;
+  if (hasType) {
+    if (isKeyValueObject(schema[$TYPE])) {
+      result = passesTypeTest(report, context, schema[$TYPE], data, depth + 1) && result;
+    } else {
+      throwConstraintError(report.schema, context, "$type must be an object");
+    }
   }
 
   if (result && hasTest) {
@@ -134,10 +154,12 @@ function passesTypeTest(schema, data, depth = 0) {
       result = result && string.$test(data) && test.test(data);
     } else if (typeof test === "function") {
       result = result && test(data);
+    } else {
+      throwConstraintError(report.schema, context, "$test must be a function or a regular expression");
     }
   }
 
-  if (result && !hasType && !hasTest && depth === 0 && !hasElement && !isKeyValueObject(data)) {
+  if (result && depth === 0 && !isType(schema) && !isKeyValueObject(data)) {
     result = false;
   }
 
@@ -161,7 +183,25 @@ function getTypeName(schema) {
 }
 
 function isType(schema) {
-  return hasOwnProperty(schema, $TEST) || hasOwnProperty(schema, $TYPE);
+  return (
+    hasOwnProperty(schema, $TEST) ||
+    hasOwnProperty(schema, $TYPE) ||
+    ((hasOwnProperty(schema, $OPTIONAL) || hasOwnProperty(schema, $UNIQUE) || hasOwnProperty(schema, $ELEMENT)) &&
+      !hasNonReservedProperties(schema))
+  );
+}
+
+function hasNonReservedProperties(schema) {
+  let count = 0;
+  forOwnNonReservedProperty(schema, function() {
+    count++;
+  });
+  return count;
+}
+
+function throwConstraintError(schema, context, message) {
+  backoutSchema(schema);
+  throw new Error(`${message}\n${context}`);
 }
 
 function checkInputForErrors(schema, data, options) {
@@ -189,6 +229,7 @@ export function validate(schema, data, options) {
 
   let report = { errors: [], data: data, schema: schema };
   validateData("", schema, data, report, options, schema[$META].uniqueValues);
+  updateMeta(schema);
 
   return report;
 }
