@@ -226,9 +226,11 @@ export function validate(schema, data, options) {
   options = buildOptions(options);
   checkInputForErrors(schema, data, options);
   addMeta(schema);
+  backoutSchema(schema);
 
   let report = { errors: [], data: data, schema: schema };
   validateData("", schema, data, report, options, schema[$META].uniqueValues);
+
   updateMeta(schema);
 
   return report;

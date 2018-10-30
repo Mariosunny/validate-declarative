@@ -73,8 +73,8 @@ yarn add validate-declarative
 ```
 
 ## Getting Started
-A *schema* is a plain-old Javascript object that has some special properties. 
-A schema describes the structure of some data.
+A *schema* is a plain Javascript object that has some special properties. 
+A schema describes the structure and type of some data in a declarative manner.
 
 ```javascript
 import {verify, validate} from 'validate-declarative';
@@ -88,12 +88,15 @@ const tweetSchema = {
   }
 };
 ```
-Keys in a schema beginning with `$` are constraints. [Constraints](#constraints) define the rules for validating data. 
-The most commonly used constraint is the `$test` constraint, which defines a type test.
+Keys in the schema beginning with `$` are constraints. [Constraints](#constraints) define the rules for validating data. 
+The most commonly used constraint is the `$test` constraint, which defines a *type test*-
+a function that takes an object and returns *true* if the object is valid, *false* otherwise.
 
-In the example above, the schema defines a property `message` that has a `$test` constraint that defines a type that is a *string* with a *length* of 24 characters or less.
+In the above example, `tweetSchema` has a property `message` that has a `$test` constraint 
+that defines a type that is a *string* with a *length* of 24 characters or less.
 
-The following tweet is therefore valid, since it satisfies the schema:
+For a given data to be valid, it must have the same structure as the schema, and satisfy every constraint
+in the schema. The following tweet is therefore valid, since it meets this criteria:
 ```javascript
 let myTweet1 = { message: "Hello world!" };
 ```
@@ -106,7 +109,7 @@ let myTweet3 = {message: "Lorem ipsum dolor sit amet, consectetur adipiscing." }
 
 To validate data against a schema, use `verify()`- 
 it takes a schema as its first argument, and the data as its second argument.
-It returns *true* if the data satisfies all the constraints in the schema.
+It returns *true* if the data satisfies the schema.
 
 ```javascript
 let result1 = verify(tweetSchema, myTweet1); // true
@@ -119,8 +122,8 @@ let result3 = verify(tweetSchema, myTweet3); // false
 console.log(validate(tweetSchema, tweet2));
 // {
 //    errors: [ { error: "InvalidValueError", key: "message", value: 5 } ] 
-//    schema: { message: { '$test': [Function: $test] }
 //    data: { message: 5 }  
+//    schema: { message: { '$test': [Function: $test] }
 // }
 ```
 <details><summary><b>[ <i>View the full code</i> ]</b></summary>
@@ -153,8 +156,8 @@ You can create a schema for any Javascript object.
 
 Check out [more examples](#examples) below, or
 learn about the other types of [constraints](#constraints). 
-See the [API](#api) for a description of `verify()` and `validate()`.
-Check out a list of the available [built-in types](#built-in-types).
+See the [API](#api) for a detailed explanation of `verify()` and `validate()`.
+Also check out a list of the available [built-in types](#built-in-types).
 
 
 ## Examples
@@ -485,6 +488,7 @@ returning *true* if and only if every property in the schema
 exists in the data, and every property's value in the data 
 satisfies the constraints of the property 
 (see [Constraints](#constraints)), *false* otherwise. 
+Prototypal properties in `data` are ignored.
 Uses Node's [`assert.deepStrictEqual()`](https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message)
 rules when comparing objects.
 
@@ -520,7 +524,7 @@ let result = verify(schema, data, options);
 
 ### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
-and an array error objects (`errors`: see [Errors](#errors)) describing each constraint failure in detail. 
+and an array error objects (`errors`, see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
 
 ### `setGlobalValidationOptions(options)`
@@ -579,7 +583,7 @@ let result2 = verify(appleType, data2); // false
 ### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
 of values within and across data. **Invoking this function is not recommended for normal use**.
-After this function is invokved, uniqueness is no longer guaranteed.
+After this function is invoked, uniqueness is no longer guaranteed on the schema.
 
 <details><summary><b>[ <i>View usage</i> ]</b></summary>
   
@@ -613,6 +617,10 @@ Defines a simple type test.
 *false* otherwise. By default, the object is always valid.
 Alternatively, `$test` is a regular expression that describes a valid object.
 If the object is invalid, an [InvalidValueError](#invalidvalueerror) is generated.
+
+(Note: `$test` does not perform any Javascript Error handling. 
+Calling a function like `charAt()` on an object without first checking that it is a string
+will throw a Javascript Error if the object is not a string.)
 
 <details><summary><b>[ <i>View examples</i> ]</b></summary>
 
@@ -659,16 +667,17 @@ const countrySchema = {
 
 Allows you to extend an existing type. 
 `$type` is any object with a `$test` property that is a type test (see above).
-During validation, the `$test` in `$type` is always called first before 
-the local `$test`. This allows you to progressively 'build' a custom type through a 
-series of type tests (see second example below). 
-If neither `$test` nor `$type` is present for a property, 
-a value will *always* be valid and never generate
-an [InvalidValueError](#invalidvalueerror).
+There can be many `$type` declarations nested within each other.
+During validation, the deepest `$test` is called first, then the second-deepest, and so on. 
+This functionality allows you to easily 'chain' series of type tests together to create original custom types (see example #2 below). 
+Indeed, many of the [built-in types](#built-in-types) included in this package are defined this way 
+(`number` 🡒 `int` 🡒 `positiveInt`).
+
+If neither `$test` nor `$type` is present, the validated object is always valid.
 
 You can add a `$name` property to your custom type, which determines 
 the *expectedType*
-in the error, though it is entirely optional.
+in a generated error- though this is entirely optional.
 
 <details><summary><b>[ <i>View examples</i> ]</b></summary>
   
@@ -774,14 +783,14 @@ For nested `$unique` declarations,
 only the most shallow `$unique` declaration is considered.
 
 (Note: Every `NaN` value is different from every other value, including other `NaN` values 
-(as per [Section 11.9.6](https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.6) of the ECMAScript spec).
+(as per the [ECMAScript spec](https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.6)).
 It would therefore be meaningless to declare a `NaN` property unique- as it will always be unique.)
 
 (Note: Each `$unique` declaration is mapped to an internal array of values stored within
 a hidden property within the schema. 
 **Be warned**- a large number of validations may result in high memory usage,
 as every validation adds another element to each internal array of unique values within the schema.
-Though it is not recommended, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
+Though it is not recommended for normal use, you can call `_resetSchema()` to clear these internal arrays (see [API](#api)).
 This, however, will not guarantee uniqueness for subsequent validations.)
 
 <details><summary><b>[ <i>View examples</i> ]</b></summary>

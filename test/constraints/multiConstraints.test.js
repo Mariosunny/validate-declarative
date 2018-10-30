@@ -1,12 +1,4 @@
-import {
-  _resetSchema,
-  DUPLICATE_VALUE_ERROR,
-  int,
-  INVALID_VALUE_ERROR,
-  list,
-  MISSING_PROPERTY_ERROR,
-  validate,
-} from "../../src";
+import { _resetSchema, DUPLICATE_VALUE_ERROR, int, INVALID_VALUE_ERROR, list, MISSING_PROPERTY_ERROR } from "../../src";
 import { generateSchemaExpects } from "../testUtils";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();

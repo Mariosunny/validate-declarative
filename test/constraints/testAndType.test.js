@@ -211,7 +211,7 @@ test("test type inheritance", () => {
   expect(verify(schema, data)).toBe(false);
 });
 
-test("test user-defined $test", () => {
+test("test custom type", () => {
   let customType = {
     $test: object => object.includes("c"),
     $name: "customType",

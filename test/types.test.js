@@ -82,6 +82,7 @@ import unravel from "unravel-function";
 import _ from "lodash";
 import { generateSchemaExpects, standardValues, standardValuesExcept, testObject } from "./testUtils";
 import { $NAME, $TYPE } from "../src/keys";
+import { newType } from "../src/types";
 
 const { expectSchemaPasses, expectSchemaFails } = generateSchemaExpects();
 
@@ -534,4 +535,13 @@ describe("test typeWithInstanceOf", () => {
       });
     });
   });
+});
+
+test("test newType", () => {
+  const $test = () => {};
+  const $type = { $test };
+  const $name = "a";
+  expect(newType($name, $test, $type)).toEqual({ $name, $test, $type });
+  expect(newType($name, $test)).toEqual({ $name, $test });
+  expect(newType(undefined, $test)).toEqual({ $test });
 });

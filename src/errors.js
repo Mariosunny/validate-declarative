@@ -27,16 +27,21 @@ export function addError(report, options, errorType, key, value, expectedType) {
 }
 
 function throwError(report, error) {
-  let message = `${error.error}: key: ${error.key}`;
+  let args = [];
+
+  if (error.key) {
+    args.push(`key: ${error.key}`);
+  }
 
   if (error.value) {
-    message += `, value: ${error.value}`;
+    args.push(`value: ${error.value}`);
   }
 
   if (error.expectedType) {
-    message += `, expectedType: ${error.expectedType}`;
+    args.push(`expectedType: ${error.expectedType}`);
   }
 
+  let message = `${error.error}: ${args.join(", ")}`;
   message += `\ndata: ${util.inspect(report.data)}`;
   message += `\nschema: ${util.inspect(report.schema, { depth: Infinity })}`;
 

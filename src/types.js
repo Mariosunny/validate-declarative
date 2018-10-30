@@ -179,7 +179,7 @@ function makeUnique(type) {
   };
 }
 
-function newType($name, $test, $type) {
+export function newType($name, $test, $type) {
   let type = { $test };
 
   if ($name) {

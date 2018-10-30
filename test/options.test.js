@@ -13,6 +13,8 @@ import {
   setGlobalValidationOptions,
   MISSING_PROPERTY_ERROR,
   DUPLICATE_VALUE_ERROR,
+  verify,
+  uniqueInt,
 } from "../src";
 import _ from "lodash";
 
@@ -62,6 +64,11 @@ test("options should be key-value object", () => {
   invalidValues.forEach(function(options) {
     expectSchemaThrows({}, {}, options);
   });
+});
+
+test("extraneous keys in options are ignored", () => {
+  expect(() => verify({}, {}, { a: 5 })).not.toThrow();
+  expect(() => setGlobalValidationOptions({ a: 5 })).not.toThrow();
 });
 
 function testOptionValues(optionName, validValues, invalidValues) {
@@ -166,66 +173,84 @@ test(`test ${ALLOW_EXTRANEOUS} option basic functionality`, () => {
   expectSchemaFails(schema, data2, error, falseOptions);
 });
 
-test(`test ${THROW_ON_ERROR} option basic functionality`, () => {
-  const schema = {
-    a: int,
-  };
-
-  let data1 = {
-    a: 5,
-  };
-
-  let data2 = {
-    a: "hello",
-  };
-
-  const error = { key: "a", error: INVALID_VALUE_ERROR, value: "hello", expectedType: int };
-
+function testThrowOnErrorOption(tests) {
   let trueOptions = {
     [THROW_ON_ERROR]: true,
   };
   let falseOptions = {
     [THROW_ON_ERROR]: false,
   };
+  tests.forEach(function(t) {
+    test(`test ${THROW_ON_ERROR} option with ${t.error.error}`, () => {
+      const schema = t.schema;
+      const validData = t.validData;
+      const invalidData = t.invalidData;
+      const error = t.error;
+      const message = t.message;
+      expectSchemaPasses(schema, validData);
+      expectSchemaNotThrows(schema, validData);
+      expectSchemaFails(schema, invalidData, error);
+      expectSchemaNotThrows(schema, invalidData);
+      expectSchemaPasses(schema, validData, falseOptions);
+      expectSchemaNotThrows(schema, validData, falseOptions);
+      expectSchemaFails(schema, invalidData, error, falseOptions);
+      expectSchemaNotThrows(schema, invalidData, falseOptions);
+      setGlobalValidationOptions(falseOptions);
+      expectSchemaPasses(schema, validData);
+      expectSchemaNotThrows(schema, validData);
+      expectSchemaFails(schema, invalidData, error);
+      expectSchemaNotThrows(schema, invalidData);
+      expectSchemaPasses(schema, validData, falseOptions);
+      expectSchemaNotThrows(schema, validData, falseOptions);
+      expectSchemaFails(schema, invalidData, error, falseOptions);
+      expectSchemaNotThrows(schema, invalidData, falseOptions);
+      expectSchemaPasses(schema, validData, trueOptions);
+      expectSchemaNotThrows(schema, validData, trueOptions);
+      expectSchemaThrows(schema, invalidData, trueOptions);
 
-  expectSchemaPasses(schema, data1);
-  expectSchemaNotThrows(schema, data1);
-  expectSchemaFails(schema, data2, error);
-  expectSchemaNotThrows(schema, data2);
-  expectSchemaPasses(schema, data1, falseOptions);
-  expectSchemaNotThrows(schema, data1, falseOptions);
-  expectSchemaFails(schema, data2, error, falseOptions);
-  expectSchemaNotThrows(schema, data2, falseOptions);
-  setGlobalValidationOptions(falseOptions);
-  expectSchemaPasses(schema, data1);
-  expectSchemaNotThrows(schema, data1);
-  expectSchemaFails(schema, data2, error);
-  expectSchemaNotThrows(schema, data2);
-  expectSchemaPasses(schema, data1, falseOptions);
-  expectSchemaNotThrows(schema, data1, falseOptions);
-  expectSchemaFails(schema, data2, error, falseOptions);
-  expectSchemaNotThrows(schema, data2, falseOptions);
-  expectSchemaPasses(schema, data1, trueOptions);
-  expectSchemaNotThrows(schema, data1, trueOptions);
-  expectSchemaThrows(schema, data2, trueOptions);
+      resetGlobalOptions();
 
-  resetGlobalOptions();
+      expectSchemaPasses(schema, validData);
+      expectSchemaNotThrows(schema, validData);
+      expectSchemaFails(schema, invalidData, error);
+      expectSchemaPasses(schema, validData, trueOptions);
+      expectSchemaNotThrows(schema, validData, trueOptions);
+      expect(() => verify(schema, invalidData, trueOptions)).toThrow(message);
+      setGlobalValidationOptions(trueOptions);
+      expectSchemaPasses(schema, validData);
+      expectSchemaNotThrows(schema, validData);
+      expect(() => verify(schema, invalidData)).toThrow(message);
+      expectSchemaPasses(schema, validData, trueOptions);
+      expectSchemaNotThrows(schema, validData, trueOptions);
+      expect(() => verify(schema, invalidData, trueOptions)).toThrow(message);
+      expectSchemaPasses(schema, validData, falseOptions);
+      expectSchemaNotThrows(schema, validData, falseOptions);
+      expectSchemaFails(schema, invalidData, error, falseOptions);
+      expectSchemaNotThrows(schema, invalidData, falseOptions);
+    });
+  });
+}
 
-  expectSchemaPasses(schema, data1);
-  expectSchemaNotThrows(schema, data1);
-  expectSchemaFails(schema, data2, error);
-  expectSchemaPasses(schema, data1, trueOptions);
-  expectSchemaNotThrows(schema, data1, trueOptions);
-  expectSchemaThrows(schema, data2, trueOptions);
-  setGlobalValidationOptions(trueOptions);
-  expectSchemaPasses(schema, data1);
-  expectSchemaNotThrows(schema, data1);
-  expectSchemaThrows(schema, data2);
-  expectSchemaPasses(schema, data1, trueOptions);
-  expectSchemaNotThrows(schema, data1, trueOptions);
-  expectSchemaThrows(schema, data2, trueOptions);
-  expectSchemaPasses(schema, data1, falseOptions);
-  expectSchemaNotThrows(schema, data1, falseOptions);
-  expectSchemaFails(schema, data2, error, falseOptions);
-  expectSchemaNotThrows(schema, data2, falseOptions);
-});
+testThrowOnErrorOption([
+  {
+    schema: int,
+    validData: 5,
+    invalidData: "hello",
+    error: { error: INVALID_VALUE_ERROR, value: "hello", expectedType: int },
+    message: `${INVALID_VALUE_ERROR}: value: hello, expectedType: ${int.$name}`,
+  },
+  {
+    schema: { a: int },
+    validData: { a: 5 },
+    invalidData: { a: "hi" },
+    error: { error: INVALID_VALUE_ERROR, key: "a", value: "hi", expectedType: int },
+    message: `${INVALID_VALUE_ERROR}: key: a, value: hi, expectedType: ${int.$name}`,
+  },
+  {
+    schema: { a: int },
+    validData: { a: 5 },
+    invalidData: {},
+    error: { error: MISSING_PROPERTY_ERROR, key: "a" },
+    message: `${MISSING_PROPERTY_ERROR}: key: a`,
+  },
+]);

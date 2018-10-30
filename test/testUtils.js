@@ -1,5 +1,7 @@
 import { validate, verify } from "../src";
 import _ from "lodash";
+import { forOwnUniqueValues } from "../src/meta";
+import { $META } from "../src/keys";
 
 export function createError(path, errorType, value, expectedType) {
   let error = {
@@ -15,7 +17,7 @@ export function createError(path, errorType, value, expectedType) {
   return error;
 }
 
-export function validateErrors(schema, data, expectedErrors, options = {}) {
+export function validateErrors(schema, data, expectedErrors, options) {
   let receivedErrors = validate(schema, data, options).errors;
 
   expect(receivedErrors.length).toBe(expectedErrors.length);
@@ -30,6 +32,12 @@ function expectSchema(schema, data, errorMapping, errors = [], options = {}) {
     errors = [errors];
   }
   validateErrors(schema, data, errors.map(errorMapping), options);
+
+  if (schema[$META].hasUnique) {
+    forOwnUniqueValues(schema, function(key) {
+      expect(schema[$META].uniqueValuesLength[key]).toBeGreaterThanOrEqual(0);
+    });
+  }
 }
 
 export function generateSchemaExpects(

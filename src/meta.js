@@ -25,18 +25,20 @@ export function updateMeta(schema) {
 }
 
 export function backoutSchema(schema) {
-  forOwnUniqueValues(schema, function(key, values) {
-    let actualLength = values.length;
-    let properLength = schema[$META].uniqueValuesLength[key];
+  if (schema[$META].hasUnique) {
+    forOwnUniqueValues(schema, function(key, values) {
+      let actualLength = values.length;
+      let properLength = schema[$META].uniqueValuesLength[key];
 
-    while (actualLength > properLength) {
-      schema[$META].uniqueValues[key].pop();
-      actualLength--;
-    }
-  });
+      while (actualLength > properLength) {
+        schema[$META].uniqueValues[key].pop();
+        actualLength--;
+      }
+    });
+  }
 }
 
-function forOwnUniqueValues(schema, func) {
+export function forOwnUniqueValues(schema, func) {
   forOwn(schema[$META].uniqueValues, function(key, values) {
     func(key, values);
   });
