@@ -121,7 +121,7 @@ export const optionalArray = makeOptional(array);
 export const uniqueArray = makeUnique(array);
 
 export const list = newType("list", function(object) {
-  return array.$test(object) || object instanceof Set || object instanceof WeakSet;
+  return array.$test(object) || object instanceof Set;
 });
 export const optionalList = makeOptional(list);
 export const uniqueList = makeUnique(list);

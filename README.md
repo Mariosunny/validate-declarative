@@ -14,7 +14,7 @@ A simple utility for declaratively validating any Javascript object.
 <details><summary><b>[ <i>See it in action</i> ]</b></summary>
   
 ```javascript
-import {verify, string, optionalNumber, date, boolean} from 'validate-declarative';
+import {verify, string, optionalNumber, boolean} from 'validate-declarative';
 
 const schema = {
   a: boolean,
@@ -521,11 +521,14 @@ let result = verify(schema, data, options);
 ```
 
 </details>
+<br/>
 
 ### `validate(schema, data, options={}) → Object`
 Same as `verify()`, but returns a *report object* containing a reference to the schema (`schema`), a reference to the data that was validated (`data`), 
 and an array error objects (`errors`, see [Errors](#errors)) describing each constraint failure in detail. 
 If the data satisfies the schema, `errors` will be an empty array, otherwise it will be non-empty.
+
+<br/>
 
 ### `setGlobalValidationOptions(options)`
 Sets the global validation rules for all validations. `options` is an optional argument that is an object with the following keys:
@@ -551,6 +554,7 @@ setGlobalValidationOptions(options);
 ```
 
 </details>
+<br/>
 
 ### `typeWithInstanceOf(clazz, name=clazz.name) → Object`
 Convenience function.
@@ -579,6 +583,7 @@ let result2 = verify(appleType, data2); // false
 ```
 
 </details>
+<br/>
 
 ### `_resetSchema(schema)`
 Resets the internal unique values within the schema, which are used to enforce uniqueness
@@ -661,6 +666,7 @@ const countrySchema = {
 };
 ```
 </details>
+<br/>
 
 ### `$type`
 **Default:** `{ $test: (object) => true }`
@@ -730,6 +736,7 @@ const schema = {
 };
 ```
 </details>
+<br/>
 
 ### `$optional`
 **Default**: `false`
@@ -769,6 +776,7 @@ let result1 = verify(schema, data1); // true
 let result2 = verify(schema, data2); // true
 ```
 </details>
+<br/>
 
 ### `$unique`
 **Default**: `false`
@@ -823,11 +831,12 @@ let result1 = verify(playerSchema, player1);
 let result2 = verify(playerSchema, player2);
 ```
 </details>
+<br/>
 
 ### `$element`
 **Default:** `undefined`
 
-Defines the schema of each element in an array, set, or weak set. 
+Defines the schema of each element in an array or set. 
 When `$element` is present, `$type` defaults to the `list` type (see [Built-in Types](#built-in-types)).
 `$element` declarations can be nested within eachother to validate multi-dimensional arrays.
 
@@ -935,7 +944,7 @@ See the [examples](#examples) for how to use types or how to define your own typ
 |`truthy`|A truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`falsy`|A falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`array`|An array.|`[1, 2, "3"]`, `new Array()`|
-|`list`|An array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
+|`list`|An array or set.|`[]`, `new Set()`, `new WeakSet()`|
 |`object`|Any object that is not a function.|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`func`|A function.|`function(){}`, `() => {}`, `Date`|
 |`date`|A date object.|`new Date()`|
@@ -966,7 +975,7 @@ Optional types are the same as core types, but with `$optional` = *true*.
 |`optionalTruthy`|An optional truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`optionalFalsy`|An optional falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`optionalArray`|An optional array.|`[1, 2, "3"]`, `new Array()`|
-|`optionalList`|An optional array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
+|`optionalList`|An optional array or optional set.|`[]`, `new Set()`, `new WeakSet()`|
 |`optionalObject`|Any object that is not a function (optional).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`optionalFunc`|An optional function.|`function(){}`, `() => {}`, `Date`|
 |`optionalDate`|An optional date object.|`new Date()`|
@@ -997,7 +1006,7 @@ Unique types are the same as core types, but with `$unique` = *true*.
 |`uniqueTruthy`|A unique truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`uniqueFalsy`|A unique falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`uniqueArray`|A unique array.|`[1, 2, "3"]`, `new Array()`|
-|`uniqueList`|A unique array, set, or weak set.|`[]`, `new Set()`, `new WeakSet()`|
+|`uniqueList`|A unique array or unique set.|`[]`, `new Set()`, `new WeakSet()`|
 |`uniqueObject`|Any object that is not a function (unique).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`uniqueFunc`|A unique function.|`function(){}`, `() => {}`, `Date`|
 |`uniqueDate`|A unique date object.|`new Date()`|

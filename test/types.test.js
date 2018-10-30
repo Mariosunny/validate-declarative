@@ -300,43 +300,21 @@ testTypeWith
     ARRAY_VALID_VALUES.concat(
       [
         new Set(),
-        new WeakSet(),
         new Set([]),
-        new WeakSet([]),
         new Set([[]]),
         new Set([[[[[[[[[]]]]]]]]]),
         new Set(new Array()),
         new Set(new Array([])),
         new Set(new Array([[[[[[[[[]]]]]]]]])),
         new Set([new Set()]),
-        new Set([new WeakSet()]),
-        new WeakSet([[[[[[[[[]]]]]]]]]),
-        new WeakSet(new Array()),
-        new WeakSet(new Array([])),
-        new WeakSet(new Array([[[[[[[[[]]]]]]]]])),
-        new WeakSet([new WeakSet()]),
-        new WeakSet([new Set()]),
         [new Set()],
-        [new WeakSet()],
-      ]
-        .concat(
-          _.values(standardValues)
-            .concat({ a: 5 })
-            .map(function(value) {
-              return new Set([value, [value], [[value]]]);
-            })
-        )
-        .concat(
-          _.values(standardValues)
-            .concat({ a: 5 })
-            .map(function(value) {
-              let set = new WeakSet();
-              try {
-                set = new WeakSet([value, [value], [[value]]]);
-              } catch (error) {}
-              return set;
-            })
-        )
+      ].concat(
+        _.values(standardValues)
+          .concat({ a: 5 })
+          .map(function(value) {
+            return new Set([value, [value], [[value]]]);
+          })
+      )
     )
   )
   .invalidValues(standardValuesExcept("array", "newArray", "set", "weakSet"));
@@ -477,7 +455,6 @@ describe("test typeWithInstanceOf", () => {
     WeakMap,
     WeakSet,
     ArrayBuffer,
-    SharedArrayBuffer,
     Promise,
     TestClass,
   ];
@@ -505,7 +482,6 @@ describe("test typeWithInstanceOf", () => {
     new WeakMap(),
     new WeakSet(),
     new ArrayBuffer(),
-    new SharedArrayBuffer(),
     new Promise(function() {}),
     new TestClass(),
   ];

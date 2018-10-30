@@ -48,6 +48,9 @@
     "prettier": "^1.14.3",
     "unravel-function": "^0.2.1"
   },
+  "engines": {
+    "node": ">=6"
+  },
   "babel": {
     "presets": [
       "es2015"

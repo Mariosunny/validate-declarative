@@ -56,13 +56,13 @@ expectConstraintWith
   .constraint($TYPE)
   .message(`schema throws when ${$TYPE} is not a key-value object`)
   .validValues([{}, { [$TYPE]: {} }, { [$TEST]: function() {} }, { [$TYPE]: {}, [$TEST]: function() {} }, { a: 5 }])
-  .invalidValues(standardValuesExcept("emptyObject", "date"));
+  .invalidValues(standardValuesExcept("emptyObject", "date", "weakSet"));
 
 expectConstraintWith
   .constraint($ELEMENT)
   .message(`schema throws when ${$ELEMENT} is not a key-value object`)
   .validValues([{}, { a: 5 }])
-  .invalidValues(standardValuesExcept("emptyObject", "date"));
+  .invalidValues(standardValuesExcept("emptyObject", "date", "weakSet"));
 
 test("non-key/value schema throws error", () => {
   const nonKeyValueObjects = [
