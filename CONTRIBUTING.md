@@ -1,8 +1,8 @@
 # Contributing
 This file contains instructions on how to contribute to this project. 
+
 Anyone can contribute to this project- 
 though it is up to the owner ([Tyler Hurson](http://github.com/Mariosunny/)) whether or not the contribution is ultimately included in a release.
-
 The easiest way to contribute is to implement something in `BACKLOG.md` and create a pull request for it.
 Original features are welcome but are not guaranteed to be accepted.
 
