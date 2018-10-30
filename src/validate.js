@@ -20,7 +20,7 @@ import {
   MISSING_PROPERTY_ERROR,
 } from "./errors";
 import { ALLOW_EXTRANEOUS, buildOptions, setGlobalOptions, validateOptions } from "./options";
-import { addMeta, backoutSchema, resetSchema as _resetSchema, updateMeta } from "./meta";
+import { addMeta, normalizeMeta, resetSchema as _resetSchema, updateMeta } from "./meta";
 
 function validateData(context, schema, data, report, options, uniqueValues) {
   if (isConstantValue(schema)) {
@@ -200,7 +200,7 @@ function hasNonReservedProperties(schema) {
 }
 
 function throwConstraintError(schema, context, message) {
-  backoutSchema(schema);
+  normalizeMeta(schema);
   throw new Error(`${message}\n${context}`);
 }
 
@@ -226,7 +226,7 @@ export function validate(schema, data, options) {
   options = buildOptions(options);
   checkInputForErrors(schema, data, options);
   addMeta(schema);
-  backoutSchema(schema);
+  normalizeMeta(schema);
 
   let report = { errors: [], data: data, schema: schema };
   validateData("", schema, data, report, options, schema[$META].uniqueValues);

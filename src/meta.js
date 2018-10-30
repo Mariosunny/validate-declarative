@@ -24,8 +24,8 @@ export function updateMeta(schema) {
   }
 }
 
-export function backoutSchema(schema) {
-  if (schema[$META].hasUnique) {
+export function normalizeMeta(schema) {
+  if (schema.hasOwnProperty($META) && schema[$META].hasUnique) {
     forOwnUniqueValues(schema, function(key, values) {
       let actualLength = values.length;
       let properLength = schema[$META].uniqueValuesLength[key];
