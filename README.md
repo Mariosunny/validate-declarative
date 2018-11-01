@@ -10,9 +10,9 @@ A simple utility for declaratively validating any Javascript object.
 - Fast, robust, and highly extensible
 - Works with arbitrarily large and deeply nested objects/arrays
 - ES5+ and browser compatible
-
-<details><summary><b>[ <i>See it in action</i> ]</b></summary>
   
+***See it in action:***
+
 ```javascript
 import {verify, string, optionalNumber, boolean} from 'validate-declarative';
 
@@ -49,8 +49,6 @@ let result2 = verify(schema, data2);
 //    'b.d' is not less than 40000
 //    'e[1]' is not a string
 ```
-</details>
-<br/>
 <br/>
 
 ## Table of Contents
@@ -944,7 +942,7 @@ See the [examples](#examples) for how to use types or how to define your own typ
 |`truthy`|A truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`falsy`|A falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`array`|An array.|`[1, 2, "3"]`, `new Array()`|
-|`list`|An array or set.|`[]`, `new Set()`, `new WeakSet()`|
+|`list`|An array or set.|`[]`, `new Set()`|
 |`object`|Any object that is not a function.|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`func`|A function.|`function(){}`, `() => {}`, `Date`|
 |`date`|A date object.|`new Date()`|
