@@ -973,7 +973,7 @@ Optional types are the same as core types, but with `$optional` = *true*.
 |`optionalTruthy`|An optional truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`optionalFalsy`|An optional falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`optionalArray`|An optional array.|`[1, 2, "3"]`, `new Array()`|
-|`optionalList`|An optional array or optional set.|`[]`, `new Set()`, `new WeakSet()`|
+|`optionalList`|An optional array or optional set.|`[]`, `new Set()`|
 |`optionalObject`|Any object that is not a function (optional).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`optionalFunc`|An optional function.|`function(){}`, `() => {}`, `Date`|
 |`optionalDate`|An optional date object.|`new Date()`|
@@ -1004,7 +1004,7 @@ Unique types are the same as core types, but with `$unique` = *true*.
 |`uniqueTruthy`|A unique truthy value.|`true`, `1`, `[]`, `{}`, `"false"`|
 |`uniqueFalsy`|A unique falsy value.|`false`, `0`, `""`, `null`, `undefined`, `NaN`|
 |`uniqueArray`|A unique array.|`[1, 2, "3"]`, `new Array()`|
-|`uniqueList`|A unique array or unique set.|`[]`, `new Set()`, `new WeakSet()`|
+|`uniqueList`|A unique array or unique set.|`[]`, `new Set()`|
 |`uniqueObject`|Any object that is not a function (unique).|`{}`, `[1, 2, 3]`, `new Set(1, 2, 3)`|
 |`uniqueFunc`|A unique function.|`function(){}`, `() => {}`, `Date`|
 |`uniqueDate`|A unique date object.|`new Date()`|
