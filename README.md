@@ -101,7 +101,7 @@ But neither of these tweets are valid:
 let myTweet2 = {message: 5};
 
 // 'message' is greater than 24 characters, invalid!
-let myTweet3 = {message: "Lorem ipsum dolor sit amet ipsum." };
+let myTweet3 = {message: "Lorem ipsum dolor sit amet, consectetur adipiscing." };
 ```
 
 To validate data against a schema, use `verify()`- 
