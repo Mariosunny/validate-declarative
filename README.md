@@ -53,7 +53,7 @@ let result2 = verify(schema, data2);
 
 ## Table of Contents
 - [Installation](#installation)
-- [Getting Started](#getting-started)
+- [Overview](#overview)
 - [Examples](#examples)
 - [API](#api)
 - [Constraints](#constraints)
@@ -70,7 +70,7 @@ npm install validate-declarative --save
 yarn add validate-declarative
 ```
 
-## Getting Started
+## Overview
 A *schema* is a plain Javascript object that has some special properties. 
 A schema describes the structure and type of some data in a declarative manner.
 
