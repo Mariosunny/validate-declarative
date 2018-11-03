@@ -90,19 +90,18 @@ Keys in the schema beginning with `$` are constraints. [Constraints](#constraint
 The most commonly used constraint is the `$test` constraint, which defines a *type test*-
 a function that takes an object and returns *true* if the object is valid, *false* otherwise.
 
-In the above example, `tweetSchema` has a property `message` that has a `$test` constraint 
-that defines a type that is a *string* with a *length* of 24 characters or less.
-
-For a given data to be valid, it must have the same structure as the schema, and satisfy every constraint
-in the schema. The following tweet is therefore valid, since it meets this criteria:
+Conceptually, `tweetSchema` describes an object with a property `message` that is a *string* with a *length* of 24 characters or less. For a given tweet to be valid, it must satisfy these constraints. The following tweet is therefore valid:
 ```javascript
 let myTweet1 = { message: "Hello world!" };
 ```
 
 But neither of these tweets are valid:
 ```javascript
+ // 'message' is not a string, invalid!
 let myTweet2 = {message: 5};
-let myTweet3 = {message: "Lorem ipsum dolor sit amet, consectetur adipiscing." };
+
+// 'message' is greater than 24 characters, invalid!
+let myTweet3 = {message: "Lorem ipsum dolor sit amet ipsum." };
 ```
 
 To validate data against a schema, use `verify()`- 
