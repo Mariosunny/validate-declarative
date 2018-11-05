@@ -936,7 +936,7 @@ const string = {
 
 These built-in types are merely for your own convinience. You can easily create your own type using the above syntax and use it in a schema.
 
-#### Core Types
+### Core Types
 |Type|Description|Examples|
 |----|-----------|------------|
 |`string`|A string.|`""`, `"hello world"`|
@@ -965,7 +965,7 @@ These built-in types are merely for your own convinience. You can easily create 
 |`nanValue`|A **NaN** value.|`NaN`|
 |`any`|Any value.|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
-#### Optional types
+### Optional types
 Optional types are the same as core types, but with `$optional` = *true*. Example:
 ```javascript
 // the built-in optional string type
@@ -1004,7 +1004,7 @@ const optionalString = {
 |`optionalNanValue`|An optional **NaN** value.|`NaN`|
 |`optionalAny`|Any value (optional).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
-#### Unique types
+### Unique types
 Unique types are the same as core types, but with `$unique` = *true*. Example:
 ```javascript
 // the built-in unique string type
