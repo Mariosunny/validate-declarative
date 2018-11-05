@@ -922,7 +922,7 @@ Generated when `allowExtraneous` = *false* and there is an extra property in the
 
 
 ## Built-in Types
-This section contains a list of types that are included in this package. A *type* is simply an object with a `$test` property which defines a function that returns *true* if the object is valid, *false* otherwise. No magic here.
+This section contains a list of types that are included in this package. A *type* is simply an object with a `$test` property which defines a function that returns *true* if the object is valid, *false* otherwise.
 
 ```javascript
 // the built-in string type
