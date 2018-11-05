@@ -966,7 +966,15 @@ These built-in types are merely for your own convinience. You can easily create 
 |`any`|Any value.|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
 #### Optional types
-Optional types are the same as core types, but with `$optional` = *true*.
+Optional types are the same as core types, but with `$optional` = *true*. Example:
+```javascript
+// the built-in optional string type
+const optionalString = {
+  $type: string,
+  $optional: true,
+  $name: 'optionalString'
+};
+```
 
 |Type|Description|Examples|
 |----|-----------|------------|
@@ -997,7 +1005,15 @@ Optional types are the same as core types, but with `$optional` = *true*.
 |`optionalAny`|Any value (optional).|`512`, `null`, `"hello"`, `undefined`, `[1, 2, 3]`|
 
 #### Unique types
-Unique types are the same as core types, but with `$unique` = *true*.
+Unique types are the same as core types, but with `$unique` = *true*. Example:
+```javascript
+// the built-in unique string type
+const uniqueString = {
+  $type: string,
+  $unique: true,
+  $name: 'uniqueString'
+};
+```
 
 |Type|Description|Examples|
 |----|-----------|------------|
