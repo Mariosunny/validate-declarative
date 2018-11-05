@@ -922,8 +922,19 @@ Generated when `allowExtraneous` = *false* and there is an extra property in the
 
 
 ## Built-in Types
-This section contains a list of the built-in types that are included in this package.
-See the [examples](#examples) for how to use types or how to define your own type.
+This section contains a list of types that are included in this package. A *type* is simply an object with a `$test` property which defines a function that returns *true* if the object is valid, *false* otherwise. No magic here.
+
+```javascript
+// the built-in string type
+const string = {
+  $test(object) {
+    return typeof object === 'string';
+  },
+  $name: 'string'
+};
+```
+
+These built-in types are merely for your own convinience. You can easily create your own type using the above syntax and use it in a schema.
 
 #### Core Types
 |Type|Description|Examples|
