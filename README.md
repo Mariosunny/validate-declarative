@@ -674,7 +674,7 @@ Allows you to extend an existing type.
 `$type` is any object with a `$test` property that is a type test (see above).
 There can be many `$type` declarations nested within each other.
 During validation, the deepest `$test` is called first, then the second-deepest, and so on. 
-This functionality allows you to easily 'chain' series of type tests together to create original custom types (see example #2 below). 
+This functionality allows you to easily 'chain' series of type tests together to create novel types (see example #2 below). 
 Indeed, many of the [built-in types](#built-in-types) included in this package are defined this way 
 (ex. `positiveInt` is an `int` is a `number`). Note that any type is also a valid schema (see [validating single values](#examples))
 
