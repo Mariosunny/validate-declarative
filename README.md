@@ -934,7 +934,7 @@ const string = {
 };
 ```
 
-These built-in types are merely for your own convinience. You can easily create your own type using the above syntax and use it in a schema.
+These built-in types are merely for your own convinience. You can easily create your own type using the above syntax and [use it in a schema](#examples).
 
 ### Core Types
 |Type|Description|Examples|
